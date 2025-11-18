@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
-import LOGO from "../assets/cerberus-logo-borderless.png";
+import LOGO from "../assets/cerberus-logo-blue.png";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
