@@ -46,7 +46,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <section>
       <h1 className={styles.loginHeader}>Cerberus</h1>
       <form onSubmit={handleSubmit} className={styles.registrationForm}>
         <div>
@@ -71,7 +71,7 @@ const Login = () => {
         </div>
         <button type="submit">Login</button>
       </form>
-    </>
+    </section>
   );
 };
 

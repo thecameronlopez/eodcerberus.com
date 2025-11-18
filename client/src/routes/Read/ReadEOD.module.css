@@ -1,0 +1,66 @@
+.searchBar {
+  display: flex;
+  align-items: first baseline;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.ticketNumberSearch {
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticketNumberSearch label {
+  font-size: 12px;
+  color: var(--linkText);
+  padding-left: 4px;
+}
+.ticketNumberSearch input {
+  padding: 6px 3px;
+  border: 1px solid var(--textSecondary);
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 150px;
+  height: 39px;
+}
+
+.monthSearch {
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.monthSearch label {
+  font-size: 12px;
+  color: var(--linkText);
+  padding-left: 4px;
+}
+
+.monthSearch select {
+  padding: 4px 3px;
+  border: 1px solid var(--textSecondary);
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 200px;
+}
+
+.personSearch {
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.personSearch label {
+  font-size: 12px;
+  color: var(--linkText);
+  padding-left: 4px;
+}
+
+.personSearch select {
+  padding: 4px 3px;
+  border: 1px solid var(--textSecondary);
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 200px;
+}

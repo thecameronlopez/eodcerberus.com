@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from app.models import Users, EOD
 from app.extensions import db
 from flask_login import login_required, current_user
+from datetime import datetime, date, timedelta
 
 creator = Blueprint("create", __name__)
 
@@ -38,7 +39,8 @@ def submit_eod():
         tower_loan=to_int(data.get("tower_loan")),
         card=to_int(data.get("card")),
         cash=to_int(data.get("cash")),
-        check=to_int(data.get("check")),
+        checks=to_int(data.get("checks")),
+        date=datetime.strptime(data.get("date"), "%Y-%m-%d").date() if data.get("date") else date.today(),
         user_id=current_user.id
     )
 

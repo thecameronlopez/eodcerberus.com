@@ -1,0 +1,52 @@
+.eodHeader {
+  color: var(--buttonPrimary);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.datePicker {
+  margin-bottom: 1.5rem;
+  margin-left: 5rem;
+  padding: 6px 3px;
+  border: 1px solid var(--textSecondary);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.eodForm {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 10px;
+  row-gap: 5px;
+  align-items: center;
+  justify-items: center;
+  /* border: 1px solid red; */
+}
+.eodForm div {
+  display: flex;
+  flex-direction: column;
+}
+.eodForm label {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--linkText);
+}
+.eodForm input {
+  padding: 6px 3px;
+  border: 1px solid var(--textSecondary);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.eodForm button {
+  grid-column: span 4;
+  justify-self: center;
+  padding: 8px 16px;
+  background-color: var(--linkText);
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

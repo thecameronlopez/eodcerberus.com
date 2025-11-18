@@ -12,7 +12,6 @@ import Home from "./routes/Home/Home";
 import Register from "./routes/Auth/Register";
 import Login from "./routes/Auth/Login";
 import ProtectedLayout from "./layout/ProtectedLayout";
-import AddEOD from "./routes/Create/AddEOD";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -20,7 +19,6 @@ const App = () => {
       <Route path="/" element={<RootLayout />}>
         <Route element={<ProtectedLayout />}>
           <Route index element={<Home />} />
-          <Route path="add_eod" element={<AddEOD />} />
         </Route>
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />

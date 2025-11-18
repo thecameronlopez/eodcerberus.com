@@ -17,6 +17,9 @@
   align-items: center;
   gap: 1.2rem;
   width: 60vw;
+  max-width: 500px;
+  align-self: center;
+  margin: 2rem auto;
 }
 
 .registrationForm div {
@@ -24,6 +27,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  max-width: 380px;
 }
 
 .registrationForm div label {

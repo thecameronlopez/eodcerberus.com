@@ -105,7 +105,7 @@ class EOD(db.Model):
             "tower_loan": self.tower_loan,
             "card": self.card,
             "cash": self.cash,
-            "check": self.checks,
+            "checks": self.checks,
             "sub_total": self.sub_total,
             "date": self.date,
             "user_id": self.user_id,
