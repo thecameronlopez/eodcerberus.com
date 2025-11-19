@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 
 dpt_enum = Enum("sales", "service", name="department_enum")
+location_enum = Enum("lake_charles", "jennings", name="location_enum")
 
 class Users(db.Model, UserMixin):
     __tablename__ = "users"
@@ -35,6 +36,7 @@ class EOD(db.Model):
     __tablename__ = "eod"
     
     id = Column(Integer, primary_key=True)
+    location = Column(location_enum, nullable=False, server_default="lake_charles")
     ticket_number = Column(Integer, nullable=False, unique=True)
     units = Column(Integer, nullable=False) 
     new = Column(Integer, nullable=False, server_default='0')
@@ -89,6 +91,7 @@ class EOD(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "location": self.location,
             "ticket_number": self.ticket_number,
             "units": self.units,
             "new": self.new,
@@ -126,10 +129,28 @@ class Deductions(db.Model):
     id = Column(Integer, primary_key=True)
     amount = Column(Integer, nullable=False, server_default='0')
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    location = Column(location_enum, nullable=False, server_default="lake_charles")
     salesman = relationship("Users", back_populates="deductions")
     
     date = Column(Date, nullable=False)
     reason = Column(Text, nullable=True)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "amount": self.amount,
+            "user_id": self.user_id,
+            "location": self.location,
+            "date": self.date,
+            "reason": self.reason,
+            "salesman": {
+                "id": self.salesman.id,
+                "first_name": self.salesman.first_name,
+                "last_name": self.salesman.last_name,
+                "email": self.salesman.email,
+                "department": self.salesman.department,
+            }
+        }
     
 #Event Listeners
 @event.listens_for(EOD, "before_insert")

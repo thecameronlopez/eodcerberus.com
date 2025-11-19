@@ -162,12 +162,6 @@ const UserEODs = ({ setComponent, setTicket }) => {
 
       <div className={styles.eodListBox}>
         {totals ? (
-          // <p className={styles.noEODs}>
-          //   [ No EODs found for{" "}
-          //   {users.find((u) => u.id === Number(userId))?.first_name ||
-          //     "this user"}
-          //   ]
-          // </p>
           <DailyReport report={totals} date={reportDate} />
         ) : (
           <ul>

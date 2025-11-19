@@ -1,11 +1,17 @@
 import styles from "./AddEOD.module.css";
 import React, { useState, useMemo } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import MoneyField from "../../components/MoneyField";
 import { formatCurrency } from "../../utils/Helpers";
+import { useAuth } from "../../context/AuthContext";
+
+const formatLocationName = {
+  lake_charles: "Lake Charles",
+  jennings: "Jennings",
+};
 
 const AddEOD = () => {
+  const { location } = useAuth();
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [formData, setFormData] = useState({
     ticket_number: "",
@@ -21,6 +27,8 @@ const AddEOD = () => {
     delivery: "",
     refunds: "",
     ebay_returns: "",
+    acima: "",
+    tower_loan: "",
     card: "",
     cash: "",
     checks: "",
@@ -70,7 +78,7 @@ const AddEOD = () => {
       alert("Ticket Number must be at least 4 digits long");
       return;
     }
-    const submitData = { ...formData, date };
+    const submitData = { ...formData, date, location: location };
 
     try {
       const response = await fetch("/api/create/submit_eod", {
@@ -148,6 +156,9 @@ const AddEOD = () => {
           />
           <br />
           <hr />
+          <small style={{ fontWeight: "600", color: "var(--buttonPrimary)" }}>
+            Submitting Ticket for {formatLocationName[location]}
+          </small>
           <br />
         </div>
         <div>

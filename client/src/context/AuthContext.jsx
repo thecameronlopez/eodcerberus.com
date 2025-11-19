@@ -5,6 +5,9 @@ const AuthProvider = createContext();
 export const AuthContext = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [location, setLocation] = useState(
+    localStorage.getItem("location") || "lake_charles"
+  );
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,8 +33,14 @@ export const AuthContext = ({ children }) => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("location", location);
+  }, [location]);
+
   return (
-    <AuthProvider.Provider value={{ user, loading, setLoading, setUser }}>
+    <AuthProvider.Provider
+      value={{ user, loading, setLoading, setUser, location, setLocation }}
+    >
       {children}
     </AuthProvider.Provider>
   );

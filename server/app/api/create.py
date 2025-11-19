@@ -20,6 +20,7 @@ def submit_eod():
     data = request.get_json()
 
     new_eod = EOD(
+        location=data.get("location").strip(),
         ticket_number=to_int(data.get("ticket_number")),
         units=to_int(data.get("units")),
         new=to_int(data.get("new")),
@@ -65,6 +66,7 @@ def submit_deduction():
     
     amount = data.get("amount")
     reason = data.get("reason")
+    location = data.get("location")
     date = datetime.strptime(data.get("date"), "%Y-%m-%d").date()
     
     deduction = Deductions(
@@ -72,6 +74,7 @@ def submit_deduction():
         user_id=current_user.id,
         date=date,
         reason=reason,
+        location=location.strip()
     )
     
     try:

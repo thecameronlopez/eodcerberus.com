@@ -9,12 +9,14 @@ import UserEODs from "../Read/UserEODs";
 import clsx from "clsx";
 import UserBar from "../../components/UserBar";
 import AddDeduction from "../Create/AddDeduction";
+import ViewDeductions from "../Users/ViewDeductions/ViewDeductions";
 
 const Components = {
   add_eod: AddEOD,
   read_eod: (props) => <ReadEOD {...props} />,
   user_eods: (props) => <UserEODs {...props} />,
   deductions: AddDeduction,
+  view_deductions: ViewDeductions,
 };
 
 const Home = () => {
@@ -22,7 +24,13 @@ const Home = () => {
   const [ticket, setTicket] = useState(null);
   const { user } = useAuth();
   const title = `${user.first_name} ${user.last_name}`;
-  const pages = ["add_eod", "deductions", "read_eod", "user_eods"];
+  const pages = [
+    "add_eod",
+    "deductions",
+    "read_eod",
+    "user_eods",
+    "view_deductions",
+  ];
 
   const SelectedComponent = Components[component];
 

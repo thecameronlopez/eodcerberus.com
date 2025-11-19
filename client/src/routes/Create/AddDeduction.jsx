@@ -3,13 +3,21 @@ import styles from "./AddDeduction.module.css";
 import React, { useState } from "react";
 import { formatDate } from "../../utils/Helpers";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
+
+const formatLocationName = {
+  lake_charles: "Lake Charles",
+  jennings: "Jennings",
+};
 
 const AddDeduction = () => {
+  const { location } = useAuth();
   const today = new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState({
     date: today,
     amount: "",
     reason: "",
+    location: location,
   });
 
   const handleChange = (e) => {
@@ -53,6 +61,9 @@ const AddDeduction = () => {
     <div className={styles.deductionContainer}>
       <form className={styles.deductionForm} onSubmit={handleSubmit}>
         <h2>Deductions</h2>
+        <small style={{ fontWeight: "600", marginBottom: "10px" }}>
+          Submitting deduction for {formatLocationName[location]}
+        </small>
         <div>
           <label htmlFor="date">Date</label>
           <input

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import LOGO from "../assets/cerberus-logo-blue.png";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
 const RootLayout = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, setLocation, location } = useAuth();
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -28,6 +28,29 @@ const RootLayout = () => {
         <Link to="/">
           <img id="header-logo" src={LOGO} alt="Cerberus Logo" />
         </Link>
+        <div className="location-switch">
+          <span className={location !== "lake_charles" ? "inactive" : ""}>
+            Lake Charles
+          </span>
+
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={location === "jennings"}
+              onChange={() => {
+                if (!confirm("Update location?")) return;
+                setLocation(
+                  location === "jennings" ? "lake_charles" : "jennings"
+                );
+              }}
+            />
+            <span className="slider"></span>
+          </label>
+
+          <span className={location !== "jennings" ? "inactive" : ""}>
+            Jennings
+          </span>
+        </div>
       </header>
       <main>
         <Outlet />{" "}

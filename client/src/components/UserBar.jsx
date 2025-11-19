@@ -4,9 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCaretDown,
   faChartSimple,
+  faClipboardList,
   faEllipsisVertical,
   faEye,
+  faFileInvoiceDollar,
   faList,
+  faMagnifyingGlass,
   faMoneyBillTransfer,
   faUserPlus,
   faUsers,
@@ -15,15 +18,16 @@ import { faSquarePlus } from "@fortawesome/free-regular-svg-icons";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+<FontAwesomeIcon icon={faFileInvoiceDollar} />;
 const paths = {
   add_eod: {
     icon: faSquarePlus,
   },
   read_eod: {
-    icon: faEye,
+    icon: faMagnifyingGlass,
   },
   user_eods: {
-    icon: faList,
+    icon: faClipboardList,
   },
   view_users: {
     icon: faUsers,
@@ -37,12 +41,15 @@ const paths = {
   deductions: {
     icon: faMoneyBillTransfer,
   },
+  view_deductions: {
+    icon: faFileInvoiceDollar,
+  },
 };
 
 const UserBar = ({ setComponent, component, title, pages }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
-  const { user } = useAuth();
+  const { user, location } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -83,7 +90,7 @@ const UserBar = ({ setComponent, component, title, pages }) => {
       {menuOpen && (
         <div className={styles.userMenu} ref={menuRef}>
           <Link to={"/"}>Home</Link>
-          <Link to="/analytics">Analytics</Link>
+          <Link to="/analytics">Reports</Link>
           <Link to="/settings">Settings</Link>
           {user.is_admin && <Link to="/users">Users</Link>}
         </div>
