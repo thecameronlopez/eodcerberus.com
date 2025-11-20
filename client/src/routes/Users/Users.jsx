@@ -11,7 +11,7 @@ const Components = {
 const Users = () => {
   const [component, setComponent] = useState("view_users");
   const SelectedComponent = Components[component];
-  const pages = ["view_users", "user_metrics", "register_user"];
+  const pages = ["view_users", "register_user"];
   return (
     <section>
       <UserBar
