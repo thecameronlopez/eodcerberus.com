@@ -271,6 +271,8 @@ def run_report(id, date):
         return jsonify(success=False, message="No EOD's match this query"), 400
     
     totals = calculate_totals(eods, deductions, salesman)
+    
+    current_app.logger.info(f"{current_user.first_name} {current_user.last_name} ran their report")
         
     return jsonify(success=True, totals=totals), 200
 

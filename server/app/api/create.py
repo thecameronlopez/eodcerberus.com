@@ -81,6 +81,8 @@ def submit_deduction():
         db.session.add(deduction)
         db.session.commit()
         
+        current_app.logger.info(f"{current_user.first_name} {current_user.last_name} submitted a deduction in the amount of {amount}")
+        
         return jsonify(success=True, message="Your deduction has been submitted!"), 201
     except Exception as e:
         db.session.rollback()
