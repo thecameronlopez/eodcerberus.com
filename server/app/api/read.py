@@ -353,3 +353,5 @@ def run_master_by_date_range():
     totals = calculate_totals(eods, deductions)
     
     return jsonify(success=True, totals=totals, master=True), 200
+
+
