@@ -37,7 +37,7 @@ const paths = {
   register_user: {
     icon: faUserPlus,
   },
-  user_metrics: {
+  user_analytics: {
     icon: faChartSimple,
   },
   deductions: {
