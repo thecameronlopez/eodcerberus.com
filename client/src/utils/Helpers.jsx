@@ -5,8 +5,6 @@ export const formatLocationName = (location) => {
 };
 
 export function formatDate(dateString) {
-  // const [year, month, day] = dateString.split("-").map(Number);
-
   const date = new Date(dateString);
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -27,9 +25,9 @@ export function formatDate(dateString) {
   ];
 
   const dayName = days[date.getDay()];
-  const monthName = months[date.getUTCMonth()];
-  const day = date.getUTCDate();
-  const year = date.getUTCFullYear();
+  const monthName = months[date.getMonth()];
+  const day = date.getDay();
+  const year = date.getFullYear();
 
   // Determine ordinal suffix (st, nd, rd, th)
   const suffix = (n) => {
