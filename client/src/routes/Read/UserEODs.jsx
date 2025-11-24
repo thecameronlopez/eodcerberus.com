@@ -4,7 +4,10 @@ import styles from "./UserEODs.module.css";
 import React, { useEffect, useState } from "react";
 import { formatCurrency, formatDate, getToday } from "../../utils/Helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFileInvoiceDollar,
+  faPenToSquare,
+} from "@fortawesome/free-solid-svg-icons";
 import DailyReport from "../../components/DailyReport";
 
 const UserEODs = ({ setComponent, setTicket }) => {
@@ -175,15 +178,23 @@ const UserEODs = ({ setComponent, setTicket }) => {
               tower_loan,
               extended_warranty,
               salesman,
+              used,
+              ["new"]: new_appliances,
+              diagnostic_fees,
+              ebay_returns,
+              refunds,
+              ebay_sales,
+              in_shop_repairs,
             }) => (
-              <li
-                key={id}
-                onClick={() => {
-                  setTicket(ticket_number);
-                  setComponent("read_eod");
-                }}
-              >
+              <li key={id}>
                 <div>
+                  <FontAwesomeIcon
+                    icon={faPenToSquare}
+                    onClick={() => {
+                      setTicket(ticket_number);
+                      setComponent("read_eod");
+                    }}
+                  />
                   <p>{formatDate(date)}</p>
                   <h3>{ticket_number}</h3>
                   <p className={styles.subTotal}>
@@ -194,12 +205,23 @@ const UserEODs = ({ setComponent, setTicket }) => {
                   </small>
                 </div>
                 <div>
+                  <p>New: {formatCurrency(new_appliances)}</p>
+                  <p>Used: {formatCurrency(used)}</p>
+                  <p>In Shop Repairs: {formatCurrency(in_shop_repairs)}</p>
                   <p>Card: {formatCurrency(card)}</p>
                   <p>Cash: {formatCurrency(cash)}</p>
                   <p>Checks: {formatCurrency(checks)}</p>
                   <p>Acima: {formatCurrency(acima)}</p>
                   <p>Tower Load: {formatCurrency(tower_loan)}</p>
                   <p>Extended Warranty: {formatCurrency(extended_warranty)}</p>
+                  <p>Diagnostic Fees: {formatCurrency(diagnostic_fees)}</p>
+                  <p>Ebay Sales: {formatCurrency(ebay_sales)}</p>
+                  <p className={styles.redP}>
+                    Refunds: {formatCurrency(refunds)}
+                  </p>
+                  <p className={styles.redP}>
+                    Ebay Returns: {formatCurrency(ebay_returns)}
+                  </p>
                 </div>
               </li>
             )

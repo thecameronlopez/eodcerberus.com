@@ -85,7 +85,7 @@ select {
 .eodListBox li {
   border: 1px solid var(--linkText);
   border-radius: 5px;
-  padding: 1rem;
+  padding: 1rem 1.2rem;
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -93,6 +93,7 @@ select {
 }
 .eodListBox li div:first-child {
   align-self: flex-start;
+  width: 25%;
 }
 .eodListBox li div h3 {
   margin: 0;
@@ -100,6 +101,13 @@ select {
   color: var(--bannerBackground);
   text-decoration: underline;
   margin-bottom: 2rem;
+}
+.eodListBox li div svg {
+  margin-bottom: 10px;
+  color: var(--bannerBackground);
+}
+.eodListBox li div svg:hover {
+  color: var(--linkText);
 }
 .eodListBox li div p {
   margin: 0.2rem 0 0 0;
@@ -109,18 +117,28 @@ select {
   font-weight: bold;
   color: var(--buttonPrimary);
 }
-.eodListBox li:hover {
-  background-color: var(--textSecondary);
-  cursor: pointer;
-}
 
 .eodListBox div:last-child {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  row-gap: 6px;
+  column-gap: 10px;
+  align-items: end;
+  justify-self: flex-end;
+  height: 100%;
+  width: 75%;
 }
 .eodListBox div:last-child p {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--background);
+  /* background-color: var(--linkText); */
+  border: 1px solid var(--bannerBackground);
+  padding: 2px;
+}
+.eodListBox div:last-child p:hover {
+  /* font-size: 16px; */
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  /* width: fit-content; */
+  cursor: pointer;
 }
