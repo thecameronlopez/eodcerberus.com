@@ -16,13 +16,12 @@ const DateRangeReport = () => {
   const [report, setReport] = useState(null);
   const [master, setMaster] = useState(false);
 
-  const url = !master
-    ? `/api/read/run_location_report_by_date_range/${location}?start_date=${dates.start_date}&end_date=${dates.end_date}`
-    : `/api/read/run_master_by_date_range?start_date=${dates.start_date}&end_date=${dates.end_date}`;
-
   useEffect(() => {
     const fetchReport = async () => {
-      const response = await fetch(url);
+      const URL = master
+        ? `/api/read/run_master_by_date_range?start_date=${dates.start_date}&end_date=${dates.end_date}`
+        : `/api/read/run_location_report_by_date_range/${location}?start_date=${dates.start_date}&end_date=${dates.end_date}`;
+      const response = await fetch(URL);
       const data = await response.json();
       if (!data.success) {
         toast.error(data.message || "Something went wrong");

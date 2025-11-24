@@ -18,9 +18,10 @@ const ReportHome = () => {
 
   useEffect(() => {
     const runReport = async () => {
-      const response = await fetch(
-        `/api/read/run_location_report_by_date/${location}?date=${date}`
-      );
+      const URL = master
+        ? `/api/read/run_master_by_date?date=${date}`
+        : `/api/read/run_location_report_by_date/${location}?date=${date}`;
+      const response = await fetch(URL);
       const data = await response.json();
       if (!data.success) {
         toast.error(data.message || "Something went wrong.");
@@ -29,26 +30,7 @@ const ReportHome = () => {
       setReport(data.totals);
     };
     runReport();
-  }, [date, location]);
-
-  const runLocationReport = async (type) => {
-    const url =
-      type === "master"
-        ? `/api/read/run_master_by_date?date=${date}`
-        : `/api/read/run_location_report_by_date/${location}?date=${date}`;
-    const reponse = await fetch(url);
-    const data = await reponse.json();
-    if (!data.success) {
-      toast.error(data.message || "Something went wrong.");
-      return;
-    }
-    if (data.master) {
-      setMaster(true);
-    } else {
-      setMaster(false);
-    }
-    setReport(data.totals);
-  };
+  }, [date, location, master]);
 
   return (
     <>
