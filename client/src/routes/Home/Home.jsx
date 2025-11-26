@@ -10,13 +10,14 @@ import clsx from "clsx";
 import UserBar from "../../components/UserBar";
 import AddDeduction from "../Create/AddDeduction";
 import ViewDeductions from "../Users/ViewDeductions/ViewDeductions";
+import ViewUsers from "../Users/ViewUsers/ViewUsers";
 
 const Components = {
   add_eod: AddEOD,
   read_eod: (props) => <ReadEOD {...props} />,
   user_eods: (props) => <UserEODs {...props} />,
   deductions: AddDeduction,
-  view_deductions: ViewDeductions,
+  user_rankings: ViewUsers,
 };
 
 const Home = () => {
@@ -29,7 +30,7 @@ const Home = () => {
     "deductions",
     "read_eod",
     "user_eods",
-    "view_deductions",
+    "user_rankings",
   ];
 
   const SelectedComponent = Components[component];
@@ -42,7 +43,7 @@ const Home = () => {
         title={`${user.first_name} ${user.last_name}`}
         pages={pages}
       />
-      <div>
+      <div className={styles.homeBox}>
         <SelectedComponent
           setComponent={setComponent}
           setTicket={setTicket}

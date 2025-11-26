@@ -10,7 +10,7 @@ def register():
     data = request.get_json()
     first_name = data.get("first_name").strip().title()
     last_name = data.get("last_name").strip().title()
-    email = data.get("email")
+    email = data.get("email").lower()
     department = data.get("department", "").strip().lower()
     is_admin = data.get("is_admin")
     pw = data.get("pw")

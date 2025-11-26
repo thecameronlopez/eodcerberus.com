@@ -11,6 +11,7 @@ import {
   faFileInvoiceDollar,
   faMagnifyingGlass,
   faMoneyBillTransfer,
+  faRankingStar,
   faUserPlus,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
@@ -54,6 +55,9 @@ const paths = {
   },
   user_reports: {
     icon: faClipboardUser,
+  },
+  user_rankings: {
+    icon: faRankingStar,
   },
 };
 
