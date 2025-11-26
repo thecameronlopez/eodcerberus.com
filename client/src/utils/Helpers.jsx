@@ -1,3 +1,18 @@
+export const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 export const formatLocationName = (location) => {
   const formatted = { lake_charles: "Lake Charles", jennings: "Jennings" };
 

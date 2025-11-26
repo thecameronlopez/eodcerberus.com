@@ -2,6 +2,8 @@ from app.extensions import db
 from sqlalchemy import Column, Integer, String, Text, Boolean, Date, ForeignKey, Enum, func, event
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
+import calendar
+from datetime import datetime, date
 
 dpt_enum = Enum("sales", "service", name="department_enum")
 location_enum = Enum("lake_charles", "jennings", name="location_enum")
@@ -18,6 +20,26 @@ class Users(db.Model, UserMixin):
     is_admin = Column(Boolean, server_default='0')
     eods = relationship('EOD', back_populates='salesman', lazy=True) 
     deductions = relationship('Deductions', back_populates="salesman", lazy=True)
+    
+    def monthly_totals(self, month_index, year=None):
+        if year is None:
+            year = date.today().year
+        
+        days_in_month = calendar.monthrange(year, month_index)[1]
+        
+        start_date = date(year, month_index, 1)
+        end_date = date(year, month_index, days_in_month)
+        
+        total = (
+            db.session.query(func.sum(EOD.sub_total))
+            .filter(
+                EOD.user_id == self.id,
+                EOD.date.between(start_date, end_date)
+            ).scalar()
+        )
+        
+        return total or 0
+        
     
     def serialize(self):
         return {

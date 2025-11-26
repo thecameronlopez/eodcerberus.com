@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from app.models import Users, EOD, Deductions
 from app.extensions import db
 from flask_login import current_user, login_required
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 reader = Blueprint("read", __name__)
 
@@ -61,6 +61,29 @@ def get_users():
     if not users:
         return jsonify(success=False, message="No users found."), 400
     return jsonify(success=True, users=[u.serialize() for u in users]), 200
+
+
+#-----------------------
+#   GET USERS TOTALS FOR A MONTH
+#-----------------------
+@reader.route("/monthly_totals", methods=["GET"])
+@login_required
+def monthly_totals():
+    users = Users.query.all()
+    if not users:
+        return jsonify(success=False, message="There was an error when querying users."), 404
+    
+    totals = []
+    
+    for u in users:
+        totals.append({
+            "id": u.id,
+            "total": u.monthly_totals(month_index=date.today().month)
+        })
+        
+    return jsonify(success=True, totals=totals), 200
+
+
 
 
 

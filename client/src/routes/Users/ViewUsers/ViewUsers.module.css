@@ -1,44 +1,36 @@
 .userList {
-  list-style-type: none;
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 1rem 4rem;
-  max-width: 1000px;
-  margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  list-style-type: none;
+  width: 80%;
+  margin: 1rem auto;
 }
 
 .userList li {
-  border: 1px solid var(--linkText);
-  width: 300px;
-  padding: 10px 0 12px 8px;
+  box-shadow: -1px 1px 10px var(--buttonPrimary);
+  border: 3px solid var(--bannerBackground);
+  background-color: var(--linkText);
   border-radius: 8px;
-  box-shadow: -1px 1px 4px var(--linkText);
-  background-color: var(--textSecondary);
-  color: var(--textPrimary);
+  padding: 0.6rem;
+  width: 90%;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 12px;
 }
 
 .userList li div:first-child {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  width: 100%;
+  align-items: center;
 }
 .userList li div:first-child svg {
-  margin-right: 14px;
-  color: var(--buttonPrimary);
-  font-size: 24px;
+  color: var(--bannerBackground);
+  font-size: 1.8rem;
 }
 
-.userList li h2 {
-  color: var(--buttonPrimary);
-}
-
-.userList li:hover {
-  background-color: var(--linkText);
+.userList li div:last-child {
+  color: var(--textPrimary);
 }
