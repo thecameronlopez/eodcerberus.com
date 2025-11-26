@@ -43,13 +43,11 @@ const Home = () => {
         title={`${user.first_name} ${user.last_name}`}
         pages={pages}
       />
-      <div className={styles.homeBox}>
-        <SelectedComponent
-          setComponent={setComponent}
-          setTicket={setTicket}
-          ticket={ticket}
-        />
-      </div>
+      <SelectedComponent
+        setComponent={setComponent}
+        setTicket={setTicket}
+        ticket={ticket}
+      />
     </section>
   );
 };
