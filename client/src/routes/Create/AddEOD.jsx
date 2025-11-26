@@ -8,6 +8,7 @@ import {
   getToday,
 } from "../../utils/Helpers";
 import { useAuth } from "../../context/AuthContext";
+import kaChing from "../../assets/audio/ka-ching.mp3";
 
 const AddEOD = () => {
   const { location } = useAuth();
@@ -93,6 +94,7 @@ const AddEOD = () => {
         throw new Error(data.message);
       }
       toast.success(data.message);
+      new Audio(kaChing).play();
       setFormData({
         ticket_number: "",
         units: "",
