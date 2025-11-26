@@ -2,18 +2,21 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./UserEODs.module.css";
 import React, { useEffect, useState } from "react";
-import { formatCurrency, formatDate } from "../../utils/Helpers";
+import { formatCurrency, formatDate, getToday } from "../../utils/Helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFileInvoiceDollar,
+  faPenToSquare,
+} from "@fortawesome/free-solid-svg-icons";
 import DailyReport from "../../components/DailyReport";
 
 const UserEODs = ({ setComponent, setTicket }) => {
   const [eods, setEods] = useState([]);
   const { user } = useAuth();
   const today = new Date().toISOString().split("T")[0];
-  const [startDate, setStartDate] = useState(today);
-  const [endDate, setEndDate] = useState(today);
-  const [reportDate, setReportDate] = useState(today);
+  const [startDate, setStartDate] = useState(getToday());
+  const [endDate, setEndDate] = useState(getToday());
+  const [reportDate, setReportDate] = useState(getToday());
   const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState(user.id);
   const [totals, setTotals] = useState(null);
@@ -75,6 +78,7 @@ const UserEODs = ({ setComponent, setTicket }) => {
 
     setStartDate(start);
     setEndDate(end);
+    setReportDate(start);
   };
 
   const runReport = async (id) => {
@@ -84,7 +88,6 @@ const UserEODs = ({ setComponent, setTicket }) => {
       if (!data.success) {
         throw new Error(data.message);
       }
-      console.log(data.totals);
       setTotals(data.totals);
     } catch (error) {
       console.error("[ERROR]: ", error);
@@ -176,15 +179,26 @@ const UserEODs = ({ setComponent, setTicket }) => {
               tower_loan,
               extended_warranty,
               salesman,
+              used,
+              ["new"]: new_appliances,
+              diagnostic_fees,
+              ebay_returns,
+              refunds,
+              ebay_sales,
+              in_shop_repairs,
+              parts,
+              delivery,
+              service,
             }) => (
-              <li
-                key={id}
-                onClick={() => {
-                  setTicket(ticket_number);
-                  setComponent("read_eod");
-                }}
-              >
+              <li key={id}>
                 <div>
+                  <FontAwesomeIcon
+                    icon={faPenToSquare}
+                    onClick={() => {
+                      setTicket(ticket_number);
+                      setComponent("read_eod");
+                    }}
+                  />
                   <p>{formatDate(date)}</p>
                   <h3>{ticket_number}</h3>
                   <p className={styles.subTotal}>
@@ -195,12 +209,26 @@ const UserEODs = ({ setComponent, setTicket }) => {
                   </small>
                 </div>
                 <div>
+                  <p>New: {formatCurrency(new_appliances)}</p>
+                  <p>Used: {formatCurrency(used)}</p>
+                  <p>Extended Warranty: {formatCurrency(extended_warranty)}</p>
+                  <p>In Shop Repairs: {formatCurrency(in_shop_repairs)}</p>
+                  <p>Ebay Sales: {formatCurrency(ebay_sales)}</p>
+                  <p>Diagnostic Fees: {formatCurrency(diagnostic_fees)}</p>
+                  <p>Delivery: {formatCurrency(delivery)}</p>
+                  <p>Parts: {formatCurrency(parts)}</p>
+                  <p>Service: {formatCurrency(service)}</p>
                   <p>Card: {formatCurrency(card)}</p>
                   <p>Cash: {formatCurrency(cash)}</p>
                   <p>Checks: {formatCurrency(checks)}</p>
                   <p>Acima: {formatCurrency(acima)}</p>
                   <p>Tower Load: {formatCurrency(tower_loan)}</p>
-                  <p>Extended Warranty: {formatCurrency(extended_warranty)}</p>
+                  <p className={styles.redP}>
+                    Refunds: {formatCurrency(refunds)}
+                  </p>
+                  <p className={styles.redP}>
+                    Ebay Returns: {formatCurrency(ebay_returns)}
+                  </p>
                 </div>
               </li>
             )

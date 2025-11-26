@@ -111,7 +111,7 @@ class EOD(db.Model):
             "cash": self.cash,
             "checks": self.checks,
             "sub_total": self.sub_total,
-            "date": self.date,
+            "date": self.date.strftime("%Y-%m-%d"),
             "user_id": self.user_id,
             "salesman": {
                 "id": self.salesman.id,

@@ -1,7 +1,12 @@
 import styles from "./UserReports.module.css";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { formatDate, formatLocationName } from "../../../utils/Helpers";
+import {
+  formatDate,
+  formatLocationName,
+  getToday,
+  shiftDate,
+} from "../../../utils/Helpers";
 import toast from "react-hot-toast";
 import DailyReport from "../../../components/DailyReport";
 
@@ -10,8 +15,8 @@ const UserReports = () => {
   const today = new Date().toISOString().split("T")[0];
   const [users, setUsers] = useState([]);
   const [params, setParams] = useState({
-    start_date: today,
-    end_date: today,
+    start_date: getToday(),
+    end_date: getToday(),
     user_id: user.id,
   });
 
@@ -40,8 +45,8 @@ const UserReports = () => {
   const setToday = () => {
     setParams({
       ...params,
-      start_date: today,
-      end_date: today,
+      start_date: getToday(),
+      end_date: getToday(),
     });
   };
 
@@ -60,19 +65,13 @@ const UserReports = () => {
         }
         setReport(data.totals);
       } catch (error) {
+        console.error("[ERROR]: ", error);
         toast.error(error.message);
         setReport(null);
-        console.log("[ERROR]: ", error);
       }
     };
     runReport();
   }, [params]);
-
-  const shiftDate = (dateStr, amount) => {
-    const d = new Date(dateStr);
-    d.setDate(d.getDate() + amount);
-    return d.toISOString().split("T")[0];
-  };
 
   return (
     <div className={styles.userReportsBlock}>

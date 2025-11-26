@@ -1,13 +1,18 @@
 import styles from "./AddEOD.module.css";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import toast from "react-hot-toast";
 import MoneyField from "../../components/MoneyField";
-import { formatCurrency, formatLocationName } from "../../utils/Helpers";
+import {
+  formatCurrency,
+  formatLocationName,
+  getToday,
+} from "../../utils/Helpers";
 import { useAuth } from "../../context/AuthContext";
+import kaChing from "../../assets/audio/ka-ching.mp3";
 
 const AddEOD = () => {
   const { location } = useAuth();
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(getToday());
   const [formData, setFormData] = useState({
     ticket_number: "",
     units: "",
@@ -73,7 +78,7 @@ const AddEOD = () => {
       alert("Ticket Number must be at least 4 digits long");
       return;
     }
-    const submitData = { ...formData, date, location: location };
+    const submitData = { ...formData, date: date, location: location };
 
     try {
       const response = await fetch("/api/create/submit_eod", {
@@ -89,6 +94,7 @@ const AddEOD = () => {
         throw new Error(data.message);
       }
       toast.success(data.message);
+      new Audio(kaChing).play();
       setFormData({
         ticket_number: "",
         units: "",
@@ -109,13 +115,14 @@ const AddEOD = () => {
         cash: "",
         checks: "",
       });
-      setDate(new Date().toISOString().split("T")[0]);
+      setDate(getToday());
       return;
     } catch (error) {
       console.error("[ERROR]: ", error);
       toast.error(error.message);
     }
   };
+
   return (
     <div className={styles.formMasterContainer}>
       <div>

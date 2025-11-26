@@ -1,7 +1,7 @@
 import MoneyField from "../../components/MoneyField";
 import styles from "./AddDeduction.module.css";
 import React, { useState } from "react";
-import { formatDate, formatLocationName } from "../../utils/Helpers";
+import { formatDate, formatLocationName, getToday } from "../../utils/Helpers";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 
@@ -9,7 +9,7 @@ const AddDeduction = () => {
   const { location } = useAuth();
   const today = new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState({
-    date: today,
+    date: getToday(),
     amount: "",
     reason: "",
     location: location,
@@ -42,7 +42,7 @@ const AddDeduction = () => {
       }
       toast.success(data.message);
       setFormData({
-        date: today,
+        date: getToday(),
         amount: "",
         reason: "",
       });

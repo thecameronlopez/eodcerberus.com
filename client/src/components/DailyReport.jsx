@@ -24,10 +24,10 @@ const DailyReport = ({ report, date, start_date, end_date, master }) => {
     window.print();
   };
 
-  useEffect(() => {
-    console.log(report);
-    console.log(title);
-  });
+  // useEffect(() => {
+  //   console.log(report);
+  //   console.log(title);
+  // });
   return (
     <div className={styles.reportPage}>
       <div className={styles.reportHeader}>

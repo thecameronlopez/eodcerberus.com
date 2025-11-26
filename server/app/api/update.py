@@ -24,7 +24,7 @@ def update_eod(id):
     try: 
     
         eod.date = datetime.strptime(data.get("date"), "%Y-%m-%d").date() if data.get("date") else eod.date
-        eod.location = data.get("location").strip()
+        # eod.location = data.get("location").strip()
         eod.units = to_int(data.get("units", eod.units))
         eod.new = to_int(data.get("new", eod.new))
         eod.used = to_int(data.get("used", eod.used))

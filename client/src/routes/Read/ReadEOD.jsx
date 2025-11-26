@@ -14,7 +14,23 @@ const ReadEOD = ({ ticket }) => {
   const [ticketNumber, setTicketNumber] = useState(ticket || "");
   const [eodData, setEodData] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    units: "",
+    new: "",
+    used: "",
+    extended_warranty: "",
+    diagnostic_fees: "",
+    in_shop_repairs: "",
+    ebay_sales: "",
+    service: "",
+    parts: "",
+    delivery: "",
+    refunds: "",
+    ebay_returns: "",
+    card: "",
+    cash: "",
+    checks: "",
+  });
 
   useEffect(() => {
     const fetchEOD = async () => {
@@ -27,7 +43,6 @@ const ReadEOD = ({ ticket }) => {
         if (!data.success) {
           throw new Error(data.message);
         }
-        console.log(data.eod);
         setEodData(data.eod);
         setFormData({
           units: data.eod.units || "",

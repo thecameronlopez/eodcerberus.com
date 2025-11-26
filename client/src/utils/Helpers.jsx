@@ -4,11 +4,23 @@ export const formatLocationName = (location) => {
   return formatted[location];
 };
 
+export const getToday = () => {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0"),
+  ].join("-");
+};
+
 export function formatDate(dateString) {
-  const date = new Date(dateString);
+  if (!dateString) return "";
+
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  const date = new Date(year, month - 1, day);
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
   const months = [
     "Jan",
     "Feb",
@@ -25,9 +37,7 @@ export function formatDate(dateString) {
   ];
 
   const dayName = days[date.getDay()];
-  const monthName = months[date.getMonth()];
-  const day = date.getDay();
-  const year = date.getFullYear();
+  const monthName = months[month - 1];
 
   // Determine ordinal suffix (st, nd, rd, th)
   const suffix = (n) => {
@@ -54,4 +64,16 @@ export const formatCurrency = (amount) => {
     currency: "USD",
   });
   return formatter.format(decimalAmount);
+};
+
+export const shiftDate = (dateStr, amount) => {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const d = new Date(year, month - 1, day);
+  d.setDate(d.getDate() + amount);
+
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+
+  return `${yyyy}-${mm}-${dd}`;
 };
