@@ -53,7 +53,7 @@ class Users(db.Model, UserMixin):
         
 
         
-        
+
 class EOD(db.Model):   
     __tablename__ = "eod"
     

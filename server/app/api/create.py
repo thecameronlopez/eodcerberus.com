@@ -22,6 +22,17 @@ def submit_eod():
     duplicate = EOD.query.filter_by(ticket_number=data.get("ticket_number")).first()
     if duplicate:
         return jsonify(success=False, message=f"Ticket number {duplicate.ticket_number} has already been entered"), 409
+    
+    submitted_as = data.get("submitted_as")
+    if submitted_as:
+        try:
+            user_id = int(submitted_as)
+            if not Users.query.get(user_id):
+                return jsonify(success=False, message="Invalid user"), 400
+        except (ValueError, TypeError):
+            return jsonify(success=False, message="Invalid user"), 400
+    else:
+        user_id = current_user.id
 
     new_eod = EOD(
         location=data.get("location").strip(),
@@ -44,7 +55,7 @@ def submit_eod():
         cash=to_int(data.get("cash")),
         checks=to_int(data.get("checks")),
         date=datetime.strptime(data.get("date"), "%Y-%m-%d").date() if data.get("date") else date.today(),
-        user_id=current_user.id
+        user_id=user_id
     )
     
 

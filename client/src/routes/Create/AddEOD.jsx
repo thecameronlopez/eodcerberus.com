@@ -6,13 +6,16 @@ import {
   formatCurrency,
   formatLocationName,
   getToday,
+  UserList,
 } from "../../utils/Helpers";
 import { useAuth } from "../../context/AuthContext";
 import kaChing from "../../assets/audio/ka-ching.mp3";
 
 const AddEOD = () => {
-  const { location } = useAuth();
+  const { location, user } = useAuth();
   const [date, setDate] = useState(getToday());
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(user.id);
   const [formData, setFormData] = useState({
     ticket_number: "",
     units: "",
@@ -33,6 +36,18 @@ const AddEOD = () => {
     cash: "",
     checks: "",
   });
+
+  useEffect(() => {
+    const get = async () => {
+      const got = await UserList();
+      if (!got.success) {
+        toast.error(got.message);
+      }
+      setUsers(got.users);
+    };
+
+    get();
+  }, []);
 
   const subTotal = useMemo(() => {
     const fields = [
@@ -78,7 +93,12 @@ const AddEOD = () => {
       alert("Ticket Number must be at least 4 digits long");
       return;
     }
-    const submitData = { ...formData, date: date, location: location };
+    const submitData = {
+      ...formData,
+      date: date,
+      location: location,
+      submitted_as: user.id === selectedUser ? null : selectedUser,
+    };
 
     try {
       const response = await fetch("/api/create/submit_eod", {
@@ -137,6 +157,23 @@ const AddEOD = () => {
       </div>
       <form className={styles.eodForm} onSubmit={handleSubmit}>
         <div className={styles.topRow}>
+          {user.is_admin && (
+            <>
+              <label htmlFor="submitted_as">Submit as</label>
+              <select
+                name="submitted_as"
+                value={selectedUser}
+                onChange={(e) => setSelectedUser(Number(e.target.value))}
+              >
+                <option value="">--select user---</option>
+                {users?.map(({ id, first_name, last_name }) => (
+                  <option value={id} key={id}>
+                    {first_name} {last_name}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           <label htmlFor="ticket_number">Ticket #</label>
           <input
             type="text"

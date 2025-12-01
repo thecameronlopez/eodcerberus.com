@@ -92,3 +92,12 @@ export const shiftDate = (dateStr, amount) => {
 
   return `${yyyy}-${mm}-${dd}`;
 };
+
+export const UserList = async () => {
+  const response = await fetch("/api/read/get_all_users");
+  const data = await response.json();
+  if (!data.success) {
+    return { success: false, message: data.message || "There was an error" };
+  }
+  return { success: true, users: data.users };
+};

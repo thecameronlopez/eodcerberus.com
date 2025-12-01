@@ -62,6 +62,14 @@ def get_users():
         return jsonify(success=False, message="No users found."), 400
     return jsonify(success=True, users=[u.serialize() for u in users]), 200
 
+@reader.route("/get_all_users", methods=["GET"])
+def get_all_users():
+    users = Users.query.all()
+    if not users:
+        current_app.logger.error(f"[USER QUERY ERROR]: Could not query for all users")
+        return jsonify(success=False, message="There was an error when querying users."), 400
+    return jsonify(success=True, users=[u.serialize() for u in users]), 200
+
 
 #-----------------------
 #   GET USERS TOTALS FOR A MONTH
