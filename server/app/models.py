@@ -1,5 +1,5 @@
 from app.extensions import db
-from sqlalchemy import Column, Integer, String, Text, Boolean, Date, ForeignKey, Enum, func, event
+from sqlalchemy import Column, Integer, BigInteger, String, Text, Boolean, Date, ForeignKey, Enum, func, event
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 import calendar
@@ -59,7 +59,7 @@ class EOD(db.Model):
     
     id = Column(Integer, primary_key=True)
     location = Column(location_enum, nullable=False, server_default="lake_charles")
-    ticket_number = Column(Integer, nullable=False, unique=True)
+    ticket_number = Column(BigInteger, nullable=False, unique=True)
     units = Column(Integer, nullable=False) 
     new = Column(Integer, nullable=False, server_default='0')
     used = Column(Integer, nullable=False, server_default='0')
