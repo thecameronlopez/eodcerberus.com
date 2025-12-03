@@ -9,7 +9,14 @@ import {
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const DailyReport = ({ report, date, start_date, end_date, master }) => {
+const DailyReport = ({
+  report,
+  date,
+  start_date,
+  end_date,
+  master = false,
+  multi = null,
+}) => {
   if (!report) return null;
 
   const title = report.salesman
@@ -38,7 +45,21 @@ const DailyReport = ({ report, date, start_date, end_date, master }) => {
             alt=""
           />
           <div>
-            <h2>{master ? "Master" : title}</h2>
+            {multi ? (
+              <small className={styles.multiList}>
+                [
+                {multi.map(({ id, first_name, last_name }) => (
+                  <span key={id}>
+                    {first_name} {last_name},&nbsp;&nbsp;
+                  </span>
+                ))}
+                ]
+              </small>
+            ) : (
+              <>
+                <h2>{master ? "Master" : title}</h2>
+              </>
+            )}
             <p className={styles.reportHeaderDate}>{displayDate}</p>
           </div>
         </div>

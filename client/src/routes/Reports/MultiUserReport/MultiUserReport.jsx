@@ -119,6 +119,7 @@ const MultiUserReport = () => {
             start_date={dates.start_date}
             end_date={dates.end_date}
             master={false}
+            multi={users.filter((u) => selectedUsers.includes(u.id))}
           />
         </div>
       )}
