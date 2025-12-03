@@ -32,6 +32,10 @@ const MultiUserReport = () => {
     console.log(selectedUsers);
   }, [selectedUsers]);
 
+  useEffect(() => {
+    setReport(null);
+  }, [selectedUsers, dates]);
+
   const runDat = async () => {
     if (selectedUsers.length === 0) {
       toast.error("Select at least 1 user");
@@ -49,10 +53,6 @@ const MultiUserReport = () => {
       if (!data.success) {
         throw new Error(data.message);
       }
-      toast.success("Fetching report.....");
-      setTimeout(() => {
-        toast.success("Report futched!");
-      }, 2000);
       setReport(data.totals);
     } catch (error) {
       console.error("[ERROR]: ", error);
