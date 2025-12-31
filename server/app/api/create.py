@@ -33,7 +33,9 @@ def submit_eod():
     ebay_returns = data.get("ebay_returns")
     acima = data.get("acima")
     tower_loan = data.get("tower_loan")
+    stripe = data.get("stripe")
     card = data.get("card")
+    ebay_card = data.get("ebay_card")
     cash = data.get("cash")
     checks = data.get("checks")
     location = data.get("location")
@@ -45,9 +47,9 @@ def submit_eod():
         return jsonify(success=False, message=f"Ticket number {duplicate.ticket_number} has already been entered"), 409
     
     if not any([new, used, extended_warranty, diagnostic_fees, in_shop_repairs, ebay_sales, service, parts, delivery, refunds]):
-        return jsonify(success=False, message="At least one sales field must be greater than zero"), 400
+        return jsonify(success=False, message="At least one sales type field must be greater than zero"), 400
     
-    if not any([card, cash, checks, acima, tower_loan]):
+    if not any([card, ebay_card, cash, checks, acima, tower_loan, stripe]):
         return jsonify(success=False, message="At least one payment method must be greater than zero"), 400
     
     
@@ -81,7 +83,9 @@ def submit_eod():
         ebay_returns=to_int(ebay_returns),
         acima=to_int(acima),
         tower_loan=to_int(tower_loan),
+        stripe=to_int(stripe),
         card=to_int(card),
+        ebay_card=to_int(ebay_card),
         cash=to_int(cash),
         checks=to_int(checks),
         date=datetime.strptime(data.get("date"), "%Y-%m-%d").date() if data.get("date") else date.today(),

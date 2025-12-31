@@ -14,53 +14,103 @@
 }
 
 .eodForm {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  column-gap: 10px;
-  row-gap: 5px;
-  align-items: center;
-  justify-items: center;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 1rem;
+  width: 80%;
 }
 
 .eodForm .topRow {
-  grid-column: span 4;
-  justify-self: start;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  gap: 0.6rem;
+  flex: 0 0 100%;
 }
-.eodForm div {
+
+.eodForm .topRow div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.eodForm .topRow div select {
+  width: fit-content;
+}
+.eodForm .topRow div label {
+  color: var(--linkText);
+}
+.eodForm .topRow div input {
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  padding: 6px 4px;
+  box-shadow: -1px 1px 4px #000;
+}
+
+.eodForm fieldset {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 1rem;
+  border-radius: 8px;
+  flex: 0 1 40%;
+  margin: 0 auto;
+}
+
+.eodForm fieldset legend {
+  color: var(--linkText);
+}
+
+.eodForm fieldset div {
   display: flex;
   flex-direction: column;
 }
-.eodForm label {
-  margin-bottom: 4px;
-  font-size: 12px;
+
+.eodForm fieldset div label {
   color: var(--linkText);
-}
-.eodForm input {
-  padding: 6px 3px;
-  border: 1px solid var(--textSecondary);
-  border-radius: 4px;
-  font-size: 1rem;
+  font-size: 14px;
 }
 
-.eodForm button {
-  grid-column: span 4;
-  justify-self: center;
-  padding: 8px 16px;
-  background-color: var(--linkText);
-  font-size: 1.2rem;
-  margin-top: 2rem;
-  color: white;
+.eodForm fieldset div input {
+  font-size: 18px;
+  border-radius: 8px;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  padding: 6px 4px;
+  box-shadow: -1px 1px 4px #000;
+  width: fit-content;
 }
 
-.subTotalDisplay {
-  grid-column: span 4;
-  justify-self: center;
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  font-weight: bold;
-  color: var(--textSecondary);
+.buttonRow {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+  margin: 1rem auto;
+}
+
+.buttonRow button {
+  width: fit-content;
+  padding: 12px 44px;
+  font-size: 1.8rem;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  border: none;
+  border-radius: 8px;
+  box-shadow: -1px 1px 4px #000;
+}
+
+@media (max-width: 600px) {
+  .eodForm {
+    flex-direction: column;
+    width: 80%;
+  }
+
+  .eodForm > fieldset {
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
 }

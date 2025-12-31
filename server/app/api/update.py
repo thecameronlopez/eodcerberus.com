@@ -39,7 +39,9 @@ def update_eod(id):
         eod.ebay_returns = to_int(data.get("ebay_returns", eod.ebay_returns))
         eod.acima = to_int(data.get("acima", eod.acima))
         eod.tower_loan = to_int(data.get("tower_loan", eod.tower_loan))
+        eod.stripe = to_int(data.get("stripe", eod.stripe))
         eod.card = to_int(data.get("card", eod.card))
+        eod.ebay_card = to_int(data.get("ebay_card", eod.ebay_card))
         eod.cash = to_int(data.get("cash", eod.cash))
         eod.checks = to_int(data.get("checks", eod.checks))
         

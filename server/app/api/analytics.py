@@ -22,10 +22,12 @@ def user_analytics(id):
     chart_data = defaultdict(lambda: {
         "units": 0,
         "card": 0,
+        "ebay_card": 0,
         "cash": 0,
         "checks": 0,
         "acima": 0,
         "tower_loan": 0,
+        "stripe": 0,
         "new": 0,
         "used": 0,
         "extended_warranty": 0,
@@ -44,10 +46,12 @@ def user_analytics(id):
         d = chart_data[e.date]
         d["units"] += e.units
         d["card"] += e.card
+        d["ebay_card"] += e.ebay_card
         d["cash"] += e.cash
         d["checks"] += e.checks
         d["acima"] += e.acima
         d["tower_loan"] += e.tower_loan
+        d["stripe"] += e.stripe
         
         d["new"] += e.new
         d["used"] += e.used

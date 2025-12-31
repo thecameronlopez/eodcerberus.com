@@ -74,7 +74,9 @@ class EOD(db.Model):
     ebay_returns = Column(Integer, nullable=False, server_default='0')
     acima = Column(Integer, nullable=False, server_default='0')
     tower_loan = Column(Integer, nullable=False, server_default='0')
+    stripe = Column(Integer, nullable=False, server_default='0')
     card = Column(Integer, nullable=False, server_default='0')
+    ebay_card = Column(Integer, nullable=False, server_default='0')
     cash = Column(Integer, nullable=False, server_default='0')
     checks = Column(Integer, nullable=False, server_default='0')
     sub_total = Column(Integer, nullable=False, server_default='0')
@@ -129,7 +131,9 @@ class EOD(db.Model):
             "ebay_returns": self.ebay_returns,
             "acima": self.acima,
             "tower_loan": self.tower_loan,
+            "stripe": self.stripe,
             "card": self.card,
+            "ebay_card": self.ebay_card,
             "cash": self.cash,
             "checks": self.checks,
             "sub_total": self.sub_total,

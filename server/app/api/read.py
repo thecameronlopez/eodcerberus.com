@@ -10,8 +10,8 @@ def calculate_totals(eods, deductions, include_salesman=None):
     totals = {k: 0 for k in [
         "total_sales", "total_units", "new_appliance_sales", "used_appliance_sales",
         "extended_warranty_sales", "diagnostic_fees", "in_shop_repairs", "service_sales",
-        "parts_sales", "ebay_sales", "delivery", "card", "cash", "checks",
-        "acima", "tower_loan", "refunds", "ebay_returns", "misc_deductions", "cash_deposits"
+        "parts_sales", "ebay_sales", "delivery", "card", "ebay_card", "cash", "checks",
+        "acima", "tower_loan", "stripe", "refunds", "ebay_returns", "misc_deductions", "cash_deposits"
     ]}
     if include_salesman:
         totals["salesman"] = include_salesman.serialize()
@@ -28,10 +28,12 @@ def calculate_totals(eods, deductions, include_salesman=None):
         totals["ebay_sales"] += e.ebay_sales
         totals["delivery"] += e.delivery
         totals["card"] += e.card
+        totals["ebay_card"] += e.ebay_card
         totals["cash"] += e.cash
         totals["checks"] += e.checks
         totals["acima"] += e.acima
         totals["tower_loan"] += e.tower_loan
+        totals["stripe"] += e.stripe
         totals["refunds"] += e.refunds
         totals["ebay_returns"] += e.ebay_returns
         totals["cash_deposits"] += e.cash

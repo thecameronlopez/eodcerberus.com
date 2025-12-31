@@ -115,6 +115,10 @@ const DailyReport = ({
           <span>{formatCurrency(report.card)}</span>
         </li>
         <li>
+          <strong>Total Ebay Card</strong>
+          <span>{formatCurrency(report.ebay_card)}</span>
+        </li>
+        <li>
           <strong>Total Cash</strong>
           <span>{formatCurrency(report.cash)}</span>
         </li>
@@ -129,6 +133,10 @@ const DailyReport = ({
         <li>
           <strong>Total Tower Loan</strong>
           <span>{formatCurrency(report.tower_loan)}</span>
+        </li>
+        <li>
+          <strong>Total Stripe</strong>
+          <span>{formatCurrency(report.stripe)}</span>
         </li>
         <li>
           <strong>Misc. Deductions</strong>
