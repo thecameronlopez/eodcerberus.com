@@ -149,3 +149,16 @@ button:disabled {
   background-color: #272b33;
   color: #1e1e1e;
 }
+
+@media (max-width: 750px) {
+  header {
+    justify-content: space-between;
+    padding-inline: 1rem;
+  }
+
+  .location-switch {
+    position: relative;
+    transform: scale(0.8);
+    gap: 4px;
+  }
+}

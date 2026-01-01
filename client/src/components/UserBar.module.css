@@ -71,3 +71,22 @@
 .userMenu a:hover {
   background-color: var(--linkText);
 }
+
+@media (max-width: 750px) {
+  .userBar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .userBar h2 {
+    align-self: center;
+  }
+
+  .userBarButtonBlock {
+    padding-bottom: 1rem;
+  }
+
+  .userMenu {
+    top: 100%;
+  }
+}
