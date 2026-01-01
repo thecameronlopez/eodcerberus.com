@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const MoneyField = ({ name, value, onChange, placeholder, className }) => {
+const MoneyField = ({
+  name,
+  value,
+  onChange,
+  placeholder,
+  className,
+  title,
+}) => {
   const [localValue, setLocalValue] = useState("");
   const inputRef = useRef(null);
 
@@ -47,6 +54,7 @@ const MoneyField = ({ name, value, onChange, placeholder, className }) => {
       onChange={handleChange}
       onBlur={handleBlur}
       onFocus={handleFocus}
+      title={title}
     />
   );
 };

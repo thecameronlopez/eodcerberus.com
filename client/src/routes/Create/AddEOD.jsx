@@ -63,7 +63,7 @@ const AddEOD = () => {
       "parts",
       "delivery",
     ];
-    const subtractredFields = ["refunds", "ebay_returns"];
+    const subtractredFields = ["refunds"];
     let total = 0;
     fields.forEach((field) => {
       const value = parseFloat(formData[field]);
@@ -301,12 +301,29 @@ const AddEOD = () => {
         </fieldset>
         <fieldset>
           <legend>Payment Method</legend>
-
           <div>
-            <label htmlFor="ebay_returns">Ebay Returns</label>
+            <label htmlFor="card">Card</label>
             <MoneyField
-              name={"ebay_returns"}
-              value={formData.ebay_returns}
+              name={"card"}
+              value={formData.card}
+              onChange={handleChange}
+              placeholder={"0.00"}
+            />
+          </div>
+          <div>
+            <label htmlFor="cash">Cash</label>
+            <MoneyField
+              name={"cash"}
+              value={formData.cash}
+              onChange={handleChange}
+              placeholder={"0.00"}
+            />
+          </div>
+          <div>
+            <label htmlFor="checks">Check</label>
+            <MoneyField
+              name={"checks"}
+              value={formData.checks}
               onChange={handleChange}
               placeholder={"0.00"}
             />
@@ -338,15 +355,7 @@ const AddEOD = () => {
               placeholder={"0.00"}
             />
           </div>
-          <div>
-            <label htmlFor="card">Card</label>
-            <MoneyField
-              name={"card"}
-              value={formData.card}
-              onChange={handleChange}
-              placeholder={"0.00"}
-            />
-          </div>
+
           <div>
             <label htmlFor="ebay_card">Ebay Card</label>
             <MoneyField
@@ -357,19 +366,10 @@ const AddEOD = () => {
             />
           </div>
           <div>
-            <label htmlFor="cash">Cash</label>
+            <label htmlFor="ebay_returns">Ebay Returns</label>
             <MoneyField
-              name={"cash"}
-              value={formData.cash}
-              onChange={handleChange}
-              placeholder={"0.00"}
-            />
-          </div>
-          <div>
-            <label htmlFor="checks">Check</label>
-            <MoneyField
-              name={"checks"}
-              value={formData.checks}
+              name={"ebay_returns"}
+              value={formData.ebay_returns}
               onChange={handleChange}
               placeholder={"0.00"}
             />
