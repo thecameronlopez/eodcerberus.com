@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+
+:root {
+  --background: #2a2829;
+  --backgroundDark: #1e1e1e;
+  --bannerBackground: #262f4c;
+  --linkText: #6d7db2;
+  --textPrimary: #f9f9f9;
+  --textSecondary: #8999af;
+  --buttonPrimary: #040b22;
+  --buttonSecondary: #8999af;
+}
+
+.jenn {
+  --linkText: #262f4c;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: unset;
+}
+
+body {
+  width: 100vw;
+  height: 100dvh;
+  font-family: "Inter", sans-serif;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+header {
+  width: 100%;
+  box-shadow: 0 2px 16px var(--linkText);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 3px solid var(--linkText);
+  position: relative;
+}
+
+#header-logo {
+  width: 180px;
+}
+
+main {
+  flex: 1;
+  padding-block: 1rem;
+  width: 100%;
+  background-color: var(--textPrimary);
+}
+
+footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 1rem;
+  box-shadow: 0 -2px 8px var(--bannerBackground);
+  background-color: var(--linkText);
+}
+footer button#logout-link {
+  background-color: transparent;
+  border: none;
+  color: var(--textPrimary);
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: underline;
+  margin-bottom: 14px;
+}
+
+button:disabled {
+  background-color: #272b33;
+  color: #1e1e1e;
+}
+
+@media (max-width: 750px) {
+  header {
+    justify-content: space-between;
+    padding-inline: 1rem;
+  }
+
+  .location-switch {
+    position: relative;
+    transform: scale(0.8);
+    gap: 4px;
+  }
+}

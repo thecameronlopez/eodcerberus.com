@@ -1,0 +1,104 @@
+.deductionsPage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-block: 2rem;
+  gap: 5rem;
+}
+
+.deductionsPage h3 {
+  color: var(--linkText);
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.deductionsDateSet {
+  border: none;
+  border-radius: 8px;
+  box-shadow: -1px 1px 4px #000;
+  font-size: 20px !important;
+}
+
+.deductionForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.deductionForm div {
+  display: flex;
+  flex-direction: column;
+}
+
+.deductionForm div label {
+  font-size: 14px;
+  color: var(--linkText);
+}
+
+.deductionForm div input {
+  font-size: 28px !important;
+  padding: 4px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: -1px 1px 4px #000;
+}
+
+.deductionForm button[type="submit"] {
+  font-size: 24px;
+  margin-top: 2rem;
+  border: none;
+  box-shadow: -1px 1px 4px #000;
+  padding: 8px 24px;
+  border-radius: 8px;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+}
+
+.deductionsList {
+  border: 1px solid var(--linkText);
+  padding: 10px;
+  border-radius: 8px;
+  /* background-color: var(--buttonSecondary); */
+}
+
+.deductionsList h4 {
+  color: var(--bannerBackground);
+  margin-bottom: 10px;
+}
+
+.deductionsList ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 20rem;
+}
+
+.deductionsList ul li {
+  border: 1px solid var(--textSecondary);
+  padding: 4px;
+  border-radius: 6px;
+  width: 100%;
+}
+.deductionsList ul li p:first-child {
+  font-weight: bold;
+  font-size: 18px;
+}
+.deductionsList ul li p.reasonForDeduction {
+  padding: 10px;
+  background-color: var(--linkText);
+  border-radius: 8px;
+  margin-top: 5px;
+}
+.deductionsList ul li:not(:last-child) {
+  border-bottom: 1px solid var(--linkText);
+  padding-bottom: 10px;
+}
+.deductionsList ul li:hover {
+  color: var(--textPrimary);
+  background-color: var(--bannerBackground);
+  cursor: pointer;
+}

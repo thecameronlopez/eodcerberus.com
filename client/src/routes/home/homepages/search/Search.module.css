@@ -1,0 +1,247 @@
+.searchPage {
+  width: 100%;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.searchPage .ticketSearch {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+}
+
+.searchPage .ticketSearch label {
+  font-size: 14px;
+  color: var(--linkText);
+}
+.ticketSearch input {
+  font-size: 16px !important;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.ticketData {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.ticketHeader {
+  flex: 1;
+  background-color: var(--textSecondary);
+  color: var(--buttonPrimary);
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  align-self: flex-start;
+}
+
+.ticketHeader h2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ticketHeader h2 div.ticketControls {
+  display: flex;
+  gap: 14px;
+}
+
+.ticketControls button {
+  border: none;
+  background-color: transparent;
+  font-size: 22px;
+}
+.ticketControls button.addTransaction {
+  color: green;
+}
+.ticketControls button.editTicket {
+  color: cyan;
+}
+.ticketControls button.deleteTicket {
+  color: darkred;
+}
+
+form.transactionForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+form.transactionForm div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+form.transactionForm div label {
+  font-size: 14px;
+  color: var(--textPrimary);
+}
+form.transactionForm div input,
+select {
+  width: 15rem;
+  background-color: transparent;
+  border: 1px solid var(--linkText) !important;
+  border-radius: 8px;
+  box-shadow: unset !important;
+  font-size: 14px !important;
+}
+
+form.transactionForm button.addLineItem {
+  background-color: transparent;
+  border: none;
+  color: var(--bannerBackground);
+  text-decoration: underline;
+  margin-left: 1rem;
+}
+
+form.transactionForm .formLineItem {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid var(--bannerBackground);
+  border-radius: 8px;
+  position: relative;
+}
+
+form.transactionForm .formLineItem button.removeLineItem {
+  color: darkred;
+  background-color: transparent;
+  width: fit-content;
+  border: none;
+  position: absolute;
+  top: 0;
+  right: 5px;
+}
+
+form.transactionForm .formLineItem select,
+input {
+  font-size: 12px !important;
+}
+
+label.returnCheck {
+  display: flex;
+  justify-content: flex-start;
+  width: 20%;
+  gap: 10px;
+}
+
+form.transactionForm button.submitTransaction {
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  align-self: center;
+  margin-block: 1rem;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  box-shadow: -1px 1px 4px #000;
+}
+
+.ticketHeader > div.ticketTotals {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ticketHeader > div.ticketTotals p {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+}
+
+.transactionData {
+  flex: 2;
+  padding: 0.6rem;
+  background-color: var(--textSecondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  border-radius: 8px;
+}
+
+.transactionData .transactionTotal {
+  align-self: center;
+  font-weight: 700;
+  color: var(--backgroundDark);
+  font-size: 20px;
+}
+
+.lineItemData {
+  width: 100%;
+  border: 2px solid var(--buttonPrimary);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+.lineItemData button.deleteTransaction {
+  color: var(--textPrimary);
+  background-color: darkred;
+  border: none;
+  padding: 4px;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  border-radius: 50%;
+}
+
+.lineItemData h4 {
+  font-size: 18px;
+  padding-left: 10px;
+  color: var(--textPrimary);
+}
+.lineItemData h4 span {
+  color: var(--backgroundDark);
+}
+
+.lineItemData ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lineItemData ul li {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid var(--bannerBackground);
+  background-color: var(--linkText);
+  border-radius: 6px;
+  padding: 10px 6px;
+  position: relative;
+}
+
+.lineItemData ul li button.deleteLineItem {
+  background-color: darkred;
+  color: var(--textPrimary);
+  position: absolute;
+  left: -5px;
+  top: -10px;
+  padding: 2px;
+  border-radius: 50%;
+  border: none;
+}
+
+.lineItemData ul li div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.lineItemData ul li > div.lineItemTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
