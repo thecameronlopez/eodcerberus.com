@@ -149,63 +149,36 @@ def migrate_eods_to_tickets_and_transactions():
     
     users_map = {user.id: user for user in new_session.query(User).all()}
     
-    
-    def get_payment_type(old_eod):
-        for pt_field in payment_type_fields:
-            amt = to_int(getattr(old_eod, pt_field, 0))
-            if amt > 0:
-                return payment_type_map[pt_field]
-        return PaymentTypeEnum.CASH #fallback
-    
-    def distribute_returns(old_eod):
-        sales = {f: to_int(getattr(old_eod, f, 0)) for f in sales_field if to_int(getattr(old_eod, f, 0)) > 0}
-        
-        total_sales = sum(sales.values())
-        total_returns = sum(to_int(getattr(old_eod, f, 0)) for f in return_fields)
-        
-        if not sales or total_sales == 0:
-            # no sales to distribute return to
-            return [(f, to_int(getattr(old_eod, f, 0))) for f in return_fields if to_int(getattr(old_eod, f, 0)) > 0]
-        
-        distributed = {}
-        running_total = 0
-        
-        for field, amt in sales.items():
-            portion = (amt * total_returns) // total_sales
-            distributed[field] = portion
-            running_total += portion
-            
-        remainder = total_returns - running_total
-        if remainder > 0:
-            largest_field = max(sales, key=sales.get)
-            distributed[largest_field] += remainder
-        return list(distributed.items())
-        
-    
-    
-    
+    eods_by_ticket = {}
     for old_eod in old_session.query(OldEOD).all():
-        #fetch user
-        user = users_map.get(old_eod.user_id)
+        key = old_eod.ticket_number
+        if key not in eods_by_ticket:
+            eods_by_ticket[key] = []
+        eods_by_ticket[key].append(old_eod)
+        
+    for ticket_number, eod_rows in eods_by_ticket.items():
+        # determin user (assume all rows same user)
+        user_id = eod_rows[0].user_id
+        user = users_map.get(user_id)
         if not user:
-            print(f"Skipping EOD {old_eod.id} - User {old_eod.user_id} not found.")
+            print(f"Skipping Ticket {ticket_number} - User {user_id} not found.")
             continue
         
-        #determin location from user
-        loc_id = location_map.get(old_eod.location)
+        # determine location (assume all rows same location)
+        loc_code = eod_rows[0].location
+        loc_id = location_map.get(loc_code)
         location = new_session.get(Location, loc_id)
         
-        #create ticket
+        #create transaction
         ticket = Ticket(
-            ticket_number=old_eod.ticket_number,
-            ticket_date=old_eod.date,
+            ticket_number=ticket_number,
+            ticket_date=eod_rows[0].date,
             user_id=user.id,
             location_id=loc_id
         )
         new_session.add(ticket)
-        new_session.flush() # generate ticket.id
+        new_session.flush()
         
-        #create transaction
         transaction = Transaction(
             ticket=ticket,
             user=user,
@@ -213,20 +186,29 @@ def migrate_eods_to_tickets_and_transactions():
             posted_date=ticket.ticket_date
         )
         new_session.add(transaction)
-        new_session.flush() # generate transaction.id
+        new_session.flush()
         
-        payment_type = get_payment_type(old_eod)
+        aggregate_sales = {f: 0 for f in sales_field}
+        aggregate_payments = {f: 0 for f in payment_type_fields}
+        aggregate_return = {f: 0 for f in return_fields}
         
-        #procees revenue items
-        for field in sales_field:
-            amount = to_int(getattr(old_eod, field, 0))
+        for row in eod_rows:
+            for f in sales_field:
+                aggregate_sales[f] += to_int(getattr(row, f, 0))
+            for f in payment_type_fields:
+                aggregate_payments[f] += to_int(getattr(row, f, 0))
+            for f in return_fields:
+                aggregate_return[f] += to_int(getattr(row, f, 0))
+            
+        payment_type = PaymentTypeEnum.CASH
+        for pt_field in payment_type_fields:
+            if aggregate_payments[pt_field] > 0:
+                payment_type = payment_type_map[pt_field]
+                break
+        
+        for field, amount in aggregate_sales.items():
             if amount > 0:
-                if field not in category_map:
-                    print(f"Skipping unknown revenue feild: {field} for EOD {old_eod.ticket_number} id: {old_eod.id}")
-                    continue
                 category = category_map[field]
-                
-                #determine taxability                    
                 taxable, tax_source = determine_taxability(
                     category=category,
                     payment_type=payment_type,
@@ -238,46 +220,41 @@ def migrate_eods_to_tickets_and_transactions():
                     payment_type=payment_type,
                     unit_price=amount,
                     taxable=taxable,
-                    taxability_source=tax_source,
+                    taxability_source=tax_source or TaxabilitySourceEnum.PRODUCT_DEFAULT,
                     tax_rate=location.current_tax_rate or 0,
                     is_return=False
                 ))
-
-                
-        # -----------------------------
-        # process return items
-        # -----------------------------
-        for field in return_fields:
-            amount = to_int(getattr(old_eod, field, 0))
+        
+        total_sales_for_dist = sum(aggregate_sales.values())
+        for field, amount in aggregate_return.items():
             if amount <= 0:
-                continue  # skip zero returns
-
-            # Assign a category to attach the return to
-            sales = {f: to_int(getattr(old_eod, f, 0)) for f in sales_field if to_int(getattr(old_eod, f, 0)) > 0}
-            if sales:
-                category = category_map[max(sales, key=sales.get)]
+                continue
+            if field in category_map:
+                category = category_map[field]
             else:
-                category = SalesCategoryEnum.LABOR
-
-            # Use the same payment type as the transaction
-            # Returns are generally not taxable
-            transaction.line_items.append(
-                LineItem(
-                    category=category,
-                    payment_type=payment_type,
-                    unit_price=-amount,       # negative because it's a return
-                    taxable=False,
-                    taxability_source=TaxabilitySourceEnum.MANUAL_OVERRIDE,
-                    tax_rate=location.current_tax_rate or 0,
-                    is_return=True
-                )
+                if total_sales_for_dist > 0:
+                    largest_field = max(aggregate_sales, key=aggregate_sales.get)
+                    category = category_map[largest_field]
+                else:
+                    continue
+            
+            taxable, tax_source = determine_taxability(
+                category=category,
+                payment_type=payment_type,
+                location=location
             )
-
-                
-        # Compute totals
+            transaction.line_items.append(LineItem(
+                category=category,
+                payment_type=payment_type,
+                unit_price=-amount,
+                taxable=taxable,
+                taxability_source=tax_source or TaxabilitySourceEnum.PRODUCT_DEFAULT,
+                tax_rate=location.current_tax_rate or 0,
+                is_return=True
+            ))
+        
         finalize_transaction(transaction)
         finalize_ticket(ticket)
-        
     new_session.commit()
     print("Migration finished successfully.")
     
@@ -294,46 +271,59 @@ def validate_migration():
         "new", "used", "extended_warranty", "diagnostic_fees",
         "in_shop_repairs", "ebay_sales", "labor", "parts", "delivery"
     ]
+    return_fields = ["refunds", "ebay_returns"]
+    payment_type_fields = ["card", "cash", "checks", "stripe", "acima", "tower_loan", "ebay_card"]
 
+    # Group old EODs by ticket number
+    eods_by_ticket = {}
     for old_eod in old_session.query(OldEOD).all():
+        key = old_eod.ticket_number
+        if key not in eods_by_ticket:
+            eods_by_ticket[key] = []
+        eods_by_ticket[key].append(old_eod)
 
-        ticket = new_session.query(Ticket).filter_by(ticket_number=old_eod.ticket_number).first()
-
+    for ticket_number, eod_rows in eods_by_ticket.items():
+        ticket = new_session.query(Ticket).filter_by(ticket_number=ticket_number).first()
         if not ticket:
-            print(f"Missing Ticket for EOD {old_eod.ticket_number}")
+            print(f"Missing Ticket for Ticket {ticket_number}")
             mismatches += 1
             continue
 
         tx = ticket.transactions[0] if ticket.transactions else None
         if not tx:
-            print(f"Missing Transaction for Ticket {ticket.ticket_number}")
+            print(f"Missing Transaction for Ticket {ticket_number}")
             mismatches += 1
             continue
 
-        # OLD totals
-        old_sales_total = sum(to_int(getattr(old_eod, f, 0)) for f in sales_fields)
-        old_returns_total = to_int(old_eod.refunds) + to_int(old_eod.ebay_returns)
-        old_net_total = to_int(old_eod.sub_total)
+        # Aggregate old totals across all rows
+        old_sales_total = sum(
+            sum(to_int(getattr(eod, f, 0)) for f in sales_fields) for eod in eod_rows
+        )
+        old_returns_total = sum(
+            to_int(eod.refunds) + to_int(eod.ebay_returns) for eod in eod_rows
+        )
+        old_net_total = sum(to_int(eod.sub_total) for eod in eod_rows)
 
-        # NEW totals
+        # New totals from merged transaction
         new_sales_total = sum(li.unit_price for li in tx.line_items if not li.is_return)
         new_returns_total = sum(abs(li.unit_price) for li in tx.line_items if li.is_return)
         new_net_total = new_sales_total - new_returns_total
 
         if old_sales_total != new_sales_total:
-            print(f"Sales mismatch Ticket {ticket.ticket_number}: OLD={old_sales_total} NEW={new_sales_total}")
+            print(f"Sales mismatch Ticket {ticket_number}: OLD={old_sales_total} NEW={new_sales_total}")
             mismatches += 1
 
         if old_returns_total != new_returns_total:
-            print(f"Returns mismatch Ticket {ticket.ticket_number}: OLD={old_returns_total} NEW={new_returns_total}")
+            print(f"Returns mismatch Ticket {ticket_number}: OLD={old_returns_total} NEW={new_returns_total}")
             mismatches += 1
 
         if old_net_total != new_net_total:
-            print(f"Net total mismatch Ticket {ticket.ticket_number}: OLD={old_net_total} NEW={new_net_total}")
+            print(f"Net total mismatch Ticket {ticket_number}: OLD={old_net_total} NEW={new_net_total}")
             mismatches += 1
 
     print("\n✅ Validation complete.")
     print(f"Total mismatches: {mismatches}")
+
 
     
     
