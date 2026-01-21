@@ -134,3 +134,38 @@
   flex-direction: column;
   gap: 0.25rem;
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .ticketListPage {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .ticketControls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  .ticketControls .ticketListDatePicker {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .listOfTickets {
+    width: 100%;
+  }
+  .listOfTickets h2 {
+    margin-top: 1rem;
+  }
+}

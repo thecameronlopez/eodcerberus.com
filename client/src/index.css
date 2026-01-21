@@ -86,15 +86,11 @@ button:disabled {
   color: #1e1e1e;
 }
 
-@media (max-width: 750px) {
-  header {
-    justify-content: space-between;
-    padding-inline: 1rem;
-  }
-
-  .location-switch {
-    position: relative;
-    transform: scale(0.8);
-    gap: 4px;
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+@media (max-width: 768px) {
+  #header-logo {
+    width: 100px;
   }
 }

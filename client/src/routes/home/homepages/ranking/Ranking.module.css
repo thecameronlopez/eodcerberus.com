@@ -66,3 +66,27 @@ ul.rankingsBoard li svg.theKing {
   left: -24px;
   transform: rotate(-40deg);
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .monthPicker {
+    justify-content: center;
+    justify-content: space-between;
+  }
+  .monthPicker button {
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    background-color: var(--linkText);
+    color: var(--bannerBackground);
+  }
+
+  .monthPicker span {
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+}

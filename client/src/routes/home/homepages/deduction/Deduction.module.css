@@ -102,3 +102,51 @@
   background-color: var(--bannerBackground);
   cursor: pointer;
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .deductionsPage {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .deductionsPage > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .deductionForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    width: 90%;
+  }
+
+  .deductionForm div {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .deductionForm div label {
+    font-size: 14px;
+    color: var(--linkText);
+    align-self: center;
+  }
+
+  .deductionForm div input {
+    font-size: 28px !important;
+    padding: 4px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: -1px 1px 4px #000;
+    width: 70%;
+    align-self: center;
+  }
+}

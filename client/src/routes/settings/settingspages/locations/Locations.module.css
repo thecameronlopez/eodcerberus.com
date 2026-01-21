@@ -115,3 +115,41 @@
   border: none;
   box-shadow: -1px 1px 4px #000;
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .locationDataBlock {
+    flex-direction: column;
+  }
+
+  .addLocationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    border: 1px solid var(--bannerBackground);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: -1px 1px 4px #000;
+    width: 100%;
+  }
+
+  .addLocationForm form div label {
+    align-self: flex-start;
+  }
+
+  .addLocationForm form div input {
+    width: 100%;
+    font-size: 20px !important;
+  }
+
+  .addLocationForm form button[type="submit"] {
+    padding: 10px 12px;
+    border-radius: 6px;
+    align-self: center;
+    margin-block: 1rem;
+  }
+}

@@ -72,7 +72,9 @@
   padding: 10px 12px;
   cursor: pointer;
   border-radius: 6px;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .paramList li input[type="checkbox"]:checked + label {
@@ -100,4 +102,40 @@ button.runnit {
   flex-direction: column;
   align-items: center;
   padding-top: 3rem;
+}
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .reportsPage {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reportFilters {
+    padding: 1rem;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-height: 15rem;
+  }
+
+  button.runnit {
+    align-self: center;
+    font-size: 1.6rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--bannerBackground);
+    color: var(--textPrimary);
+
+    box-shadow: -1px 1px 4px #000;
+  }
+
+  .reported {
+    width: 100%;
+  }
 }

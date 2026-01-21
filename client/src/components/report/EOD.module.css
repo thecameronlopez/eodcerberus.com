@@ -144,6 +144,7 @@ p.deductionApplied {
   .eodHeader {
     padding-bottom: 2px;
     border-bottom: none;
+    flex-direction: row !important;
   }
 
   .eodHeader img {
@@ -203,5 +204,31 @@ p.deductionApplied {
 
   details ul li p.taxAdded {
     display: none;
+  }
+}
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .eodPage {
+    width: 100%;
+  }
+
+  .eodPage .eodHeader {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .eodPage .eodHeader .eodTitle > div {
+    align-items: center;
+  }
+
+  details ul li h4 {
+    font-size: 14px;
+  }
+  .eodPage .eodData ul li > div {
+    align-items: flex-end;
   }
 }

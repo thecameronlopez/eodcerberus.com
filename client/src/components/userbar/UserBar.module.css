@@ -83,3 +83,38 @@ h2.homeUser {
 .userBar .userMenu a:hover {
   background-color: var(--linkText);
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .userBar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 4px 0 10px 0;
+    border: none;
+    border-bottom: 1px solid var(--linkText);
+  }
+
+  .userBar .userBarPath {
+    width: 100%;
+  }
+
+  .userBarPath h2 {
+    font-size: 20px;
+  }
+  .userBarPath .pathButtons {
+    gap: 1.5rem;
+  }
+
+  .userBarButtonBlock {
+    width: 100%;
+    justify-content: space-evenly;
+    border: 2px solid var(--linkText);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: inset 1px 1px 3px #333;
+    background-color: #f4f5fa;
+  }
+}

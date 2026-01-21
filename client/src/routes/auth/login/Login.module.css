@@ -54,3 +54,22 @@
   box-shadow: -1px 1px 4px #000;
   margin-top: 2rem;
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .loginContainer h1.loginHeader {
+    font-size: 26px;
+  }
+
+  .loginContainer .loginForm {
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .loginForm > div {
+    width: 100%;
+  }
+}

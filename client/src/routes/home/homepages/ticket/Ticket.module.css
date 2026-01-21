@@ -151,3 +151,38 @@ button.removeLiButton {
   color: #555;
   cursor: not-allowed;
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .ticketContainer .ticketForm {
+    padding: 0;
+  }
+
+  .ticketForm .formTopBar {
+    width: 100%;
+  }
+  .ticketForm .formTopBar div input {
+    padding: 4px 8px;
+    width: fit-content;
+  }
+
+  .ticketForm .lineItems .lineItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  button.removeLiButton {
+    top: -5%;
+    left: -2.5%;
+  }
+
+  .returnBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+}

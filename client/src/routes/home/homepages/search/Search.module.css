@@ -245,3 +245,23 @@ form.transactionForm button.submitTransaction {
   flex-direction: column;
   align-items: flex-end;
 }
+
+/* ==========================
+   Mobile / Responsive styles
+   ========================== */
+
+@media (max-width: 768px) {
+  .searchPage {
+    align-items: center;
+  }
+  .searchPage .ticketSearch {
+    align-items: center;
+  }
+  .ticketData {
+    flex-direction: column;
+  }
+
+  .ticketData .ticketHeader {
+    width: 100%;
+  }
+}
