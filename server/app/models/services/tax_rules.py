@@ -35,10 +35,11 @@ def determine_taxability(*, category, payment_type, location):
     # Category default
     taxable = SALES_CATEGORY_TAXABILITY.get(category, False)
     source = TaxabilitySourceEnum.PRODUCT_DEFAULT
-
+    #IMPORTANT:
+    #Payment type must NEVER override an explicitly non-taxable category
     #Payment type override
     payment_taxable = PAYMENT_TYPE_TAXABILITY.get(payment_type)
-    if payment_taxable is not None:
+    if taxable and payment_taxable is not None:
         taxable = payment_taxable
         source = TaxabilitySourceEnum.PAYMENT_TYPE
 

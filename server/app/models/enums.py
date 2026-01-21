@@ -126,7 +126,3 @@ TaxabilitySourceEnumSA = SAEnum(
     validate_strings=True
 )
 
-
-
-# Tax needs to get added to the above categories and held in a seperate state for processing with an added 10.75%
-# Jennings and lafayette will have different tax amounts.
