@@ -163,6 +163,10 @@ def migrate_eods_to_tickets_and_transactions():
         total_sales = sum(sales.values())
         total_returns = sum(to_int(getattr(old_eod, f, 0)) for f in return_fields)
         
+        if not sales or total_sales == 0:
+            # no sales to distribute return to
+            return [(f, to_int(getattr(old_eod, f, 0))) for f in return_fields if to_int(getattr(old_eod, f, 0)) > 0]
+        
         distributed = {}
         running_total = 0
         
