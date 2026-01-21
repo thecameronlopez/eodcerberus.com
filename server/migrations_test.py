@@ -221,6 +221,9 @@ def migrate_eods_to_tickets_and_transactions():
         for field in sales_field:
             amount = to_int(getattr(old_eod, field, 0))
             if amount > 0:
+                if field not in category_map:
+                    print(f"Skipping unknown revenue feild: {field} for EOD {old_eod.ticket_number} id: {old_eod.id}")
+                    continue
                 category = category_map[field]
                 
                 #determine taxability                    
