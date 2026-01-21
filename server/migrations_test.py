@@ -62,6 +62,9 @@ new_session.commit()
 
 print("Locations and tax rates set")
 
+start_date = date(2026, 1, 1)
+end_date = date(2026, 1, 20)
+
 
 # ---------------------------------
 # MAPPINGS
@@ -121,7 +124,9 @@ def migrate_users():
     
 def migrate_deductions():
     print("Migrating Deductions...")
-    for old_deduction in old_session.query(OldDeductions).all():
+    for old_deduction in old_session.query(OldDeductions).filter(
+        OldDeductions.date.between(start_date, end_date)
+    ).all():
         new_deduction = Deduction(
             user_id=old_deduction.user_id,
             amount=old_deduction.amount,
@@ -149,7 +154,9 @@ def migrate_eods_to_tickets_and_transactions():
 
     # Group EOD rows by ticket number (handles trailing "0" additions)
     eods_by_ticket = {}
-    for old_eod in old_session.query(OldEOD).all():
+    for old_eod in old_session.query(OldEOD).filter(
+        OldEOD.date.between(start_date, end_date)
+    ).all():
         eods_by_ticket.setdefault(old_eod.ticket_number, []).append(old_eod)
 
     for ticket_number, eod_rows in eods_by_ticket.items():
@@ -293,7 +300,9 @@ def validate_migration():
 
     # Group old EODs by ticket number
     eods_by_ticket = {}
-    for old_eod in old_session.query(OldEOD).all():
+    for old_eod in old_session.query(OldEOD).filter(
+        OldEOD.date.between(start_date, end_date)
+    ):
         eods_by_ticket.setdefault(old_eod.ticket_number, []).append(old_eod)
 
     for ticket_number, eod_rows in eods_by_ticket.items():
