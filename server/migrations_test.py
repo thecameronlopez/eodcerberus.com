@@ -294,10 +294,7 @@ def validate_migration():
     # Group old EODs by ticket number
     eods_by_ticket = {}
     for old_eod in old_session.query(OldEOD).all():
-        key = old_eod.ticket_number
-        if key not in eods_by_ticket:
-            eods_by_ticket[key] = []
-        eods_by_ticket[key].append(old_eod)
+        eods_by_ticket.setdefault(old_eod.ticket_number, []).append(old_eod)
 
     for ticket_number, eod_rows in eods_by_ticket.items():
         ticket = new_session.query(Ticket).filter_by(ticket_number=ticket_number).first()
@@ -312,16 +309,16 @@ def validate_migration():
             mismatches += 1
             continue
 
-        # Aggregate old totals across all rows
+        # Aggregate old totals
         old_sales_total = sum(
             sum(to_int(getattr(eod, f, 0)) for f in sales_fields) for eod in eod_rows
         )
         old_returns_total = sum(
-            to_int(eod.refunds) + to_int(eod.ebay_returns) for eod in eod_rows
+            sum(to_int(getattr(eod, f, 0)) for f in return_fields) for eod in eod_rows
         )
         old_net_total = sum(to_int(eod.sub_total) for eod in eod_rows)
 
-        # New totals from merged transaction
+        # Aggregate new totals from line items
         new_sales_total = sum(li.unit_price for li in tx.line_items if not li.is_return)
         new_returns_total = sum(abs(li.unit_price) for li in tx.line_items if li.is_return)
         new_net_total = new_sales_total - new_returns_total
