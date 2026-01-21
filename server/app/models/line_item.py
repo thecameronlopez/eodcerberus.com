@@ -3,6 +3,7 @@ from sqlalchemy import Integer, Boolean, ForeignKey, Date, Numeric, String, even
 from .base import Base
 from .enums import SalesCategoryEnumSA, PaymentTypeEnumSA, ProductCategoryEnumSA, TaxabilitySourceEnumSA, ProductCategoryEnum, SalesCategoryEnum, PaymentTypeEnum, TaxabilitySourceEnum
 from datetime import date as DTdate
+from decimal import Decimal, ROUND_HALF_UP
 
 class LineItem(Base):
     __tablename__ = "line_items"
@@ -47,11 +48,18 @@ class LineItem(Base):
         Computes tax amount and total.
         Assumes unit_price, taxable, tax_rate are already set
         """
-        unit_price = self.unit_price or 0
-        tax_rate = float(self.tax_rate or 0)
+        unit_price = Decimal(self.unit_price or 0)
+        tax_rate = Decimal(str(self.tax_rate or 0))
         
-        self.tax_amount = round(unit_price * tax_rate) if self.taxable else 0
-        self.total = unit_price + self.tax_amount        
+        if self.taxable:
+            raw_tax = unit_price * tax_rate
+            self.tax_amount = int(
+                raw_tax.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+            )
+        else:
+            self.tax_amount = 0
+        
+        self.total = int(unit_price) + self.tax_amount        
     
     
     ###
