@@ -244,7 +244,14 @@ def migrate_eods_to_tickets_and_transactions():
         #process return items
         for field, amount in distribute_returns(old_eod):
             if amount > 0:
-                category = category_map[field]
+                if field in category_map:
+                    category = category_map[field]
+                else:
+                    sales = {f: to_int(getattr(old_eod, f, 0)) for f in sales_field if to_int(getattr(old_eod, f, 0)) > 0}
+                    if sales:
+                        category = category_map[max(sales, key=sales.get)]
+                    else:
+                        continue
                 
                 taxable, tax_source = determine_taxability(
                     category=category,
