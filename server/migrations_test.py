@@ -109,6 +109,7 @@ def migrate_users():
     print("Migrating Users...")
     for old_user in old_session.query(OldUsers).all():
         new_user = User(
+            id=old_user.id,
             first_name=old_user.first_name,
             last_name=old_user.last_name,
             email=old_user.email,
