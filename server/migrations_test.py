@@ -138,7 +138,7 @@ def migrate_deductions():
 def migrate_eods_to_tickets_and_transactions():
     print("Migrating EODs to Tickets, Transactions, LineItems...")
 
-    sales_field = [
+    sales_fields = [
         "new", "used", "extended_warranty", "diagnostic_fees",
         "in_shop_repairs", "ebay_sales", "labor", "parts", "delivery"
     ]
@@ -147,13 +147,10 @@ def migrate_eods_to_tickets_and_transactions():
 
     users_map = {user.id: user for user in new_session.query(User).all()}
 
-    # Group old EODs by ticket number
+    # Group EOD rows by ticket number (handles trailing "0" additions)
     eods_by_ticket = {}
     for old_eod in old_session.query(OldEOD).all():
-        key = old_eod.ticket_number
-        if key not in eods_by_ticket:
-            eods_by_ticket[key] = []
-        eods_by_ticket[key].append(old_eod)
+        eods_by_ticket.setdefault(old_eod.ticket_number, []).append(old_eod)
 
     for ticket_number, eod_rows in eods_by_ticket.items():
         user_id = eod_rows[0].user_id
@@ -184,27 +181,29 @@ def migrate_eods_to_tickets_and_transactions():
         new_session.add(transaction)
         new_session.flush()
 
-        # Aggregate sales and payments across all rows
-        aggregate_sales = {f: 0 for f in sales_field}
+        aggregate_sales = {f: 0 for f in sales_fields}
+        aggregate_returns = {f: 0 for f in return_fields}
         aggregate_payments = {f: 0 for f in payment_type_fields}
-        aggregate_return = {f: 0 for f in return_fields}
 
+        # Aggregate totals across all rows
         for row in eod_rows:
-            for f in sales_field:
+            for f in sales_fields:
                 aggregate_sales[f] += to_int(getattr(row, f, 0))
             for f in payment_type_fields:
                 aggregate_payments[f] += to_int(getattr(row, f, 0))
             for f in return_fields:
-                aggregate_return[f] += to_int(getattr(row, f, 0))
+                aggregate_returns[f] += to_int(getattr(row, f, 0))
 
-        # Determine payment type (first non-zero)
+        # Determine primary payment type (first non-zero)
         payment_type = PaymentTypeEnum.CASH
         for pt_field in payment_type_fields:
             if aggregate_payments[pt_field] > 0:
                 payment_type = payment_type_map[pt_field]
                 break
 
-        # Create line items for sales
+        total_sales = sum(aggregate_sales.values())
+
+        # --- Handle normal sales ---
         for field, amount in aggregate_sales.items():
             if amount <= 0:
                 continue
@@ -224,57 +223,56 @@ def migrate_eods_to_tickets_and_transactions():
                 is_return=False
             ))
 
-        # ----------------------------
-        # Distribute returns proportionally across actual sales categories
-        # ----------------------------
-        total_sales = sum(aggregate_sales.values())
-        if total_sales > 0:
-            for return_field, return_amount in aggregate_return.items():
-                if return_amount <= 0:
+        # --- Handle returns ---
+        for field, amount in aggregate_returns.items():
+            if amount <= 0:
+                continue
+
+            # Assign return category
+            # If we have sales, pick the largest category; otherwise default to LABOR
+            if total_sales > 0:
+                largest_sales_field = max(aggregate_sales, key=aggregate_sales.get)
+                category = category_map[largest_sales_field]
+            else:
+                category = SalesCategoryEnum.LABOR
+
+            taxable, tax_source = determine_taxability(
+                category=category,
+                payment_type=payment_type,
+                location=location
+            )
+            transaction.line_items.append(LineItem(
+                category=category,
+                payment_type=payment_type,
+                unit_price=-amount,
+                taxable=taxable,
+                taxability_source=tax_source or TaxabilitySourceEnum.PRODUCT_DEFAULT,
+                tax_rate=location.current_tax_rate or 0,
+                is_return=True
+            ))
+
+        # --- Handle payment-only rows (no sales, no returns) ---
+        if total_sales == 0 and sum(aggregate_returns.values()) == 0:
+            for pt_field, pt_amount in aggregate_payments.items():
+                if pt_amount <= 0:
                     continue
+                # Assign default category for payment-only line items
+                transaction.line_items.append(LineItem(
+                    category=SalesCategoryEnum.LABOR,  # or another sensible default
+                    payment_type=payment_type_map[pt_field],
+                    unit_price=pt_amount,
+                    taxable=True,
+                    taxability_source=TaxabilitySourceEnum.MANUAL_OVERRIDE,
+                    tax_rate=location.current_tax_rate or 0,
+                    is_return=False
+                ))
 
-                # First, distribute proportionally
-                distributed = {}
-                running_total = 0
-                for sale_field, sale_amount in aggregate_sales.items():
-                    if sale_amount > 0:
-                        portion = (sale_amount * return_amount) // total_sales
-                        if portion > 0:
-                            distributed[sale_field] = portion
-                            running_total += portion
-
-                # Handle remainder
-                remainder = return_amount - running_total
-                if remainder > 0:
-                    largest_field = max(aggregate_sales, key=aggregate_sales.get)
-                    distributed[largest_field] = distributed.get(largest_field, 0) + remainder
-
-                # Append line items for distributed returns
-                for sale_field, amt in distributed.items():
-                    if amt <= 0:
-                        continue
-                    category = category_map[sale_field]
-                    taxable, tax_source = determine_taxability(
-                        category=category,
-                        payment_type=payment_type,
-                        location=location
-                    )
-                    transaction.line_items.append(LineItem(
-                        category=category,
-                        payment_type=payment_type,
-                        unit_price=-amt,
-                        taxable=taxable,
-                        taxability_source=tax_source or TaxabilitySourceEnum.PRODUCT_DEFAULT,
-                        tax_rate=location.current_tax_rate or 0,
-                        is_return=True
-                    ))
-
-        # Finalize totals
         finalize_transaction(transaction)
         finalize_ticket(ticket)
 
     new_session.commit()
     print("Migration finished successfully.")
+
 
     
 
