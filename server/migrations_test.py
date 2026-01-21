@@ -241,35 +241,35 @@ def migrate_eods_to_tickets_and_transactions():
                 ))
 
                 
-        #process return items
-        for field, amount in distribute_returns(old_eod):
-            if amount > 0:
-                if field in category_map:
-                    category = category_map[field]
-                else:
-                    sales = {f: to_int(getattr(old_eod, f, 0)) for f in sales_field if to_int(getattr(old_eod, f, 0)) > 0}
-                    if sales:
-                        category = category_map[max(sales, key=sales.get)]
-                    else:
-                        continue
-                
-                taxable, tax_source = determine_taxability(
+        # -----------------------------
+        # process return items
+        # -----------------------------
+        for field in return_fields:
+            amount = to_int(getattr(old_eod, field, 0))
+            if amount <= 0:
+                continue  # skip zero returns
+
+            # Assign a category to attach the return to
+            sales = {f: to_int(getattr(old_eod, f, 0)) for f in sales_field if to_int(getattr(old_eod, f, 0)) > 0}
+            if sales:
+                category = category_map[max(sales, key=sales.get)]
+            else:
+                category = SalesCategoryEnum.LABOR
+
+            # Use the same payment type as the transaction
+            # Returns are generally not taxable
+            transaction.line_items.append(
+                LineItem(
                     category=category,
                     payment_type=payment_type,
-                    location=location
+                    unit_price=-amount,       # negative because it's a return
+                    taxable=False,
+                    taxability_source=None,
+                    tax_rate=0,
+                    is_return=True
                 )
-                
-                transaction.line_items.append(
-                    LineItem(
-                        category=category,
-                        payment_type=payment_type,
-                        unit_price=-amount,
-                        taxable=taxable,
-                        taxability_source=tax_source,
-                        tax_rate=location.current_tax_rate or 0,
-                        is_return=True
-                    )
-                )
+            )
+
                 
         # Compute totals
         finalize_transaction(transaction)
