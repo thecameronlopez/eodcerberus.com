@@ -2,7 +2,7 @@ import os
 from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.models import User, Ticket, Transaction, LineItem, Deduction, Location, DepartmentEnum, SalesCategoryEnum, PaymentTypeEnum, Base, TaxRate
+from app.models import User, Ticket, Transaction, LineItem, Deduction, Location, DepartmentEnum, SalesCategoryEnum, PaymentTypeEnum, Base, TaxRate, TaxabilitySourceEnum
 from app.old_models import Users as OldUsers, EOD as OldEOD, Deductions as OldDeductions
 from app.models.services.tax_rules import determine_taxability
 from app.utils.tools import to_int, finalize_ticket, finalize_transaction
@@ -264,8 +264,8 @@ def migrate_eods_to_tickets_and_transactions():
                     payment_type=payment_type,
                     unit_price=-amount,       # negative because it's a return
                     taxable=False,
-                    taxability_source=None,
-                    tax_rate=0,
+                    taxability_source=TaxabilitySourceEnum.MANUAL_OVERRIDE,
+                    tax_rate=location.current_tax_rate or 0,
                     is_return=True
                 )
             )
