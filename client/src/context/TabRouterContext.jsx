@@ -19,7 +19,7 @@ const TabRouterContext = createContext();
 export const TabRouterProvider = ({ children }) => {
   const [tabs, setTabs] = useState({
     home: "ticket",
-    setting: "locations",
+    settings: "locations",
     reports: "run_reports",
   });
 
