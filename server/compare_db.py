@@ -1,14 +1,14 @@
-# compare_totals.py
+import csv
 from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.models import Ticket, Transaction, LineItem, Location
 from app.old_models import EOD as OldEOD
-from app.utils.tools import to_int
 
-# -----------------------------
+# ---------------------------------
 # DATABASE CONNECTIONS
-# -----------------------------
+# ---------------------------------
+
 OLD_DB_URL = "mysql+pymysql://cameron:Claire18!@127.0.0.1:3306/cerberus"
 NEW_DB_URL = "mysql+pymysql://cameron:Claire18!@127.0.0.1:3306/cerberus_"
 
@@ -21,67 +21,101 @@ NewSession = sessionmaker(bind=new_engine)
 old_session = OldSession()
 new_session = NewSession()
 
-# -----------------------------
-# CONFIG
-# -----------------------------
+# ---------------------------------
+# DATE RANGE
+# ---------------------------------
 start_date = date(2026, 1, 1)
-end_date = date.today()
+end_date = date(2026, 1, 20)
 
-# Payment type columns in old DB
-payment_type_fields = ["card", "cash", "checks", "stripe", "acima", "tower_loan", "ebay_card"]
+# ---------------------------------
+# FIELDS
+# ---------------------------------
+sales_fields = [
+    "new", "used", "extended_warranty", "diagnostic_fees",
+    "in_shop_repairs", "ebay_sales", "labor", "parts", "delivery"
+]
+return_fields = ["refunds", "ebay_returns"]
 
-# -----------------------------
-# RUN COMPARISON
-# -----------------------------
-mismatched_tickets = []
+# ---------------------------------
+# OUTPUT CSV
+# ---------------------------------
+output_file = "/home/cameron/db_audit.csv"
 
-# Fetch tickets from new DB in date range
-tickets = new_session.query(Ticket).filter(
+# ---------------------------------
+# MAIN COMPARISON LOGIC
+# ---------------------------------
+mismatches = []
+
+# Count EODs in old DB
+old_eods_count = old_session.query(OldEOD).filter(
+    OldEOD.date.between(start_date, end_date)
+).count()
+
+# Count Tickets in new DB
+new_tickets_count = new_session.query(Ticket).filter(
     Ticket.ticket_date.between(start_date, end_date)
-).all()
+).count()
 
-for ticket in tickets:
-    ticket_number = ticket.ticket_number
+# Group old EODs by ticket number
+eods_by_ticket = {}
+for old_eod in old_session.query(OldEOD).filter(
+    OldEOD.date.between(start_date, end_date)
+).all():
+    eods_by_ticket.setdefault(old_eod.ticket_number, []).append(old_eod)
 
-    # --- Aggregate old post-tax total from EOD payment columns ---
-    old_eods = old_session.query(OldEOD).filter(
-        OldEOD.ticket_number == ticket_number,
-        OldEOD.date.between(start_date, end_date)
-    ).all()
+with open(output_file, "w", newline="") as csvfile:
+    writer = csv.writer(csvfile)
+    # Write header
+    writer.writerow([
+        "Ticket Number",
+        "Old Total",
+        "New Total",
+        "Old Sales",
+        "New Sales",
+        "Old Returns",
+        "New Returns",
+        "Mismatch?"
+    ])
 
-    if not old_eods:
-        continue  # nothing to compare
+    for ticket_number, eod_rows in eods_by_ticket.items():
+        old_sales_total = sum(
+            sum(getattr(eod, f) or 0 for f in sales_fields) for eod in eod_rows
+        )
+        old_returns_total = sum(
+            sum(getattr(eod, f) or 0 for f in return_fields) for eod in eod_rows
+        )
+        old_net_total = sum(eod.sub_total or 0 for eod in eod_rows)
 
-    old_post_tax_total = sum(
-        sum(to_int(getattr(eod, pt, 0)) for pt in payment_type_fields)
-        for eod in old_eods
-    )
+        ticket = new_session.query(Ticket).filter_by(ticket_number=ticket_number).first()
+        if not ticket or not ticket.transactions:
+            new_sales_total = new_returns_total = new_net_total = None
+        else:
+            tx = ticket.transactions[0]
+            new_sales_total = sum(li.unit_price for li in tx.line_items if not li.is_return)
+            new_returns_total = sum(abs(li.unit_price) for li in tx.line_items if li.is_return)
+            new_net_total = new_sales_total - new_returns_total
 
-    # --- Compute new total from line items ---
-    for tx in ticket.transactions:
-        for li in tx.line_items:
-            li.compute_total()
-        tx.compute_total()
-    ticket.compute_total()
+        is_mismatch = (
+            old_net_total != (new_net_total if new_net_total is not None else -1)
+        )
 
-    new_total = ticket.total
+        if is_mismatch:
+            mismatches.append(ticket_number)
 
-    # --- Compare ---
-    if old_post_tax_total != new_total:
-        mismatched_tickets.append({
-            "ticket_number": ticket_number,
-            "old_total": old_post_tax_total,
-            "new_total": new_total
-        })
+        writer.writerow([
+            ticket_number,
+            old_net_total,
+            new_net_total,
+            old_sales_total,
+            new_sales_total,
+            old_returns_total,
+            new_returns_total,
+            "YES" if is_mismatch else "NO"
+        ])
 
-# -----------------------------
-# REPORT RESULTS
-# -----------------------------
-if mismatched_tickets:
-    print("\n⚠️ Mismatched tickets found:")
-    for m in mismatched_tickets:
-        print(f"Ticket {m['ticket_number']}: OLD={m['old_total']} NEW={m['new_total']}")
-else:
-    print("\n✅ All totals match between old and new DBs.")
-
-print(f"\nTotal mismatches: {len(mismatched_tickets)}")
+# Summary
+print("✅ DB comparison complete")
+print(f"Old EODs count: {old_eods_count}")
+print(f"New Tickets count: {new_tickets_count}")
+print(f"Total mismatched tickets: {len(mismatches)}")
+print(f"CSV written to: {output_file}")
