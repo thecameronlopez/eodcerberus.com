@@ -8,6 +8,8 @@ import { useReactToPrint } from "react-to-print";
 import { UserList, LocationList } from "../../../../utils/api";
 import ReportParams from "../../../../components/reportparams/ReportParams";
 import { getTodayLocalDate } from "../../../../utils/tools";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPrint } from "@fortawesome/free-solid-svg-icons";
 
 const REPORT_TYPES = {
   user_eod: "User Report",
@@ -120,6 +122,13 @@ const RunReports = () => {
     <div className={styles.reportsPage}>
       <div className={styles.reportFilters}>
         <div>
+          <button
+            className={styles.prinnit}
+            onClick={printFn}
+            disabled={!report}
+          >
+            <FontAwesomeIcon icon={faPrint} />
+          </button>
           <div className={styles.reportType}>
             <label htmlFor="report_type">Select Report Type</label>
             <select

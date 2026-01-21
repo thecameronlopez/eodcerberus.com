@@ -96,6 +96,17 @@ button.runnit {
   margin-top: auto;
 }
 
+button.prinnit {
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
+  align-self: flex-end;
+  color: var(--bannerBackground);
+}
+button.prinnit:disabled {
+  filter: opacity(0.3);
+}
+
 .reported {
   width: 80%;
   display: flex;
