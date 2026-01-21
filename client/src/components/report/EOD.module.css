@@ -1,0 +1,207 @@
+.eodPage {
+  width: 80%;
+  max-width: 1000px;
+  border: 2px solid var(--linkText);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/*
+  HEADER
+*/
+.eodHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--linkText);
+  padding-bottom: 4px;
+}
+
+.eodLogo {
+  width: 12rem;
+}
+
+.eodTitle > div:first-child {
+  margin-bottom: 10px;
+}
+
+/*
+DYNAMIC TITLES
+*/
+.eodHeader .userTitle,
+.locationTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  /* margin-bottom: 10px; */
+}
+.eodHeader .multiUserTitle,
+.multiLocationTitle {
+  font-size: 16px;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  /* margin-bottom: 10px; */
+
+  font-weight: bold;
+}
+
+.eodHeader .masterTitle {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.eodHeader div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.eodHeader .grandTotals,
+.eodUser {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.eodDate {
+  font-size: 20px;
+}
+
+/*
+  BODY
+*/
+
+.eodData {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+details {
+  width: 100%;
+  border: 1px solid var(--linkText);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+details summary {
+  font-size: 28px;
+  cursor: pointer;
+  padding: 10px;
+}
+
+details ul {
+  width: 100%;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+details ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 1px solid var(--linkText);
+  border-radius: 8px;
+  padding: 6px;
+}
+details ul li:hover {
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+}
+
+details ul li h4 {
+  font-size: 20px;
+}
+
+details ul li > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+p.deductionApplied {
+  color: darkred;
+}
+
+@media print {
+  .eodPage {
+    width: 100%;
+    border: none;
+  }
+
+  .eodHeader {
+    padding-bottom: 2px;
+    border-bottom: none;
+  }
+
+  .eodHeader img {
+    width: 6rem;
+  }
+
+  .eodHeader .userTitle {
+    font-size: 12px;
+  }
+
+  .eodHeader .grandTotals,
+  .eodUser {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .eodDate {
+    font-size: 16px;
+  }
+
+  .eodHeader .eodTitle .grandTotals {
+    font-size: 14px;
+  }
+
+  .eodData {
+    padding: 0;
+  }
+
+  details {
+    padding: 2px;
+    border: none;
+  }
+
+  details summary {
+    list-style-type: none;
+    font-size: 14px;
+    padding: 2px;
+    font-weight: 800;
+    text-decoration: underline;
+  }
+
+  details ul {
+    gap: 5px;
+    margin-top: 2px;
+  }
+
+  details ul li {
+    padding: 6px;
+  }
+
+  details ul li h4 {
+    font-size: 14px;
+  }
+  details ul li div {
+    font-size: 12px;
+  }
+
+  details ul li p.taxAdded {
+    display: none;
+  }
+}

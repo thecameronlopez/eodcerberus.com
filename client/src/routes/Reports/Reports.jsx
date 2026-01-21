@@ -1,44 +1,26 @@
-import UserBar from "../../components/UserBar";
 import styles from "./Reports.module.css";
 import React, { useState } from "react";
-import AddEOD from "../Create/AddEOD";
-import ReadEOD from "../Read/ReadEOD";
-import UserEODs from "../Read/UserEODs";
+import UserBar from "../../components/userbar/UserBar";
 import { useAuth } from "../../context/AuthContext";
-import DateRangeReport from "./DateRangeReport/DateRangeReport";
-import ReportHome from "./ReportHome/ReportHome";
-import UserReports from "./UserReports/UserReports";
-import MultiUserReport from "./MultiUserReport/MultiUserReport";
+import RunReports from "./reportpages/run_reports/RunReports";
+import TicketList from "./reportpages/ticket_list/TicketList";
+import { useTabRouter } from "../../context/TabRouterContext";
 
-const Components = {
-  report_home: ReportHome,
-  date_range_report: DateRangeReport,
-  user_reports: UserReports,
-  multi_user: MultiUserReport,
+const PAGES = {
+  run_reports: RunReports,
+  ticket_list: TicketList,
 };
 
 const Reports = () => {
-  const title = "Reports";
-  const [component, setComponent] = useState("report_home");
-  const pages = [
-    "report_home",
-    "date_range_report",
-    "user_reports",
-    "multi_user",
-  ];
+  const { tabs } = useTabRouter();
+  const activeTab = tabs.reports;
 
-  const SelectedComponent = Components[component];
-
+  const SelectedComponent = PAGES[activeTab];
   return (
-    <>
-      <UserBar
-        component={component}
-        setComponent={setComponent}
-        title={title}
-        pages={pages}
-      />
+    <div>
+      <UserBar pages={Object.keys(PAGES)} section={"reports"} />
       <SelectedComponent />
-    </>
+    </div>
   );
 };
 

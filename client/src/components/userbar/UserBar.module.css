@@ -1,0 +1,85 @@
+.userBar {
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 90%;
+  justify-content: space-between;
+  padding-inline: 1rem;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--linkText);
+  position: relative;
+}
+
+h2.homeUser {
+  color: var(--linkText);
+  width: 100%;
+  font-size: 26px;
+  margin-bottom: 2px;
+}
+
+.userBarPath {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.pathButtons {
+  display: flex;
+  gap: 10px;
+}
+.pathButtons button {
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
+  padding: 0;
+  color: var(--linkText);
+}
+.pathButtons button.activePath {
+  color: var(--background);
+}
+
+.userBar .userBarButtonBlock {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.userBarButtonBlock button {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--textSecondary);
+}
+
+.userBarButtonBlock button.activeButton {
+  color: var(--bannerBackground);
+}
+
+.userBar .userMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 100;
+
+  border-radius: 8px;
+}
+
+.userBar .userMenu a {
+  background-color: var(--textSecondary);
+  color: var(--textPrimary);
+  width: 100%;
+  text-align: end;
+  padding: 10px 8px 10px 24px;
+  font-size: 24px;
+}
+.userBar .userMenu a:last-child {
+  border-radius: 0 0 0 8px;
+}
+.userBar .userMenu a:hover {
+  background-color: var(--linkText);
+}

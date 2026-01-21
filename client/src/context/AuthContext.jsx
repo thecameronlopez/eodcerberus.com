@@ -5,46 +5,52 @@ const AuthProvider = createContext();
 export const AuthContext = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [location, setLocation] = useState(
-    localStorage.getItem("location") || "lake_charles"
-  );
+  const [bootstrapped, setBootstrapped] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await fetch("/api/auth/hydrate_user", {
-          method: "GET",
           credentials: "include",
         });
-        if (response.ok) {
-          const data = await response.json();
-          // console.log(data.user);
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Error when fetching user: ", error);
+
+        if (!response.ok) throw new Error("Not authenticated");
+
+        const data = await response.json();
+        setUser(data.user);
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
+
     fetchUser();
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("location", location);
-    if (location === "jennings") {
-      document.documentElement.classList.add("jenn");
-    } else {
-      document.documentElement.classList.remove("jenn");
-    }
-  }, [location]);
+    const checkBootstrap = async () => {
+      try {
+        const res = await fetch("/api/bootstrap/status");
+        const data = await res.json();
+        setBootstrapped(data.bootstrapped);
+      } catch {
+        setBootstrapped(false);
+      }
+    };
+    checkBootstrap();
+  }, []);
 
   return (
     <AuthProvider.Provider
-      value={{ user, loading, setLoading, setUser, location, setLocation }}
+      value={{
+        user,
+        setUser,
+        loading,
+        setLoading,
+        bootstrapped,
+        setBootstrapped,
+      }}
     >
       {children}
     </AuthProvider.Provider>

@@ -1,0 +1,37 @@
+.editUserForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.editUserForm div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.editUserForm div label {
+  font-size: 12px;
+  color: var(--bannerBackground);
+}
+
+.editUserForm > div input,
+.editUserForm > div select {
+  padding: 0.5rem !important;
+  border: 1px solid var(--linkText);
+  border-radius: 4px;
+  font-size: 18px !important;
+  width: 250px;
+}
+
+.editUserForm button {
+  padding: 0.6rem 1.2rem;
+  font-size: 18px;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

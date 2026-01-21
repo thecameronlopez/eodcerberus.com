@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
 const RootLayout = () => {
-  const { user, setUser, loading, setLocation, location } = useAuth();
+  const { user, setUser, loading, init } = useAuth();
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -24,44 +24,14 @@ const RootLayout = () => {
       toast.error(error.message);
     }
   };
+
   return (
     <>
       <header>
-        <Link to="/">
-          <img
-            id="header-logo"
-            src={location === "lake_charles" ? LOGO : LOGODARK}
-            alt="Cerberus Logo"
-          />
-        </Link>
-        {user && (
-          <div className="location-switch">
-            <span className={location !== "lake_charles" ? "inactive" : ""}>
-              Lake Charles
-            </span>
-
-            <label className="toggle">
-              <input
-                type="checkbox"
-                checked={location === "jennings"}
-                onChange={() => {
-                  if (!confirm("Update location?")) return;
-                  setLocation(
-                    location === "jennings" ? "lake_charles" : "jennings"
-                  );
-                }}
-              />
-              <span className="slider"></span>
-            </label>
-
-            <span className={location !== "jennings" ? "inactive" : ""}>
-              Jennings
-            </span>
-          </div>
-        )}
+        <img id="header-logo" src={LOGO} alt="Cerberus Logo" />
       </header>
       <main>
-        <Outlet />{" "}
+        <Outlet />
       </main>
       <footer>
         {user && (

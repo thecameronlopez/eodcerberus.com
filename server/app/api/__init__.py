@@ -1,16 +1,18 @@
 from flask import Blueprint
-from .create import creator
 from .auth import authorizer
+from .create import creator
+from .update import updator
 from .read import reader
-from .update import updater
 from .delete import deleter
-from .analytics import analyzer
+from .reports import reporter
+from .bootstrap import bootstrapper
 
-api_bp = Blueprint("api", __name__, url_prefix="/api")
+api = Blueprint("api", __name__, url_prefix="/api")
 
-api_bp.register_blueprint(creator, url_prefix="/create")
-api_bp.register_blueprint(authorizer, url_prefix="/auth")
-api_bp.register_blueprint(reader, url_prefix="/read")
-api_bp.register_blueprint(updater, url_prefix="/update")
-api_bp.register_blueprint(deleter, url_prefix="/delete")
-api_bp.register_blueprint(analyzer, url_prefix="/analytics")
+api.register_blueprint(authorizer, url_prefix="/auth")
+api.register_blueprint(creator, url_prefix="/create")
+api.register_blueprint(updator, url_prefix="/update")
+api.register_blueprint(reader, url_prefix="/read")
+api.register_blueprint(deleter, url_prefix="/delete")
+api.register_blueprint(reporter, url_prefix="/reports")
+api.register_blueprint(bootstrapper, url_prefix="/bootstrap")

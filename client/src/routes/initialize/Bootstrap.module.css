@@ -1,0 +1,63 @@
+.bootstrapPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-block: 2rem;
+}
+
+.bootstrapForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-block: 1rem;
+  gap: 1.5rem;
+}
+
+.bootstrapForm fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.8rem;
+  width: 100%;
+  border-radius: 12px;
+}
+.bootstrapForm fieldset legend {
+  color: var(--buttonPrimary);
+  font-weight: 800;
+}
+
+.bootstrapForm fieldset div {
+  display: flex;
+  flex-direction: column;
+}
+
+.bootstrapForm fieldset div label {
+  font-size: 14px;
+  color: var(--linkText);
+}
+
+.bootstrapForm fieldset div input {
+  font-size: 24px;
+  border-radius: 8px;
+  padding: 4px;
+  border: none;
+  box-shadow: -1px 1px 4px #000;
+}
+
+.bootstrapForm fieldset div select {
+  font-size: 24px !important;
+  width: 100% !important;
+  height: 40px !important;
+  border-radius: 8px !important;
+}
+
+.bootstrapForm button[type="submit"] {
+  font-size: 24px;
+  padding: 6px 30px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: -1px 1px 4px #000;
+  background-color: var(--buttonSecondary);
+  color: var(--textPrimary);
+}

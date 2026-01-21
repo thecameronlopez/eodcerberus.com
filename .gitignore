@@ -1,33 +1,18 @@
-server/env/
-server/venv/
-server/__pycache__/
-server/app/__pycache__/
-server/app/api/__pycache__/
-client/node_modules/
-
-server/logs/
-server/__pycache__/
-server/app/__pycache__/
-server/app/api/__pycache__/
-server/uploads/
-server/app/logs/
-
-client/.env.local
-client/.env.production
-
+#Python
 __pycache__/
-__pycache__/*
-**/__pycache__/
-*.pyc
-.DS_Store
+*.pyc 
+*.pyo 
+*.pyd
+
+#enviornment runtime
 .env
-*.exe
-*.bat
-Thumbs.db
-desktop.ini
+venv/
+server/.env 
+server/logs/
 
-notes.txt
+*.log 
 
-deploy.tar.gz
+node_modules/
+dist/
 
-deployServer.sh
+.DS_Store

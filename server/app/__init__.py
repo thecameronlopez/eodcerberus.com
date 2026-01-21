@@ -1,7 +1,7 @@
 from flask import Flask
 from config import Config
 from app.extensions import db, bcrypt, cors, login_manager, mail, migrate
-from app.models import Users
+from app.models import User
 from app.logger import setup_logger
 
 def create_app(config_class=Config):
@@ -19,12 +19,12 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     mail.init_app(app)
     
-    from app.api import api_bp
-    app.register_blueprint(api_bp)
+    from app.api import api
+    app.register_blueprint(api)
     
     
     @login_manager.user_loader
     def load_user(id):
-        return Users.query.get(id)
+        return db.session.get(User, id)
     
     return app

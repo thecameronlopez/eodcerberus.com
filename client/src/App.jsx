@@ -1,36 +1,46 @@
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 import React from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
-  RouterProvider,
   Route,
+  RouterProvider,
 } from "react-router-dom";
+import Home from "./routes/home/Home";
+import Register from "./routes/auth/register/Register";
+import Login from "./routes/auth/login/Login";
 import RootLayout from "./layout/RootLayout";
-import Home from "./routes/Home/Home";
-import Register from "./routes/Auth/Register";
-import Login from "./routes/Auth/Login";
-import ProtectedLayout from "./layout/ProtectedLayout";
-import Reports from "./routes/Reports/Reports";
-import Settings from "./routes/Settings/Settings";
-import Users from "./routes/Users/Users";
+import ProtectedLayout from "./layout/ProtectedRoutes";
+import Settings from "./routes/settings/Settings";
+import Reports from "./routes/reports/Reports";
+import BootstrapGate from "./layout/BootstrapGate";
+import Bootstrap from "./routes/initialize/Bootstrap";
+import { TicketProvider } from "./context/TicketContext";
+import { TabRouterProvider } from "./context/TabRouterContext";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
-        <Route element={<ProtectedLayout />}>
-          <Route index element={<Home />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="settings" element={<Settings />} />
+        <Route path="bootstrap" element={<Bootstrap />} />
+        <Route element={<BootstrapGate />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route element={<ProtectedLayout />}>
+            <Route index element={<Home />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="reports" element={<Reports />} />
+          </Route>
         </Route>
-        <Route path="users" element={<Users />} />
-        <Route path="login" element={<Login />} />
-      </Route>
-    )
+      </Route>,
+    ),
   );
-  return <RouterProvider router={router} />;
+  return (
+    <TicketProvider>
+      <TabRouterProvider>
+        <RouterProvider router={router} />
+      </TabRouterProvider>
+    </TicketProvider>
+  );
 };
 
 export default App;
