@@ -78,9 +78,11 @@ for eod in old_eods:
     old_total = to_int(eod.sub_total)
 
     mismatch = "YES" if old_total != new_total else "NO"
+    eod_date = eod.date
 
     results.append({
         "Ticket Number": ticket_number,
+        "Date": eod_date,
         "Old Total": old_total,
         "New Total": new_total,
         "Old Sales": old_sales_total,
