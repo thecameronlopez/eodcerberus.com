@@ -63,17 +63,14 @@ def delete_line_item(line_item_id):
     if not line_item:
         return jsonify(success=False, message="Line item not found"), 404
 
-    # Optional: prevent deleting if ticket/transaction date is finalized
-    # e.g., if line_item.transaction.posted_date < some_cutoff_date:
-    #     return jsonify(success=False, message="Cannot delete line item for closed date"), 403
-
     try:
         transaction = line_item.transaction
         ticket = transaction.ticket if transaction else None
-        
         transaction_id = line_item.transaction_id
+        
+        if transaction:
+            transaction.line_items.remove(line_item)
         db.session.delete(line_item)
-        db.session.flush()
         
         if transaction:
             transaction.compute_total()
