@@ -40,6 +40,7 @@ def delete_transaction(transaction_id):
     try:
         ticket = transaction.ticket
         db.session.delete(transaction)
+        db.session.flush()
         if ticket:
             ticket.compute_total()
             
@@ -72,6 +73,7 @@ def delete_line_item(line_item_id):
         
         transaction_id = line_item.transaction_id
         db.session.delete(line_item)
+        db.session.flush()
         
         if transaction:
             transaction.compute_total()
