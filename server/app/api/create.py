@@ -253,7 +253,7 @@ def add_transaction(ticket_id):
         line_item = LineItem(
             category=category,
             payment_type=payment_type,
-            unit_price=to_cents(li["unit_price"]),
+            unit_price=li["unit_price"],
             taxable=taxable,
             taxability_source=tax_source,
             tax_rate=location.current_tax_rate or 0,
