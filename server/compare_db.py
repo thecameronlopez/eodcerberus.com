@@ -137,7 +137,11 @@ for ticket_number, eod_rows in eods_by_ticket.items():
                 continue
             category = category_map[field]
             payment_type = PaymentTypeEnum.CASH  # default for audit
-            taxable, tax_source = determine_taxability(category, payment_type, loc)
+            taxable, tax_source = determine_taxability(
+                category=category, 
+                payment_type=payment_type, 
+                location=loc
+                )
             tx.line_items.append(LineItem(
                 category=category,
                 payment_type=payment_type,
@@ -155,7 +159,11 @@ for ticket_number, eod_rows in eods_by_ticket.items():
                 continue
             category = SalesCategoryEnum.LABOR
             payment_type = PaymentTypeEnum.CASH
-            taxable, tax_source = determine_taxability(category, payment_type, loc)
+            taxable, tax_source = determine_taxability(
+                category=category, 
+                payment_type=payment_type, 
+                location=loc
+                )
             tx.line_items.append(LineItem(
                 category=category,
                 payment_type=payment_type,
