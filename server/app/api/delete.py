@@ -39,8 +39,10 @@ def delete_transaction(transaction_id):
 
     try:
         ticket = transaction.ticket
+        
+        if ticket:
+            ticket.transactions.remove(transaction)
         db.session.delete(transaction)
-        db.session.flush()
         if ticket:
             ticket.compute_total()
             
