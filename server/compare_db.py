@@ -48,7 +48,7 @@ tickets_map = {t.ticket_number: t for t in new_tickets}
 
 for eod in old_eods:
     ticket_number = eod.ticket_number
-    trailing_0 = "YES" if len(str(ticket_number)) > 4 else "NO"
+    trailing_0 = "YES" if len(str(ticket_number)) == 5 else "NO"
     original_ticket_number = int(str(ticket_number)[:-1]) if trailing_0 == "YES" else ticket_number
 
     new_ticket = tickets_map.get(original_ticket_number)
