@@ -4,7 +4,7 @@ from app.models import User, Ticket, Transaction, LineItem, Location, TaxRate, D
 from app.models.services.tax_rules import determine_taxability
 from app.extensions import db
 from datetime import datetime, date as DTdate
-from app.utils.tools import to_int, finalize_ticket, finalize_transaction
+from app.utils.tools import to_int, to_cents, finalize_ticket, finalize_transaction
 from sqlalchemy import select
 
 creator = Blueprint("create", __name__)
@@ -253,7 +253,7 @@ def add_transaction(ticket_id):
         line_item = LineItem(
             category=category,
             payment_type=payment_type,
-            unit_price=to_int(li["unit_price"]),
+            unit_price=to_cents(li["unit_price"]),
             taxable=taxable,
             taxability_source=tax_source,
             tax_rate=location.current_tax_rate or 0,
