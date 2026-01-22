@@ -173,7 +173,7 @@ for ticket_number, eod_rows in eods_by_ticket.items():
                 tax_rate=loc.current_tax_rate or 0,
                 is_return=True
             ))
-
+        tx.compute_total()
         ticket.transactions.append(tx)
 
     # Compute totals
