@@ -16,6 +16,10 @@ export default defineConfig(({ mode }) => {
       }),
     ],
     server: {
+      host: true,
+      port: 5173,
+      cors: true,
+      allowedHosts: ["localhost", "127.0.0.1", "eodcerberus.dev"],
       proxy: {
         "/api": {
           target: env.SERVER_URL,

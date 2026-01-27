@@ -7,6 +7,7 @@ from .deductions import Deduction
 from .tax_rate import TaxRate
 from .transactions import Transaction
 from .location import Location
+from .tender import Tender
 
 
 

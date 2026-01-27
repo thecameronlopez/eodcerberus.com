@@ -1,0 +1,187 @@
+.ticketBox {
+  width: 80%;
+  margin: 2rem auto;
+}
+
+.ticketForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: 1rem;
+  display: grid;
+  grid-template-areas:
+    "a b b"
+    "c b b"
+    "d b b";
+}
+
+fieldset {
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+fieldset legend {
+  color: var(--linkText);
+}
+
+/* Ticket Meta Data */
+fieldset.ticketMeta {
+  grid-area: a;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* fieldset.ticketMeta > * {
+  border: 1px solid red;
+} */
+
+fieldset.ticketMeta input[type="date"] {
+  font-size: 18px !important;
+}
+
+fieldset.ticketMeta .ticketNumberInput {
+  display: flex;
+  flex-direction: column;
+  width: 12rem;
+}
+fieldset.ticketMeta .ticketNumberInput input {
+  font-size: 20px !important;
+}
+
+button.addLi,
+button.addTender {
+  border: none;
+  background-color: transparent;
+  padding: 0 10px;
+  text-decoration: underline;
+  color: var(--bannerBackground);
+}
+
+/* LINE ITEMS */
+
+fieldset.lineItems {
+  grid-area: b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lineItem {
+  position: relative;
+  padding: 10px;
+  border-bottom: 1px solid var(--bannerBackground);
+  border-left: 1px solid var(--bannerBackground);
+  border-radius: 6px;
+  padding-bottom: 10px;
+  display: grid;
+  grid-template-areas:
+    "a a a"
+    "b . c";
+  row-gap: 1rem;
+  width: 100%;
+}
+
+.lineItem .catSelect {
+  grid-area: a;
+}
+
+.lineItem .unitPrice {
+  grid-area: b;
+  background-color: var(--textPrimary);
+  font-size: 18px;
+}
+
+.lineItem .returnBox {
+  grid-area: c;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lineItem button.removeLi {
+  position: absolute;
+  background-color: transparent;
+  color: darkred;
+  border: none;
+  font-size: 1.4rem;
+  right: -6px;
+  top: -12px;
+}
+
+/* PAYMENTS */
+fieldset.payments {
+  grid-area: c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.tender {
+  position: relative;
+  padding: 10px;
+  border-bottom: 1px solid var(--bannerBackground);
+  border-right: 1px solid var(--bannerBackground);
+  border-radius: 6px;
+
+  display: grid;
+  grid-template-areas:
+    "a a a"
+    "b . c";
+  row-gap: 1rem;
+  width: 100%;
+}
+
+.tender .typeSelect {
+  grid-area: a;
+}
+
+.tender .paymentAmount {
+  grid-area: b;
+  background-color: var(--textPrimary);
+  font-size: 18px;
+}
+
+.tender button.removeTender {
+  position: absolute;
+  background-color: transparent;
+  color: darkred;
+  border: none;
+  font-size: 1.4rem;
+  right: -6px;
+  top: -12px;
+}
+
+/* SUMMARY */
+fieldset.summary {
+  grid-area: d;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-weight: 800;
+}
+
+fieldset.summary p.paidInFull {
+  color: green;
+}
+
+fieldset.summary p.balanceOwed {
+  color: darkred;
+}
+
+button.submitTicket {
+  font-size: 1.5rem;
+  align-self: center;
+  margin-top: 1rem;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 0;
+  width: 100%;
+}

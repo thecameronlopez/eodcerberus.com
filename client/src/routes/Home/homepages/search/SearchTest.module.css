@@ -1,0 +1,190 @@
+.ticketSearchPage {
+  width: 80%;
+  margin: 1rem auto;
+  max-width: 1400px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+/* .ticketSearchPage > * {
+  border: 1px solid red;
+} */
+
+.searchPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  min-height: 20rem;
+
+  border: 1px solid var(--buttonPrimary);
+  border-radius: 12px;
+  background-color: var(--textSecondary);
+  color: var(--buttonPrimary);
+}
+
+.searchPanel .ticketTotals {
+  margin-top: auto;
+}
+
+.ticketNumberInput {
+  display: flex;
+  flex-direction: column;
+}
+.ticketNumberInput > input {
+  background-color: var(--buttonPrimary);
+  color: var(--textPrimary);
+  font-size: 20px !important;
+  width: 70%;
+}
+
+/*------------Ticket controls------------*/
+.ticketControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 60%;
+  margin-block: 10px;
+}
+.ticketControls button {
+  border: none;
+  background-color: transparent;
+  font-size: 22px;
+}
+.ticketControls button.addTransaction {
+  color: green;
+}
+.ticketControls button.editTicket {
+  color: cyan;
+}
+.ticketControls button.deleteTicket {
+  color: darkred;
+}
+
+/*------------Ticket results------------*/
+.ticketResults {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+
+  /* padding: 0 1rem; */
+}
+
+.ticketResults h4 {
+  align-self: center;
+}
+
+/*------------Transaction Items------------*/
+.transaction {
+  border: 1px solid var(--buttonPrimary);
+  border-radius: 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 10px;
+
+  box-shadow: -1px 1px 4px #000;
+}
+
+/*------------Line Items------------*/
+.lineItem {
+  border-bottom: 2px solid var(--linkText);
+  border-right: 1px solid var(--linkText);
+  border-radius: 4px 0 8px 4px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
+
+  box-shadow: 1px 1px 3px #333;
+}
+
+.lineItem > p:first-child {
+  font-weight: 800;
+}
+
+.lineItemTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.lineItemTotal p {
+  font-weight: 800;
+}
+.lineItemTotal p span {
+  font-weight: 400;
+}
+
+/*------------Tenders------------*/
+.transactionTender {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+
+  border-radius: 6px;
+  background-color: var(--textSecondary);
+  color: var(--buttonPrimary);
+  padding: 6px 10px;
+
+  font-weight: bold;
+
+  box-shadow: inset -1px 1px 3px #333;
+}
+
+/*------------FORM------------*/
+.addTrannyForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.addTrannyForm fieldset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+button.addLineItem,
+button.addTender {
+  background-color: transparent;
+  border: none;
+  color: darkgreen;
+}
+
+.formTender {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+.formTender select {
+  font-size: unset;
+}
+
+.formLineItem {
+  position: relative;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.formTender button.removeTender,
+button.removeLineItem {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: red;
+}

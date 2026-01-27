@@ -6,7 +6,7 @@ from datetime import date as DTdate
 class Transaction(Base):
     __tablename__ = "transactions"
     
-    # Relationships
+    #-----------------------Relationships-------------------------
     ticket_id: Mapped[int] = mapped_column(ForeignKey("tickets.id"), nullable=False)
     ticket = relationship("Ticket", back_populates="transactions", lazy="selectin")
     
@@ -16,16 +16,16 @@ class Transaction(Base):
     location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
     location = relationship("Location", back_populates="transactions", lazy="selectin")
     
-    # Date of transaction
-    posted_date: Mapped[DTdate] = mapped_column(Date, nullable=False)
+    #---------------------Transaction Date-----------------------
+    posted_date: Mapped[DTdate] = mapped_column(Date, nullable=False, default=DTdate.today)
     
-    # Transaction Totals
+    #-------------------Transaction Totals (cents)--------------
     units: Mapped[int] = mapped_column(Integer, default=0) #how many line items
     subtotal: Mapped[int] = mapped_column(Integer, nullable=False, default=0) #before tax
     tax_total: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     total: Mapped[int] = mapped_column(Integer, nullable=False, default=0) #after tax    
     
-    # Children
+    #------------------------Children-------------------------------
     line_items = relationship(
         "LineItem",
         back_populates="transaction",
@@ -33,8 +33,17 @@ class Transaction(Base):
         lazy="selectin",
     )
     
-    # Compute totals based on line items
+    tenders = relationship(
+        "Tender",
+        back_populates="transaction",
+        cascade="all, delete-orphan",
+        lazy="selectin"
+    )
+    
+    
+    #------------------------Helpers-------------------------------
     def compute_total(self):
+        """ Compute subtotal, tax, and total from line items """
         self.units = len(self.line_items)
         
         self.subtotal = sum(
@@ -48,8 +57,24 @@ class Transaction(Base):
         )
         
         self.total = sum(li.signed_total for  li in self.line_items)
+        
+        
+    @property
+    def total_paid(self) -> int:
+        """ Sum of all tenders on this transaction """
+        return sum(t.amount for t in self.tenders or [])
     
+    @property
+    def balance_delta(self) -> int:
+        """ 
+        How this transaction affects the ticket balance.
+        Positive = customer owes more
+        Negative = Customer overpaid /credit
+        """
+        
+        return self.total - self.total_paid
     
+    #------------------------Serialize-------------------------------
     def serialize(self, include_relationships=False):
         data = super().serialize(include_relationships=include_relationships)
         
@@ -62,6 +87,7 @@ class Transaction(Base):
         
         if include_relationships:
             data["line_items"] = [li.serialize() for li in self.line_items]
+            data["tenders"] = [t.serialize() for t in self.tenders]
 
         
         return data

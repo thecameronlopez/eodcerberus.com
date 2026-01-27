@@ -8,32 +8,33 @@ from decimal import Decimal, ROUND_HALF_UP
 class LineItem(Base):
     __tablename__ = "line_items"
     
-    # Parent Transaction
+    # ------------------ Relationships ------------------
     transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id"), nullable=False)
     transaction = relationship("Transaction", back_populates="line_items", lazy="selectin")
     
-    # Classification
-    category: Mapped[SalesCategoryEnum] = mapped_column(SalesCategoryEnumSA, nullable=False)
-    payment_type: Mapped[PaymentTypeEnum] = mapped_column(PaymentTypeEnumSA, nullable=False)
+    # ------------------ Classification ------------------
+    category: Mapped[SalesCategoryEnum] = mapped_column(SalesCategoryEnumSA, nullable=False)    
     
-    # Pricing (in cents)
+    
+    # ------------------ Pricing (in cents) ------------------
     unit_price: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     
-    # Tax determination
+    # ------------------ Tax determination ------------------
     taxable: Mapped[bool] = mapped_column(Boolean, nullable=False)
     taxability_source: Mapped[TaxabilitySourceEnum] = mapped_column(TaxabilitySourceEnumSA, nullable=False)
+    tax_rate: Mapped[Decimal] = mapped_column(Numeric(5, 4), nullable=True)
     
-    # Tax calculations
-    tax_rate: Mapped[float] = mapped_column(Numeric(5, 4), nullable=True)
+    # ------------------ Computed values (in cents) ------------------
     tax_amount: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    
-    # Final Price (unit price + tax if taxable else unit_price)
     total: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     
-    # Flag for returns
+    # ------------------ Return flag ------------------
     is_return: Mapped[bool] = mapped_column(Boolean, default=False)
     
-    # Compute transaction sum
+    
+    
+    
+    # ------------------ Helpers ------------------
     @property
     def signed_total(self):
         """
@@ -42,7 +43,6 @@ class LineItem(Base):
         total = self.total or 0
         return -total if self.is_return else total
     
-    # Compute the line item total
     def compute_total(self):
         """ 
         Computes tax amount and total.
@@ -72,8 +72,8 @@ class LineItem(Base):
         
         data["tax_rate"] = float(self.tax_rate) * 100 if self.tax_rate else None
         data["is_return"] = self.is_return
-        data["payment_type"] = self.payment_type
-        data["category"] = self.category
+        data["sales_category"] = self.category.value
+        data["taxability_source"] = self.taxability_source.value
         
         return data
     

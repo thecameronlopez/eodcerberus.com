@@ -21,6 +21,7 @@ export const SALES_CATEGORY = {
   parts: "Parts",
   delivery: "Delivery",
   ebay_sale: "Ebay Sale",
+  layaway: "Layaway",
 };
 
 export const PAYMENT_TYPE = {
