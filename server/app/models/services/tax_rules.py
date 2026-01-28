@@ -20,6 +20,7 @@ SALES_CATEGORY_TAXABILITY = {
     SalesCategoryEnum.PARTS: True,
     SalesCategoryEnum.LABOR: True,
     SalesCategoryEnum.DIAGNOSTIC_FEE: True,
+    SalesCategoryEnum.IN_SHOP_REPAIR: True,
     SalesCategoryEnum.DELIVERY: True,
     SalesCategoryEnum.EXTENDED_WARRANTY: False,
     SalesCategoryEnum.EBAY_SALE: False,
