@@ -6,13 +6,25 @@ import redis
 load_dotenv()
 
 class Config:
+    #-------------------------------
+    # App Basics
+    #-------------------------------
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev_secret")
+    FLASK_ENV = os.environ.get("FLASK_ENV", "development")
+    DEBUG = os.environ.get("DEBUG", "True") == "True"
+    APP_NAME = os.environ.get("APP_NAME", "Cerberus")
+    
+    
+    #-------------------------------
+    # Database
+    #-------------------------------
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    FLASK_ENV = os.environ.get("FLASK_ENV", "development")
-    DEBUG = FLASK_ENV == "development"
+    SQLALCHEMY_ECHO = os.environ.get("SQLALCHEMY_ECHO", "False") == "True"
     
-    # Sessions
+    #-------------------------------
+    # Session
+    #-------------------------------
     SESSION_TYPE = "redis"
     SESSION_REDIS = redis.from_url(os.environ.get("REDIS_URL", "redis://localhost:6379"))
     SESSION_COOKIE_SAMESITE = "Lax"
@@ -20,13 +32,33 @@ class Config:
     SESSION_COOKIE_SECURE = FLASK_ENV == "production"   # only secure cookies in prod
     SESSION_COOKIE_HTTPONLY = True
     SESSION_USE_SIGNER = True
-    SESSION_KEY_PREFIX = "cerberus:"
+    SESSION_KEY_PREFIX = f"{APP_NAME.lower()}:"
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
     
     
+    #-------------------------------
     # CORS
+    #-------------------------------
     if FLASK_ENV == "production":
-        CORS_ORIGINS = ["https://mattsteamportal.com"]
+        CORS_ORIGINS = ["https://eodcerberus.com"]
     else:
-        CORS_ORIGINS = ["http://localhost:5173",  "http://192.168.1.205:5173",  "http://192.168.1.248:5173", "http://192.168.1.165:5173", "http://192.168.1.181:5173"]  # 0: local; 1: back shop; 2: main office; 3: home pi; 4: home laptop;
+        CORS_ORIGINS = [
+            "http://localhost:5173",  
+            "http://192.168.1.205:5173",  
+            "http://192.168.1.248:5173", 
+            "http://192.168.1.165:5173", 
+            "http://192.168.1.181:5173"
+            ]  
     CORS_SUPPORTS_CREDENTIALS = True
+    
+    
+    #-------------------------------
+    # Mail
+    #-------------------------------
+    MAIL_SUPPRESS_SEND = os.environ.get("MAIL_SUPPRESS_SEND", "False") == "True"
+    
+    #-------------------------------
+    # Feature Flags
+    #-------------------------------
+    FEATURE_X_ENABLED = os.environ.get("FEATURE_X_ENABLED", "False") == "True"
+    LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
