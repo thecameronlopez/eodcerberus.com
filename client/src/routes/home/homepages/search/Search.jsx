@@ -46,7 +46,7 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
     user_id: user.id,
     line_items: [
       {
-        sales_category: "",
+        category: "",
         payment_type: "",
         amount: "",
         date: "",
@@ -164,7 +164,7 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
         location_id: user.location_id,
         line_items: [
           {
-            sales_category: "",
+            category: "",
             payment_type: "",
             amount: "",
             date: "",

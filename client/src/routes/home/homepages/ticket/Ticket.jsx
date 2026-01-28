@@ -91,7 +91,7 @@ const Ticket = () => {
       user_id: Number(formData.user_id),
       date: formData.date,
       line_items: formData.line_items.map((li) => ({
-        category: li.sales_category,
+        category: li.category,
         payment_type: li.payment_type,
         unit_price: Number(li.unit_price),
         is_return: li.is_return,
@@ -195,11 +195,11 @@ const Ticket = () => {
           {formData.line_items.map((li, index) => (
             <div key={index} className={styles.lineItem}>
               <div>
-                <label htmlFor="sales_category">Sales Category</label>
+                <label htmlFor="category">Sales Category</label>
                 <select
-                  value={li.sales_category}
+                  value={li.category}
                   onChange={(e) =>
-                    updateLineItem(index, "sales_category", e.target.value)
+                    updateLineItem(index, "category", e.target.value)
                   }
                   required
                 >
