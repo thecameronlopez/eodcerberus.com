@@ -295,7 +295,7 @@ const SearchTest = ({ ticketNumber: initialTicketNumber }) => {
                 Taxes Applied: <span>{formatCurrency(ticket.tax_total)}</span>
               </p>
               <p>
-                Total: <span>{formatCurrency(ticket.total)}</span>
+                Total Owed: <span>{formatCurrency(ticket.balance_owed)}</span>
               </p>
             </div>
           </>

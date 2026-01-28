@@ -21,7 +21,6 @@ export const SALES_CATEGORY = {
   parts: "Parts",
   delivery: "Delivery",
   ebay_sale: "Ebay Sale",
-  layaway: "Layaway",
 };
 
 export const TAX_DETERMINATION = {
@@ -34,7 +33,6 @@ export const TAX_DETERMINATION = {
   parts: true,
   delivery: true,
   ebay_sale: false,
-  layaway: true,
 };
 
 export const PAYMENT_TYPE = {

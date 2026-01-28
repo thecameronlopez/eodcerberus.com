@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import login_required, current_user
-from app.models import User, Ticket, Transaction, Tender, LineItem, Location, TaxRate, Deduction, SalesCategoryEnum, TaxabilitySourceEnum, PaymentTypeEnum
+from app.models import User, Ticket, Transaction, Tender, LineItem, LineItemTender, Location, TaxRate, Deduction, SalesCategoryEnum, TaxabilitySourceEnum, PaymentTypeEnum
 from app.models.services.tax_rules import determine_taxability
 from app.extensions import db
 from datetime import datetime, date as DTdate
 from app.utils.tools import to_int, finalize_ticket, finalize_transaction
 from sqlalchemy import select
+from app.services.allocations import allocate_tender_to_line_items
 
 creator = Blueprint("create", __name__)
 
@@ -81,7 +82,8 @@ def create_ticket():
             {
                 "category": "NEW_APPLIANCE",
                 "unit_price": 50000,
-                "is_return": false
+                "is_return": false,
+                "taxable": true
             }
         ],
         "tenders": [
@@ -137,6 +139,7 @@ def create_ticket():
     
     
     #--------------Create Line Items and attach-------------
+    line_items = []
     for li in data.get("line_items", []):
         try:
             category = SalesCategoryEnum(li["category"])
@@ -156,6 +159,7 @@ def create_ticket():
         #attach line items to transaction
         line_item.compute_total()
         transaction.line_items.append(line_item)
+        line_items.append(line_item)
     # attach it all to the ticket
     transaction.compute_total()
     ticket.transactions.append(transaction)
@@ -166,23 +170,24 @@ def create_ticket():
     tender_data = data.get("tenders", [])
     
     if not tender_data:
+        tender_data = [{"payment_type": PaymentTypeEnum.CASH.value, "amount": transaction.total}]
+        
+    for t in tender_data:
+        try:
+            payment_type = PaymentTypeEnum(t["payment_type"])
+        except ValueError:
+            return jsonify(success=False, message="Invalid payment type"), 400
+        
         tender = Tender(
-            payment_type=PaymentTypeEnum.CASH,
-            amount=transaction.total
+            payment_type=payment_type,
+            amount=to_int(t["amount"])
         )
         transaction.tenders.append(tender)
-    else:
-        for t in tender_data:
-            try:
-                payment_type = PaymentTypeEnum(t["payment_type"])
-            except ValueError:
-                return jsonify(success=False, message="Invalid payment type"), 400
-            
-            tender = Tender(
-                payment_type=payment_type,
-                amount=int(t["amount"])
-            )
-            transaction.tenders.append(tender)
+        
+        #------------------Allocate this tender across line items-----------------
+        for tender in transaction.tenders:
+            allocations = allocate_tender_to_line_items(transaction, tender)
+            db.session.add_all(allocations)
         
     
     #----------------Compute totals and open balance--------------------

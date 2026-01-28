@@ -8,6 +8,7 @@ from .tax_rate import TaxRate
 from .transactions import Transaction
 from .location import Location
 from .tender import Tender
+from .line_item_tender import LineItemTender
 
 
 

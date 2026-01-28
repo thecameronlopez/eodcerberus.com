@@ -1,4 +1,4 @@
-from decimal import Decimal, ROUND_HALF_UP
+
 
 def to_int(value):
     """Safely convert any incoming value to int. Fallback = 0."""
@@ -15,8 +15,10 @@ def finalize_ticket(ticket):
         tx.compute_total()
     ticket.compute_total()
     
-
+    
 def finalize_transaction(transaction):
     for li in transaction.line_items:
         li.compute_total()
     transaction.compute_total()
+    
+    

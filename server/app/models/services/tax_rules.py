@@ -24,7 +24,6 @@ SALES_CATEGORY_TAXABILITY = {
     SalesCategoryEnum.DELIVERY: True,
     SalesCategoryEnum.EXTENDED_WARRANTY: False,
     SalesCategoryEnum.EBAY_SALE: False,
-    SalesCategoryEnum.LAYAWAYS: False,
 }
 
 

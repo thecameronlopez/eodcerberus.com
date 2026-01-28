@@ -18,6 +18,13 @@ class Tender(Base):
         lazy="selectin"
     )
     
+    allocations = relationship(
+        "LineItemTender",
+        back_populates="tender",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    
     # ------------------ Tender Fields ------------------    
     payment_type: Mapped[PaymentTypeEnum] = mapped_column(
         PaymentTypeEnumSA, 
@@ -28,6 +35,7 @@ class Tender(Base):
         nullable=False, 
         default=0
     )
+    
     
     # ------------------ Serialize ------------------
     def serialize(self, include_relationships=False):

@@ -72,7 +72,6 @@ class SalesCategoryEnum(str, Enum):
     PARTS = "parts"
     DELIVERY = "delivery"
     EBAY_SALE = "ebay_sale"
-    LAYAWAYS = "layaway"
     
     def __str__(self):
         return self.value

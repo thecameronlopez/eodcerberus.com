@@ -40,6 +40,8 @@ class Transaction(Base):
         lazy="selectin"
     )
     
+
+    
     
     #------------------------Helpers-------------------------------
     def compute_total(self):
@@ -56,7 +58,9 @@ class Transaction(Base):
             for li in self.line_items
         )
         
-        self.total = sum(li.signed_total for  li in self.line_items)
+        self.total = sum(li.signed_total for li in self.line_items)
+        
+        total_paid = sum(t.amount for t in self.tenders or [])
         
         
     @property
@@ -77,19 +81,37 @@ class Transaction(Base):
     #------------------------Serialize-------------------------------
     def serialize(self, include_relationships=False):
         data = super().serialize(include_relationships=include_relationships)
-        
-        data["units"] = self.units
-        data["subtotal"] = self.subtotal
-        data["tax_total"] = self.tax_total
-        data["total"] = self.total 
-        
-        data["posted_date"] = self.posted_date.isoformat()
-        
-        if include_relationships:
-            data["line_items"] = [li.serialize() for li in self.line_items]
-            data["tenders"] = [t.serialize() for t in self.tenders]
 
-        
+        data.update({
+            "units": self.units,
+            "subtotal": self.subtotal,
+            "tax_total": self.tax_total,
+            "total": self.total,
+            "posted_date": self.posted_date.isoformat(),
+            "total_paid": self.total_paid,
+            "balance_delta": self.balance_delta
+        })
+
+        if include_relationships:
+            # Line items
+            data["line_items"] = [li.serialize(include_relationships=True) for li in self.line_items]
+
+            # Tenders
+            data["tenders"] = [t.serialize(include_relationships=True) for t in self.tenders]
+
+            # Line item allocations per tender
+            allocations = []
+            for lit in getattr(self, "line_item_tenders", []):
+                allocations.append({
+                    "line_item_id": lit.line_item_id,
+                    "tender_id": lit.tender_id,
+                    "applied_pretax": lit.applied_pretax,
+                    "applied_tax": lit.applied_tax,
+                    "applied_total": lit.applied_total
+                })
+            data["line_item_tenders"] = allocations
+
         return data
+
     
     

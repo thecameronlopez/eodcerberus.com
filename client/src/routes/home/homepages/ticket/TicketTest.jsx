@@ -41,9 +41,9 @@ const TicketTest = () => {
       {
         payment_type: "",
         amount: 0,
+        is_layaway: false,
       },
     ],
-    split_tender: false,
   });
 
   /* ------------------ Line Items ------------------ */
@@ -93,6 +93,7 @@ const TicketTest = () => {
         {
           payment_type: "",
           amount: 0,
+          is_layaway: false,
         },
       ],
     }));
@@ -126,6 +127,27 @@ const TicketTest = () => {
       tax: tax * sign,
       total: total * sign,
     };
+  };
+
+  const computeLayawayPreTax = (desiredTotalCents, taxRate) => {
+    return Math.round(desiredTotalCents / (1 + taxRate));
+  };
+
+  const handleTenderAmountChange = (index, desiredTotalCents) => {
+    setFormData((prev) => {
+      const tenders = [...prev, tenders];
+      const t = { ...tenders[index] };
+      const taxRate = user.location.current_tax_rate;
+
+      if (t.is_layaway) {
+        t.amount = computeLayawayPreTax(desiredTotalCents, taxRate);
+      } else {
+        t.amount = desiredTotalCents;
+      }
+
+      tenders[index] = t;
+      return { ...prev, tenders };
+    });
   };
 
   const lineItemTotals = useMemo(() => {
@@ -203,9 +225,9 @@ const TicketTest = () => {
           {
             payment_type: "",
             amount_cents: 0,
+            is_layaway: false,
           },
         ],
-        split_tender: false,
       });
     } catch (error) {
       console.error("[FORM SUBMISSION ERROR]: ", error);
@@ -333,7 +355,7 @@ const TicketTest = () => {
           ))}
         </fieldset>
 
-        {/* ---------------- Payment ---------------- */}
+        {/* ---------------- Tenders ---------------- */}
         <fieldset className={styles.payments}>
           <legend>
             <button
@@ -369,12 +391,27 @@ const TicketTest = () => {
                 <option value="">--payment type--</option>
                 {renderOptions(PAYMENT_TYPE)}
               </select>
-
-              <MoneyField
-                value={t.amount}
-                onChange={(e) => updateTender(index, "amount", e.target.value)}
-                className={styles.paymentAmount}
-              />
+              <div className={styles.layawayBox}>
+                <label htmlFor={`is_layaway_${index}`}>
+                  Layaway
+                  <input
+                    type="checkbox"
+                    name="is_layaway"
+                    id={`is_layaway_${index}`}
+                    checked={t.is_layaway}
+                    onChange={(e) =>
+                      updateTender(index, "is_layaway", e.target.checked)
+                    }
+                  />
+                </label>
+                <MoneyField
+                  value={t.amount}
+                  onChange={(e) =>
+                    updateTender(index, "amount", e.target.value)
+                  }
+                  className={styles.paymentAmount}
+                />
+              </div>
             </div>
           ))}
         </fieldset>

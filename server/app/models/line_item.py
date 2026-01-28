@@ -11,6 +11,14 @@ class LineItem(Base):
     # ------------------ Relationships ------------------
     transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id"), nullable=False)
     transaction = relationship("Transaction", back_populates="line_items", lazy="selectin")
+    payments = relationship(
+        "LineItemTender",
+        back_populates="line_item",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        )
+    
+    
     
     # ------------------ Classification ------------------
     category: Mapped[SalesCategoryEnum] = mapped_column(SalesCategoryEnumSA, nullable=False)    

@@ -96,6 +96,7 @@ fieldset.lineItems {
 .liCheckBoxes {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 5px;
 }
 .liCheckBoxes label input[type="checkbox"] {
@@ -153,12 +154,24 @@ fieldset.payments {
 
 .tender .typeSelect {
   grid-area: a;
+  font-size: 18px !important;
 }
 
 .tender .paymentAmount {
   grid-area: b;
   background-color: var(--textPrimary);
   font-size: 18px;
+}
+
+.tender .layawayBox {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.tender .layawayBox label {
+  display: flex;
+  gap: 5px;
 }
 
 .tender button.removeTender {
