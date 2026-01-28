@@ -1,7 +1,11 @@
 import styles from "./TicketTest.module.css";
 import { useAuth } from "../../../../context/AuthContext";
 import React, { useMemo, useState } from "react";
-import { SALES_CATEGORY, PAYMENT_TYPE } from "../../../../utils/enums";
+import {
+  SALES_CATEGORY,
+  PAYMENT_TYPE,
+  TAX_DETERMINATION,
+} from "../../../../utils/enums";
 import {
   renderOptions,
   getTodayLocalDate,
@@ -20,6 +24,7 @@ import toast from "react-hot-toast";
 
 const TicketTest = () => {
   const { user } = useAuth();
+  console.log(user.location);
 
   const [formData, setFormData] = useState({
     ticket_number: "",
@@ -27,8 +32,9 @@ const TicketTest = () => {
     line_items: [
       {
         category: "",
-        unit_price_cents: 0,
+        unit_price: 0,
         is_return: false,
+        taxable: true,
       },
     ],
     tenders: [
@@ -48,8 +54,9 @@ const TicketTest = () => {
         ...prev.line_items,
         {
           category: "",
-          unit_price_cents: 0,
+          unit_price: 0,
           is_return: false,
+          taxable: true,
         },
       ],
     }));
@@ -61,6 +68,13 @@ const TicketTest = () => {
       items[index] = { ...items[index], [field]: value };
       return { ...prev, line_items: items };
     });
+  };
+
+  const handleCategoryChange = (index, category) => {
+    const defaultTaxable = TAX_DETERMINATION[category] ?? true;
+
+    updateLineItem(index, "category", category);
+    updateLineItem(index, "taxable", defaultTaxable);
   };
 
   const removeLineItem = (index) => {
@@ -100,12 +114,37 @@ const TicketTest = () => {
   };
 
   /* ------------------ Math (cents only) ------------------ */
+  const computeLineItemTotals = (li, taxRate) => {
+    const preTax = Number(li.unit_price) || 0;
+    const tax = li.taxable ? Math.round(preTax * taxRate) : 0;
+    const total = preTax + tax;
+
+    const sign = li.is_return ? -1 : 1;
+
+    return {
+      pretax: preTax * sign,
+      tax: tax * sign,
+      total: total * sign,
+    };
+  };
+
+  const lineItemTotals = useMemo(() => {
+    const taxRate = user.location.current_tax_rate;
+
+    return formData.line_items.map((li) => computeLineItemTotals(li, taxRate));
+  }, [formData.line_items, user.location.current_tax_rate]);
+
   const subtotalCents = useMemo(() => {
-    return formData.line_items.reduce((sum, li) => {
-      const price = Number(li.unit_price) || 0;
-      return li.is_return ? sum - price : sum + price;
-    }, 0);
-  }, [formData.line_items]);
+    return lineItemTotals.reduce((sum, li) => sum + li.pretax, 0);
+  }, [lineItemTotals]);
+
+  const taxTotalCents = useMemo(() => {
+    return lineItemTotals.reduce((sum, li) => sum + li.tax, 0);
+  }, [lineItemTotals]);
+
+  const totalCents = useMemo(() => {
+    return lineItemTotals.reduce((sum, li) => sum + li.total, 0);
+  }, [lineItemTotals]);
 
   const totalPaidCents = useMemo(() => {
     return formData.tenders.reduce(
@@ -114,7 +153,7 @@ const TicketTest = () => {
     );
   }, [formData.tenders]);
 
-  const balanceOwedCents = subtotalCents - totalPaidCents;
+  const balanceOwedCents = totalCents - totalPaidCents;
 
   const isUnderpaid = balanceOwedCents > 0;
   const isOverpaid = balanceOwedCents < 0;
@@ -156,7 +195,7 @@ const TicketTest = () => {
         line_items: [
           {
             category: "",
-            unit_price_cents: 0,
+            unit_price: 0,
             is_return: false,
           },
         ],
@@ -230,33 +269,66 @@ const TicketTest = () => {
 
               <select
                 value={li.category}
-                onChange={(e) =>
-                  updateLineItem(index, "category", e.target.value)
-                }
+                onChange={(e) => handleCategoryChange(index, e.target.value)}
                 className={styles.catSelect}
               >
                 <option value="">--category--</option>
                 {renderOptions(SALES_CATEGORY)}
               </select>
-
-              <MoneyField
-                value={li.unit_price}
-                onChange={(e) =>
-                  updateLineItem(index, "unit_price", e.target.value)
-                }
-                className={styles.unitPrice}
-              />
-
-              <label className={styles.returnBox}>
-                Return
-                <input
-                  type="checkbox"
-                  checked={li.is_return}
-                  onChange={(e) =>
-                    updateLineItem(index, "is_return", e.target.checked)
-                  }
-                />
-              </label>
+              {li.category && (
+                <>
+                  <div className={styles.liPriceBox}>
+                    <div className={styles.liCheckBoxes}>
+                      <label htmlFor={`taxable-${index}`}>
+                        Taxable
+                        <input
+                          type="checkbox"
+                          name="taxable"
+                          id={`taxable-${index}`}
+                          checked={li.taxable}
+                          onChange={(e) =>
+                            updateLineItem(index, "taxable", e.target.checked)
+                          }
+                        />
+                      </label>
+                      <label htmlFor={`is_return-${index}`}>
+                        Return
+                        <input
+                          type="checkbox"
+                          name="is_return"
+                          id={`is_return-${index}`}
+                          checked={li.is_return}
+                          onChange={(e) =>
+                            updateLineItem(index, "is_return", e.target.checked)
+                          }
+                        />
+                      </label>
+                    </div>
+                    <div className={styles.liUnitPrice}>
+                      <label htmlFor="unit_price">Unit Price</label>
+                      <MoneyField
+                        value={li.unit_price}
+                        onChange={(e) =>
+                          updateLineItem(index, "unit_price", e.target.value)
+                        }
+                        className={styles.unitPrice}
+                      />
+                    </div>
+                    <div className={styles.liTotals}>
+                      <p>
+                        Tax:{" "}
+                        <span>{formatCurrency(lineItemTotals[index].tax)}</span>
+                      </p>
+                      <p>
+                        Total:{" "}
+                        <span>
+                          {formatCurrency(lineItemTotals[index].total)}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </fieldset>
@@ -310,8 +382,11 @@ const TicketTest = () => {
         {/* ---------------- Totals ---------------- */}
         <fieldset className={styles.summary}>
           <legend>Summary</legend>
-          <p>Subtotal: ${(subtotalCents / 100).toFixed(2)}</p>
-          <p>Total Paid: ${(totalPaidCents / 100).toFixed(2)}</p>
+          <p>Subtotal: {formatCurrency(subtotalCents)}</p>
+          <p>Taxes: {formatCurrency(taxTotalCents)}</p>
+          <p>Total: {formatCurrency(totalCents)}</p>
+          <br />
+          <p>Total Paid: {formatCurrency(totalPaidCents)}</p>
 
           {isOverpaid && (
             <p>Change Due: ${Math.abs(balanceOwedCents / 100).toFixed(2)}</p>

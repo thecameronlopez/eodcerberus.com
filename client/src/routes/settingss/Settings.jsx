@@ -2,7 +2,6 @@ import UserBar from "../../components/userbar/UserBar";
 import { useAuth } from "../../context/AuthContext";
 import Locations from "./settingspages/locations/Locations";
 import Users from "./settingspages/users/Users";
-import styles from "./Settings.module.css";
 import React, { useState } from "react";
 import { useTabRouter } from "../../context/TabRouterContext";
 

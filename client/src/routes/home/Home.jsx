@@ -1,4 +1,4 @@
-import styles from "./Home.module.css";
+// import styles from "./Home.module.css";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import UserBar from "../../components/userbar/UserBar";
@@ -42,7 +42,7 @@ const Home = () => {
   const SelectedComponent = PAGES[activeTab];
 
   return (
-    <div className={styles.homeContainer}>
+    <div>
       <UserBar pages={Object.keys(PAGES)} section={"home"} />
       <SelectedComponent
         setTicket={setTicket}

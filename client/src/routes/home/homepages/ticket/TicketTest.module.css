@@ -67,21 +67,18 @@ fieldset.lineItems {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .lineItem {
   position: relative;
   padding: 10px;
-  border-bottom: 1px solid var(--bannerBackground);
-  border-left: 1px solid var(--bannerBackground);
+  border: 1px solid var(--bannerBackground);
   border-radius: 6px;
-  padding-bottom: 10px;
-  display: grid;
-  grid-template-areas:
-    "a a a"
-    "b . c";
-  row-gap: 1rem;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
   width: 100%;
 }
 
@@ -89,18 +86,36 @@ fieldset.lineItems {
   grid-area: a;
 }
 
-.lineItem .unitPrice {
+.lineItem .liPriceBox {
   grid-area: b;
-  background-color: var(--textPrimary);
-  font-size: 18px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
 }
 
-.lineItem .returnBox {
-  grid-area: c;
-  justify-self: end;
+.liCheckBoxes {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 5px;
+}
+.liCheckBoxes label input[type="checkbox"] {
+  margin-left: 10px;
+}
+
+.liUnitPrice {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2rem;
+}
+.liUnitPrice label {
+  font-size: 14px;
+}
+.liUnitPrice > input {
+  font-size: 18px !important;
+}
+
+.liTotals {
+  margin-left: auto;
 }
 
 .lineItem button.removeLi {
