@@ -20,6 +20,7 @@ SALES_CATEGORY_TAXABILITY = {
     SalesCategoryEnum.PARTS: True,
     SalesCategoryEnum.LABOR: True,
     SalesCategoryEnum.DIAGNOSTIC_FEE: True,
+    SalesCategoryEnum.IN_SHOP_REPAIR: True,
     SalesCategoryEnum.DELIVERY: True,
     SalesCategoryEnum.EXTENDED_WARRANTY: False,
     SalesCategoryEnum.EBAY_SALE: False,
@@ -27,11 +28,13 @@ SALES_CATEGORY_TAXABILITY = {
 }
 
 
-def determine_taxability(*, category, location=None):
+def determine_taxability(*, category):
     """
     Returns:
         (taxable: bool, source: TaxabilitySourceEnum)
     """
+    
+    #Override taxable for Acima payments.
 
     # Category default
     taxable = SALES_CATEGORY_TAXABILITY.get(category, False)

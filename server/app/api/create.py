@@ -143,16 +143,12 @@ def create_ticket():
         except ValueError:
             return jsonify(success=False, message="Invalid category"), 400
         
-        taxable, tax_source = determine_taxability(
-            category=category,
-            location=location
-        )
         
         line_item = LineItem(
             category=category,
             unit_price=to_int(li["unit_price"]),
-            taxable=taxable,
-            taxability_source=tax_source,
+            taxable=bool(li.get("taxable", True)),
+            taxability_source=TaxabilitySourceEnum.MANUAL_OVERRIDE,
             tax_rate=location.current_tax_rate or 0,
             is_return=bool(li.get("is_return", False))
         )

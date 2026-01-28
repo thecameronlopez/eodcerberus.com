@@ -24,6 +24,19 @@ export const SALES_CATEGORY = {
   layaway: "Layaway",
 };
 
+export const TAX_DETERMINATION = {
+  new_appliance: true,
+  used_appliance: true,
+  extended_warranty: false,
+  diagnostic_fee: true,
+  in_shop_repair: true,
+  labor: true,
+  parts: true,
+  delivery: true,
+  ebay_sale: false,
+  layaway: true,
+};
+
 export const PAYMENT_TYPE = {
   cash: "Cash",
   card: "Card",
