@@ -2,13 +2,16 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
-def setup_logger(app_name: str = "cerberus", log_level=logging.INFO):
+def setup_logger(app_name: str = "cerberus"):
     """Configure and return an app wide logger here"""
-    logger = logging.getLogger(app_name)
+    logger = logging.getLogger(app_name.lower())
     
     if logger.hasHandlers():
         return logger
     
+    # Read log level from .env
+    log_level_name = os.environ.get("LOG_LEVEL", "INFO").upper()
+    log_level = getattr(logging, log_level_name, logging.INFO)
     logger.setLevel(log_level)
     
     # Ensure log directory exists
@@ -17,7 +20,7 @@ def setup_logger(app_name: str = "cerberus", log_level=logging.INFO):
     
     #Handlers
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(log_level)
     
     file_handler = RotatingFileHandler(log_path, maxBytes=2_000_000, backupCount=5)
     file_handler.setLevel(logging.DEBUG)
