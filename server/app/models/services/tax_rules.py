@@ -27,11 +27,14 @@ SALES_CATEGORY_TAXABILITY = {
 }
 
 
-def determine_taxability(*, category, location):
+def determine_taxability(*, category, payment_type, location):
     """
     Returns:
         (taxable: bool, source: TaxabilitySourceEnum)
     """
+    
+    if payment_type == PaymentTypeEnum.ACIMA:
+        return False, TaxabilitySourceEnum.PAYMENT_TYPE
 
     # Category default
     taxable = SALES_CATEGORY_TAXABILITY.get(category, False)

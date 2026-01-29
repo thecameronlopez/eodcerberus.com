@@ -143,6 +143,7 @@ def create_ticket():
 
         taxable, tax_source = determine_taxability(
             category=category,
+            payment_type=payment_type,
             location=location
         )
 
