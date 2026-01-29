@@ -1,0 +1,21 @@
+SALES_CATEGORIES = [
+    "NEW_APPLIANCE",
+    "USED_APPLIANCE",
+    "EXTENDED_WARRANTY",
+    "DIAGNOSTIC_FEE",
+    "IN_SHOP_REPAIR",
+    "LABOR",
+    "PARTS",
+    "DELIVERY",
+    "EBAY_SALE"
+]
+
+PAYMENT_TYPES = [
+    "CASH",
+    "CARD",
+    "CHECK",
+    "EBAY_PAYMENT",
+    "STRIPE_PAYMENT",
+    "ACIMA",
+    "TOWER_LOAN"
+]

@@ -1,5 +1,4 @@
 from .base import Base
-from .enums import DepartmentEnum, LocationEnum, SalesCategoryEnum, PaymentTypeEnum, TaxabilitySourceEnum
 from .line_item import LineItem
 from .ticket import Ticket
 from .users import User
@@ -9,14 +8,8 @@ from .transactions import Transaction
 from .location import Location
 from .tender import Tender
 from .line_item_tender import LineItemTender
+from .lookups import SalesCategory, PaymentType, Department
+from .sales_day import SalesDay
 
 
 
-# custom base requires unique db creation in the flask shell
-#from app import create_app
-#from app.extensions import db
-#from app.models.base import Base
-#
-#app = create_app()
-#with app.app_context():
-#   Base.metadata.create_all(bind=db.engine)

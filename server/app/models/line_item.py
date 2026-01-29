@@ -1,88 +1,46 @@
+# app/models/line_item.py
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Boolean, ForeignKey, Date, Numeric, String, event
+from sqlalchemy import Integer, Boolean, ForeignKey, Numeric, String
 from .base import Base
-from .enums import SalesCategoryEnumSA, PaymentTypeEnumSA, ProductCategoryEnumSA, TaxabilitySourceEnumSA, ProductCategoryEnum, SalesCategoryEnum, PaymentTypeEnum, TaxabilitySourceEnum
-from datetime import date as DTdate
 from decimal import Decimal, ROUND_HALF_UP
 
 class LineItem(Base):
     __tablename__ = "line_items"
     
-    # ------------------ Relationships ------------------
     transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id"), nullable=False)
-    transaction = relationship("Transaction", back_populates="line_items", lazy="selectin")
-    payments = relationship(
-        "LineItemTender",
-        back_populates="line_item",
-        cascade="all, delete-orphan",
-        lazy="selectin",
-        )
+    category_id: Mapped[int] = mapped_column(ForeignKey("sales_categories.id"), nullable=False)
     
+    unit_price: Mapped[int] = mapped_column(Integer, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, default=1)
     
-    
-    # ------------------ Classification ------------------
-    category: Mapped[SalesCategoryEnum] = mapped_column(SalesCategoryEnumSA, nullable=False)    
-    
-    
-    # ------------------ Pricing (in cents) ------------------
-    unit_price: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    
-    # ------------------ Tax determination ------------------
     taxable: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    taxability_source: Mapped[TaxabilitySourceEnum] = mapped_column(TaxabilitySourceEnumSA, nullable=False)
     tax_rate: Mapped[Decimal] = mapped_column(Numeric(5, 4), nullable=True)
+    tax_amount: Mapped[int] = mapped_column(Integer, default=0)
+    total: Mapped[int] = mapped_column(Integer, default=0)
     
-    # ------------------ Computed values (in cents) ------------------
-    tax_amount: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    total: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    
-    # ------------------ Return flag ------------------
     is_return: Mapped[bool] = mapped_column(Boolean, default=False)
     
+    # ---------------- Relationships ----------------
+    transaction = relationship("Transaction", back_populates="line_items", lazy="joined")
+    category = relationship("SalesCategory", lazy="joined")
+    allocations = relationship("LineItemTender", back_populates="line_item", cascade="all, delete-orphan")
     
-    
-    
-    # ------------------ Helpers ------------------
-    @property
-    def signed_total(self):
-        """
-        Returns negative total for returns, and positive total for sales.
-        """
-        total = self.total or 0
-        return -total if self.is_return else total
-    
+    # ---------------- Helpers ----------------
     def compute_total(self):
-        """ 
-        Computes tax amount and total.
-        Assumes unit_price, taxable, tax_rate are already set
-        """
-        unit_price = Decimal(self.unit_price or 0)
-        tax_rate = Decimal(str(self.tax_rate or 0))
-        
-        if self.taxable:
-            raw_tax = unit_price * tax_rate
-            self.tax_amount = int(
-                raw_tax.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
-            )
-        else:
-            self.tax_amount = 0
-        
-        self.total = int(unit_price) + self.tax_amount        
+        qty_price = self.unit_price * self.quantity
+        tax_amt = Decimal(qty_price) * Decimal(self.tax_rate or 0)
+        self.tax_amount = int(tax_amt.quantize(Decimal("1"), rounding=ROUND_HALF_UP)) if self.taxable else 0
+        self.total = qty_price + self.tax_amount
+        if self.is_return:
+            self.total = -self.total
+            
+            
+    @property
+    def paid_total(self):
+        return sum(t.applied_total for t in self.tenders)
     
-    
-    ###
-    def serialize(self, include_relationships=False):
-        data = super().serialize(include_relationships=include_relationships)
-        
-        data["unit_price"] = self.unit_price 
-        data["tax_amount"] = self.tax_amount
-        data["total"] = self.total
-        
-        data["tax_rate"] = float(self.tax_rate) * 100 if self.tax_rate else None
-        data["is_return"] = self.is_return
-        data["sales_category"] = self.category.value
-        data["taxability_source"] = self.taxability_source.value
-        
-        return data
+    @property
+    def remaining_total(self):
+        return self.total - self.paid_total
     
     

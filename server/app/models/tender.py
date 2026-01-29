@@ -1,45 +1,18 @@
+# app/models/tender.py
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Date, Boolean, ForeignKey, BigInteger, event
+from sqlalchemy import Integer, ForeignKey
 from .base import Base
-from datetime import date as DTdate
-from .enums import PaymentTypeEnum, PaymentTypeEnumSA
 
 class Tender(Base):
     __tablename__ = "tenders"
     
-    # ------------------ Relationships ------------------
-    transaction_id: Mapped[int] = mapped_column(
-        ForeignKey("transactions.id"), 
-        nullable=False
-    )
-    transaction = relationship(
-        "Transaction", 
-        back_populates="tenders", 
-        lazy="selectin"
-    )
+    transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id"), nullable=False)
+    payment_type_id: Mapped[int] = mapped_column(ForeignKey("payment_types.id"), nullable=False)
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)
     
-    allocations = relationship(
-        "LineItemTender",
-        back_populates="tender",
-        cascade="all, delete-orphan",
-        lazy="selectin",
-    )
+    # ---------------- Relationships ----------------
+    transaction = relationship("Transaction", back_populates="tenders", lazy="joined")
+    payment_type = relationship("PaymentType", lazy="joined")
+    allocations = relationship("LineItemTender", back_populates="tender", cascade="all, delete-orphan")
     
-    # ------------------ Tender Fields ------------------    
-    payment_type: Mapped[PaymentTypeEnum] = mapped_column(
-        PaymentTypeEnumSA, 
-        nullable=False
-    )
-    amount: Mapped[int] = mapped_column(
-        Integer, 
-        nullable=False, 
-        default=0
-    )
-    
-    
-    # ------------------ Serialize ------------------
-    def serialize(self, include_relationships=False):
-        data = super().serialize(include_relationships=include_relationships)
-        data["payment_type"] = self.payment_type
-        data["amount"] = self.amount
-        return data
+   

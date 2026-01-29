@@ -1,369 +1,412 @@
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import login_required, current_user
-from app.models import User, Ticket, Transaction, Tender, LineItem, LineItemTender, Location, TaxRate, Deduction, SalesCategoryEnum, TaxabilitySourceEnum, PaymentTypeEnum
-from app.models.services.tax_rules import determine_taxability
 from app.extensions import db
+from app.models import (
+    User, 
+    Ticket, 
+    Transaction, 
+    Tender, 
+    LineItem, 
+    LineItemTender, 
+    Location, 
+    TaxRate, 
+    Deduction,
+    Department,
+    PaymentType,
+    SalesCategory, 
+    SalesDay
+)
+
+from app.schemas import (
+    LineItemSchema, 
+    LineItemTenderSchema, 
+    UserSchema, 
+    TransactionSchema,
+    LocationSchema,
+    TenderSchema,
+    TicketSchema,
+    CreateLi, 
+    CreateTicket,
+    CreateTender,
+    CreateDeduction,
+    CreateLocation,
+    CreatePaymentType,
+    CreateSalesCategory,
+    SalesDaySchema,
+    CreateTransaction
+)
 from datetime import datetime, date as DTdate
+from marshmallow import Schema, fields, validate, ValidationError
 from app.utils.tools import to_int, finalize_ticket, finalize_transaction
+from app.utils.constants import PAYMENT_TYPES, SALES_CATEGORIES
 from sqlalchemy import select
 from app.services.allocations import allocate_tender_to_line_items
 
 creator = Blueprint("create", __name__)
 
-# ----------------------------
-# Create a new location
-# ----------------------------
+
+
 @creator.route("/location", methods=["POST"])
 @login_required
 def create_location():
-    data = request.get_json()
-    
-    name = data.get("name")
-    code = data.get("code")
-    address = data.get("address")
-    current_tax_rate = data.get("current_tax_rate")
-    
-    if current_tax_rate is not None:
-        try:
-            current_tax_rate = float(current_tax_rate)
-            if current_tax_rate < 0 or current_tax_rate > 1:
-                raise ValueError
-        except ValueError:
-            return jsonify(success=False, message="Invalid tax rate"), 400
-    else:
-        current_tax_rate = 0.0
-    
+    schema = CreateLocation()
+    try:
+        data = schema.load(request.get_json())
+    except ValidationError as e:
+        return jsonify(success=False, errors=e.messages), 400
+
     existing = db.session.query(Location).filter(
-        (Location.name == name.title()) |
-        (Location.code == code.lower())
+        (Location.name == data["name"].title()) | 
+        (Location.code == data["code"].lower())
     ).first()
-    
     if existing:
         return jsonify(success=False, message="Location already exists"), 409
-    
+
     new_location = Location(
-        name=name.title(),
-        code=code.strip().lower(),
-        address=address,
-        current_tax_rate=current_tax_rate
+        name=data["name"].title(),
+        code=data["code"].strip().lower(),
+        address=data["address"],
+        current_tax_rate=data["current_tax_rate"]
     )
-    
+
     initial_tax = TaxRate(
         location=new_location,
-        rate=current_tax_rate,
-        effective_from=DTdate.today(),
-        effective_to=None
+        rate=data["current_tax_rate"],
+        effective_from=DTdate.today()
     )
-    
+
     try:
         db.session.add_all([new_location, initial_tax])
         db.session.commit()
-        current_app.logger.info(f"[NEW LOCATION ADDED]: {current_user.first_name} {current_user.last_name} added a new location: {name} | tax rate: {current_tax_rate}")
-        return jsonify(success=True, message=f"New location {name}, has been added", new_location=new_location.serialize()), 201
+        return jsonify(success=True, new_location=LocationSchema().dump(new_location)), 201
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"[NEW LOCATION ERROR]: {e}")
-        return jsonify(success=False, message="Error when adding new location"), 500
-    
-# ----------------------------
-# CREAT A NEW TICKET
-# ----------------------------
+        return jsonify(success=False, message="Error adding location"), 500
+
+
+
+
+@creator.route("/sales_category", methods=["POST"])
+@login_required
+def create_sales_category():
+    schema = CreateSalesCategory()
+    try:
+        data = schema.load(request.get_json())
+    except ValidationError as e:
+        return jsonify(success=False, errors=e.messages), 400
+
+    if data["name"].upper() in SALES_CATEGORIES:
+        return jsonify(success=False, message="Category already exists"), 409
+
+    SALES_CATEGORIES.append(data["name"].upper())
+    return jsonify(success=True, message=f"Category {data['name']} added"), 201
+
+
+
+
+
+
+@creator.route("/payment_type", methods=["POST"])
+@login_required
+def create_payment_type():
+    schema = CreatePaymentType()
+    try:
+        data = schema.load(request.get_json())
+    except ValidationError as e:
+        return jsonify(success=False, errors=e.messages), 400
+
+    if data["name"].upper() in PAYMENT_TYPES:
+        return jsonify(success=False, message="Payment type already exists"), 409
+
+    PAYMENT_TYPES.append(data["name"].upper())
+    return jsonify(success=True, message=f"Payment type {data['name']} added"), 201
+
+
+
+
+# -------------------------------
+# CREATE A NEW TICKET
+# -------------------------------
 @creator.route("/ticket", methods=["POST"])
 @login_required
 def create_ticket():
-    """ 
-    JSON Payload
+    """
+    JSON Payload Example:
     {
         "ticket_number": 1234,
-        "date": "2026-01-01",
+        "date": "2026-01-29",
         "location_id": 1,
-        "user_id": 1,
         "line_items": [
             {
-                "category": "NEW_APPLIANCE",
+                "category": 2,
                 "unit_price": 50000,
-                "is_return": false,
-                "taxable": true
+                "quantity": 1,
+                "taxable": true,
+                "is_return": false
             }
         ],
         "tenders": [
             {
-                "payment_type": "CARD",
-                "amount": 5000
+                "payment_type": 1,
+                "amount": 50000
             }
         ]
     }
     """
-    data = request.get_json()
-    
-    #--------------Check Duplicate Tickets-----------------
-    existing = db.session.query(Ticket).filter_by(ticket_number=data.get("ticket_number")).first()
-    if existing:
-        return jsonify(
-            success=False, 
-            message=f"Ticket number {existing.ticket_number} already in use.", existing_ticket_number=existing.ticket_number
-        ), 400
-    
-    #-----------------Parse Ticekt Date-----------------------
-    ticket_date = datetime.strptime(
-        data.get("date", datetime.today().isoformat()), "%Y-%m-%d"
-    ).date()
-    
-    
-    #------------------Fetch Location-------------------------
-    location = db.session.get(Location, int(data["location_id"]))
+    schema = CreateTicket()
+    try:
+        data = schema.load(request.get_json())
+    except ValidationError as e:
+        return jsonify(success=False, errors=e.messages), 400
+
+    # Check duplicate ticket_number
+    if db.session.query(Ticket).filter_by(ticket_number=data["ticket_number"]).first():
+        return jsonify(success=False, message="Ticket number already exists"), 400
+
+    # Fetch location
+    location = db.session.get(Location, data["location_id"])
     if not location:
-        return jsonify(success=False, message="Invali location."), 404
-    
-    
-    #------------------Fetch User---------------------------
-    user = db.session.get(User, int(data["user_id"]))
-    if not user:
-        return jsonify(success=False, message="Invalide user id"), 404
-    
-    
-    #-------------------Create Ticket-----------------------
+        return jsonify(success=False, message="Invalid location"), 404
+
+    # Fetch user (default to current_user)
+    user = current_user
+
+    # Determine or create SalesDay for this user/location/date
+    ticket_date = data["date"]
+    sales_day = (
+        db.session.query(SalesDay)
+        .filter_by(user_id=user.id, location_id=location.id, opened_at=ticket_date)
+        .first()
+    )
+    if not sales_day:
+        sales_day = SalesDay(
+            user_id=user.id,
+            location_id=location.id,
+            opened_at=ticket_date
+        )
+        db.session.add(sales_day)
+        db.session.flush()  # Assign ID for relationship
+
+    # Create ticket
     ticket = Ticket(
         ticket_number=data["ticket_number"],
         ticket_date=ticket_date,
         location=location,
-        user=user
-    )
-    
-    #-------------------Create Transaction---------------------
-    transaction = Transaction(
         user=user,
-        location=location,
-        posted_date=ticket_date
+        sales_day=sales_day
     )
-    
-    
-    #--------------Create Line Items and attach-------------
-    line_items = []
-    for li in data.get("line_items", []):
-        try:
-            category = SalesCategoryEnum(li["category"])
-        except ValueError:
-            return jsonify(success=False, message="Invalid category"), 400
-        
-        
+
+    # Create transaction
+    transaction = Transaction(user=user, location=location, posted_date=ticket_date)
+
+    # ------------------- Line Items -------------------
+    for li_data in data["line_items"]:
         line_item = LineItem(
-            category=category,
-            unit_price=to_int(li["unit_price"]),
-            taxable=bool(li.get("taxable", True)),
-            taxability_source=TaxabilitySourceEnum.MANUAL_OVERRIDE,
-            tax_rate=location.current_tax_rate or 0,
-            is_return=bool(li.get("is_return", False))
+            category_id=li_data["category"],
+            unit_price=li_data["unit_price"],
+            quantity=li_data.get("quantity", 1),
+            taxable=li_data.get("taxable", True),
+            is_return=li_data.get("is_return", False),
+            tax_rate=location.current_tax_rate or 0
         )
-    
-        #attach line items to transaction
         line_item.compute_total()
         transaction.line_items.append(line_item)
-        line_items.append(line_item)
-    # attach it all to the ticket
-    transaction.compute_total()
+
+    # Compute transaction totals
+    transaction.compute_totals()
     ticket.transactions.append(transaction)
-    
-    
-    
-    #------------------Create Tenders and attach-----------------
-    tender_data = data.get("tenders", [])
-    
-    if not tender_data:
-        tender_data = [{"payment_type": PaymentTypeEnum.CASH.value, "amount": transaction.total}]
-        
-    for t in tender_data:
-        try:
-            payment_type = PaymentTypeEnum(t["payment_type"])
-        except ValueError:
-            return jsonify(success=False, message="Invalid payment type"), 400
-        
-        tender = Tender(
-            payment_type=payment_type,
-            amount=to_int(t["amount"])
-        )
+
+    # ------------------- Tenders -------------------
+    tenders_data = data.get("tenders")
+    if not tenders_data:
+        # Default tender: cash full amount
+        tenders_data = [{"payment_type": 1, "amount": transaction.total}]
+
+    for t_data in tenders_data:
+        tender = Tender(payment_type=t_data["payment_type"], amount=t_data["amount"])
         transaction.tenders.append(tender)
-        
-        #------------------Allocate this tender across line items-----------------
-        for tender in transaction.tenders:
-            allocations = allocate_tender_to_line_items(transaction, tender)
-            db.session.add_all(allocations)
-        
-    
-    #----------------Compute totals and open balance--------------------
+        allocations = allocate_tender_to_line_items(transaction, tender)
+        db.session.add_all(allocations)
+
+    # Finalize ticket
     finalize_ticket(ticket)
-    
-    
-    #-------------------Commit to DB---------------------
+
     try:
         db.session.add(ticket)
         db.session.commit()
-        current_app.logger.info(f"[NEW TICKET]: {user.first_name} {user.last_name} added ticket# {ticket.ticket_number}")
-        return jsonify(
-            success=True,
-            message=f"Ticket added successfully!",
-            ticket=ticket.serialize(include_relationships=True)
-        ), 201
+        return jsonify(success=True, ticket=ticket.serialize(include_relationships=True)), 201
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"[NEW TICKET ERROR]: {e}")
-        return jsonify(success=False, message="There was an error when submitting your ticket."), 500
+        current_app.logger.error(f"[CREATE TICKET ERROR]: {e}")
+        return jsonify(success=False, message="Error creating ticket"), 500
 
 
-
-
-# ----------------------------
-# ADD A NEW TRANSACTION TO AN EXISTING TICKET
-# ----------------------------
+# -------------------------------
+# ADD A TRANSACTION TO EXISTING TICKET
+# -------------------------------
 @creator.route("/transaction/<int:ticket_id>", methods=["POST"])
 @login_required
-def add_transaction(ticket_id):
+def create_transaction(ticket_id):
     """
-    payload example:
+    JSON Payload Example:
     {
-        "posted_date": "2026-01-01",
-        "location_id": 2,
-        "user_id": 1,
+        "posted_date": "2026-01-29",
+        "location_id": 1,
         "line_items": [
             {
-                "sales_category": "USED_APPLIANCE",
+                "category": 2,
                 "unit_price": 25000,
-                "is_return": False
+                "quantity": 1,
+                "taxable": true,
+                "is_return": false
             }
         ],
         "tenders": [
             {
-                "payment_type": "CARD",
+                "payment_type": 1,
                 "amount": 25000
             }
         ]
     }
     """
-    data = request.get_json()
+    schema = CreateTransaction()
+    try:
+        data = schema.load(request.get_json())
+    except ValidationError as e:
+        return jsonify(success=False, errors=e.messages), 400
 
-    # ------------------ Fetch ticket ------------------
+    # Fetch ticket
     ticket = db.session.get(Ticket, ticket_id)
     if not ticket:
         return jsonify(success=False, message="Ticket not found"), 404
 
-    # ------------------ Fetch location ------------------
-    location = db.session.get(Location, int(data["location_id"]))
+    # Fetch location
+    location = db.session.get(Location, data["location_id"])
     if not location:
         return jsonify(success=False, message="Invalid location"), 404
 
-    # ------------------ Fetch user ------------------
-    user = db.session.get(User, int(data["user_id"]))
-    if not user:
-        return jsonify(success=False, message="User not found"), 404
+    user = current_user
 
-    # ------------------ Parse transaction date ------------------
-    posted_date = datetime.strptime(
-        data.get("posted_date", datetime.today().isoformat()), "%Y-%m-%d"
-    ).date()
-
-    # ------------------ Create transaction ------------------
-    transaction = Transaction(
-        user=user,
-        location=location,
-        posted_date=posted_date
+    # Determine or create SalesDay
+    posted_date = data["posted_date"]
+    sales_day = (
+        db.session.query(SalesDay)
+        .filter_by(user_id=user.id, location_id=location.id, opened_at=posted_date)
+        .first()
     )
+    if not sales_day:
+        sales_day = SalesDay(user_id=user.id, location_id=location.id, opened_at=posted_date)
+        db.session.add(sales_day)
+        db.session.flush()
 
-    # ------------------ Create line items ------------------
-    for li_data in data.get("line_items", []):
-        try:
-            category = SalesCategoryEnum(li_data["sales_category"])
-        except ValueError:
-            return jsonify(success=False, message="Invalid category"), 400
+    # Create transaction
+    transaction = Transaction(user=user, location=location, posted_date=posted_date)
 
-        taxable, tax_source = determine_taxability(
-            category=category,
-            location=location
-        )
-
+    for li_data in data["line_items"]:
         line_item = LineItem(
-            category=category,
-            unit_price=to_int(li_data["unit_price"]),
-            taxable=taxable,
-            taxability_source=tax_source,
-            tax_rate=location.current_tax_rate or 0,
-            is_return=bool(li_data.get("is_return", False))
+            category_id=li_data["category"],
+            unit_price=li_data["unit_price"],
+            quantity=li_data.get("quantity", 1),
+            taxable=li_data.get("taxable", True),
+            is_return=li_data.get("is_return", False),
+            tax_rate=location.current_tax_rate or 0
         )
-
+        line_item.compute_total()
         transaction.line_items.append(line_item)
 
-    # ------------------ Create tenders ------------------
-    for t_data in data.get("tenders", []):
-        try:
-            payment_type = PaymentTypeEnum(t_data["payment_type"])
-        except ValueError:
-            return jsonify(success=False, message="Invalid payment type"), 400
-
-        tender = Tender(
-            payment_type=payment_type,
-            amount=to_int(t_data["amount"])
-        )
-        transaction.tenders.append(tender)
-
-    # ------------------ Attach transaction to ticket ------------------
+    transaction.compute_totals()
     ticket.transactions.append(transaction)
 
-    # ------------------ Compute totals ------------------
+    # Tenders
+    tenders_data = data.get("tenders")
+    if not tenders_data:
+        tenders_data = [{"payment_type": 1, "amount": transaction.total}]
+
+    for t_data in tenders_data:
+        tender = Tender(payment_type=t_data["payment_type"], amount=t_data["amount"])
+        transaction.tenders.append(tender)
+        allocations = allocate_tender_to_line_items(transaction, tender)
+        db.session.add_all(allocations)
+
+    # Finalize transaction
     finalize_transaction(transaction)
     ticket.compute_total()
 
-    # ------------------ Commit to DB ------------------
     try:
         db.session.add(transaction)
         db.session.commit()
-        current_app.logger.info(
-            f"[ADD TRANSACTION]: {user.first_name} {user.last_name} added a transaction to ticket# {ticket.ticket_number}"
-        )
-        return jsonify(
-            success=True,
-            message="Transaction added successfully",
-            ticket=ticket.serialize(include_relationships=True)
-        ), 201
+        return jsonify(success=True, ticket=ticket.serialize(include_relationships=True)), 201
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"[ADD TRANSACTION ERROR]: {e}")
-        return jsonify(success=False, message="Error adding transaction"), 500
+        current_app.logger.error(f"[CREATE TRANSACTION ERROR]: {e}")
+        return jsonify(success=False, message="Error creating transaction"), 500
 
 
 
 
+# app/api/create.py
 
-
-# ----------------------------
-# Create a deduction for a user
-# ----------------------------
 @creator.route("/deduction", methods=["POST"])
 @login_required
 def create_deduction():
-    data = request.get_json()
-    
-    amount = data.get("amount")
-    reason = data.get("reason")
-    date_obj = datetime.strptime(data.get("date"), "%Y-%m-%d").date() if data.get("date") else datetime.today().date()
-    
-    if not amount or not reason:
-        return jsonify(success=False, message="Amount and reason are required"), 400
-    
-    if to_int(amount) <= 0:
-        return jsonify(success=False, message="Amount must be greater than 0"), 400
-    
-    deduction = Deduction(
-        user_id=current_user.id,
-        amount=to_int(amount),
-        reason=reason,
-        date=date_obj
+    """
+    JSON Payload Example:
+    {
+        "user_id": 1,          # optional, defaults to current_user if omitted
+        "amount": 2500,
+        "reason": "Returned item",
+        "date": "2026-01-29",
+        "location_id": 1       # required
+    }
+    """
+    schema = CreateDeduction()
+    try:
+        data = schema.load(request.get_json())
+    except ValidationError as e:
+        return jsonify(success=False, errors=e.messages), 400
+
+    # Use current_user if user_id is not provided
+    user = db.session.get(User, data.get("user_id", current_user.id))
+    if not user:
+        return jsonify(success=False, message="Invalid user"), 404
+
+    # Fetch location
+    location = db.session.get(Location, data["location_id"])
+    if not location:
+        return jsonify(success=False, message="Invalid location"), 404
+
+    deduction_date = data["date"]
+
+    # Determine or create SalesDay for this deduction
+    sales_day = (
+        db.session.query(SalesDay)
+        .filter_by(user_id=user.id, location_id=location.id, opened_at=deduction_date)
+        .first()
     )
-    
+    if not sales_day:
+        sales_day = SalesDay(
+            user_id=user.id,
+            location_id=location.id,
+            opened_at=deduction_date
+        )
+        db.session.add(sales_day)
+        db.session.flush()  # Assign ID
+
+    # Create deduction
+    deduction = Deduction(
+        user=user,
+        amount=data["amount"],
+        reason=data["reason"],
+        date=deduction_date,
+        sales_day_id=sales_day.id
+    )
+
     try:
         db.session.add(deduction)
         db.session.commit()
-        current_app.logger.info(f"[DEDUCTION CREATED]: {current_user.first_name} {current_user.last_name} created deduction {deduction.id}")
-        return jsonify(success=True, message="Deduction submitted!", deduction=deduction.serialize()), 201
+        return jsonify(success=True, deduction=deduction.serialize()), 201
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"[DEDUCTION CREATION ERROR]: {e}")
-        return jsonify(success=False, message="Error submitting deduction."), 500
+        current_app.logger.error(f"[CREATE DEDUCTION ERROR]: {e}")
+        return jsonify(success=False, message="Error creating deduction"), 500
+
