@@ -2,6 +2,7 @@
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from marshmallow import fields 
 from app.models import LineItem
+from app.utils.constants import TAXABILITY_SOURCE
 
 class LineItemSchema(SQLAlchemySchema):
     class Meta:
@@ -12,12 +13,12 @@ class LineItemSchema(SQLAlchemySchema):
     unit_price = auto_field()
     quantity = auto_field()
     taxable = auto_field()
+    taxability_source = auto_field()
     tax_rate = auto_field()
     tax_amount = auto_field()
     total = auto_field()
     is_return = auto_field()
     category = fields.Method("get_category")
-    # taxability_source = fields.Method("get_taxability_source")
     
     # Nested allocations
     payments = fields.Nested("LineItemTenderSchema", many=True, exclude=("line_item",))

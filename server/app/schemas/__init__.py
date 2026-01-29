@@ -5,6 +5,9 @@ from .tender import TenderSchema
 from .ticket import TicketSchema
 from .sales_day import SalesDaySchema
 from .transaction import TransactionSchema
+from .payment_type import PaymentType
+from .sales_category import SalesCategorySchema
+from .department import DepartmentSchema
 from .user import UserSchema
 from .user_registry import UserRegistrySchema
 from .user_login import UserLoginSchema
@@ -16,5 +19,6 @@ from .create_items import (
     CreateSalesCategory, 
     CreatePaymentType, 
     CreateDeduction,
-    CreateTransaction
+    CreateTransaction, 
+    CreateDepartment
 )

@@ -49,14 +49,16 @@ class CreateTransaction(Schema):
 
 
 
-
-# 
+class CreateDepartment(Schema):
+    name = fields.String(required=True)
+    # active = fields.Boolean(required=False)
+ 
     
 class CreateLocation(Schema):
     name = fields.String(required=True)
     code = fields.String(required=True)
     address = fields.String(required=False)
-    current_tax_code = fields.Float(validate=validate.Range(min=0, max=1))
+    current_tax_code = fields.Float(validate=validate.Range(min=0, max=1), required=False)
 
 
 class CreateSalesCategory(Schema):

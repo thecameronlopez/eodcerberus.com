@@ -7,8 +7,7 @@ class UserRegistrySchema(Schema):
     email = fields.Email(required=True)
     pw = fields.Str(required=True, load_only=True)
     pw2 = fields.Str(required=True, load_only=True)
-    department = fields.Str(required=True)
-    location_code = fields.Str(required=True)
+    department = fields.Str(required=False)
     is_admin = fields.Bool(required=False)
     
     @validates_schema

@@ -1,6 +1,6 @@
 import styles from "./TicketTest.module.css";
 import { useAuth } from "../../../../context/AuthContext";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   SALES_CATEGORY,
   PAYMENT_TYPE,
@@ -12,6 +12,11 @@ import {
   formatDate,
   formatCurrency,
 } from "../../../../utils/tools";
+import {
+  UserList,
+  CategoriesList,
+  PaymentTypeList,
+} from "../../../../utils/api";
 import MoneyField from "../../../../components/MoneyField";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -24,7 +29,9 @@ import toast from "react-hot-toast";
 
 const TicketTest = () => {
   const { user } = useAuth();
-  console.log(user.location);
+  const [payList, setPayList] = useState();
+  const [catList, setCatList] = useState();
+  const [usersList, setUsersList] = useState();
 
   const [formData, setFormData] = useState({
     ticket_number: "",
@@ -45,6 +52,27 @@ const TicketTest = () => {
       },
     ],
   });
+
+  /*----------------Populate lists---------------------*/
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const [userRes, catRes, payRes] = await Promise.all([
+          UserList(),
+          CategoriesList(),
+          PaymentTypeList(),
+        ]);
+        if (userRes.success) setUsersList(userRes.users || []);
+        if (catRes.success) setCatList(catRes.categories || []);
+        if (payRes.success) setPayList(payRes.payment_types || []);
+      } catch (error) {
+        console.error("[PROMISE ERROR]: ", error);
+        toast.error(error.message);
+      }
+    };
+
+    fetchAll();
+  }, []);
 
   /* ------------------ Line Items ------------------ */
   const addLineItem = () => {
@@ -152,6 +180,7 @@ const TicketTest = () => {
 
   const lineItemTotals = useMemo(() => {
     const taxRate = user.location.current_tax_rate;
+    // const taxRate = 0.1075;
 
     return formData.line_items.map((li) => computeLineItemTotals(li, taxRate));
   }, [formData.line_items, user.location.current_tax_rate]);

@@ -12,6 +12,7 @@ import {
   faUsers,
   faPersonRunning,
   faLayerGroup,
+  faList,
 } from "@fortawesome/free-solid-svg-icons";
 
 const TabRouterContext = createContext();
@@ -43,6 +44,7 @@ export const TabRouterProvider = ({ children }) => {
     //Settings tabs
     locations: faLocationCrosshairs,
     users: faUsers,
+    sales_categories: faList,
 
     //Reports tabs
     run_reports: faPersonRunning,

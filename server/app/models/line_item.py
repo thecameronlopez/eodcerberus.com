@@ -14,6 +14,7 @@ class LineItem(Base):
     quantity: Mapped[int] = mapped_column(Integer, default=1)
     
     taxable: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    taxability_source: Mapped[bool] = mapped_column(String(50), nullable=False)
     tax_rate: Mapped[Decimal] = mapped_column(Numeric(5, 4), nullable=True)
     tax_amount: Mapped[int] = mapped_column(Integer, default=0)
     total: Mapped[int] = mapped_column(Integer, default=0)

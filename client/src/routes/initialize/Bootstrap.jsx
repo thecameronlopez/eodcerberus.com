@@ -35,12 +35,15 @@ const Bootstrap = () => {
         email: formData.email,
         first_name: formData.first_name,
         last_name: formData.last_name,
-        department: formData.department,
-        password: formData.password,
+        pw: formData.password,
+        pw2: formData.password,
       },
       location: {
         name: formData.name,
         code: formData.code,
+      },
+      department: {
+        name: formData.department,
       },
     };
 
