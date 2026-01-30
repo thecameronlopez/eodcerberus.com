@@ -1,12 +1,12 @@
 from app.extensions import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, Boolean, DateTime, ForeignKey
-from .base import Base
+from .base import Base, IDMixin
 from datetime import date as DTdate
 import calendar
 from flask_login import UserMixin
 
-class User(Base, UserMixin):
+class User(IDMixin, Base, UserMixin):
     __tablename__ = "users"
     
     #Primary Fields

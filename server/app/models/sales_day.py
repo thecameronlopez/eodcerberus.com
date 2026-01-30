@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, DateTime, Enum, Index, Integer, func
 from datetime import datetime, timezone
 import enum
 
-from .base import Base
+from .base import Base, IDMixin
 
 
 class SalesDayStatus(str, enum.Enum):
@@ -12,7 +12,7 @@ class SalesDayStatus(str, enum.Enum):
     LOCKED = "locked"
 
 
-class SalesDay(Base):
+class SalesDay(IDMixin, Base):
     __tablename__ = "sales_days"
 
     # ------------------ Core fields ------------------

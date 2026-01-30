@@ -18,7 +18,7 @@ def allocate_tender_to_line_items(transaction, tender):
     items = get_allocatable_item(transaction)
     
     if not items:
-        return
+        return []
     
     total_pretax = sum(li.unit_price for li in items)
     

@@ -5,7 +5,7 @@ from .tender import TenderSchema
 from .ticket import TicketSchema
 from .sales_day import SalesDaySchema
 from .transaction import TransactionSchema
-from .payment_type import PaymentType
+from .payment_type import PaymentTypeSchema
 from .sales_category import SalesCategorySchema
 from .department import DepartmentSchema
 from .user import UserSchema

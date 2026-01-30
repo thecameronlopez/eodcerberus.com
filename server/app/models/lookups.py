@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean
-from .base import Base
+from .base import Base, IDMixin
 
-class SalesCategory(Base):
+class SalesCategory(IDMixin, Base):
     __tablename__ = "sales_categories"
     
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
@@ -14,7 +14,7 @@ class SalesCategory(Base):
     
     
     
-class PaymentType(Base):
+class PaymentType(IDMixin, Base):
     __tablename__ = "payment_types"
     
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
@@ -26,7 +26,7 @@ class PaymentType(Base):
   
     
     
-class Department(Base):
+class Department(IDMixin, Base):
     __tablename__ = "departments"
     
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)

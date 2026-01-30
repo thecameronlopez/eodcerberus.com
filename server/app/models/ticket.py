@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, Boolean, Date, ForeignKey, BigInteger, event
-from .base import Base
+from .base import Base, IDMixin
 from datetime import date as DTdate
 
-class Ticket(Base):
+class Ticket(IDMixin, Base):
     __tablename__ = "tickets"
     
     # ------------------- Core fields -------------------

@@ -29,26 +29,27 @@ import toast from "react-hot-toast";
 
 const TicketTest = () => {
   const { user } = useAuth();
-  const [payList, setPayList] = useState();
-  const [catList, setCatList] = useState();
-  const [usersList, setUsersList] = useState();
+  console.log(user);
+  const [payList, setPayList] = useState([]);
+  const [catList, setCatList] = useState([]);
+  const [usersList, setUsersList] = useState([]);
 
   const [formData, setFormData] = useState({
     ticket_number: "",
     date: getTodayLocalDate(),
     line_items: [
       {
-        category: "",
+        category_id: "",
         unit_price: 0,
         is_return: false,
         taxable: true,
+        quantity: 1,
       },
     ],
     tenders: [
       {
         payment_type: "",
         amount: 0,
-        is_layaway: false,
       },
     ],
   });
@@ -81,10 +82,11 @@ const TicketTest = () => {
       line_items: [
         ...prev.line_items,
         {
-          category: "",
+          category_id: "",
           unit_price: 0,
           is_return: false,
           taxable: true,
+          quantity: 1,
         },
       ],
     }));
@@ -99,9 +101,9 @@ const TicketTest = () => {
   };
 
   const handleCategoryChange = (index, category) => {
-    const defaultTaxable = TAX_DETERMINATION[category] ?? true;
+    const defaultTaxable = TAX_DETERMINATION[Number(category)] ?? true;
 
-    updateLineItem(index, "category", category);
+    updateLineItem(index, "category_id", Number(category));
     updateLineItem(index, "taxable", defaultTaxable);
   };
 
@@ -121,7 +123,6 @@ const TicketTest = () => {
         {
           payment_type: "",
           amount: 0,
-          is_layaway: false,
         },
       ],
     }));
@@ -130,7 +131,7 @@ const TicketTest = () => {
   const updateTender = (index, field, value) => {
     setFormData((prev) => {
       const tenders = [...prev.tenders];
-      tenders[index] = { ...tenders[index], [field]: value };
+      tenders[index] = { ...tenders[index], [field]: Number(value) };
       return { ...prev, tenders };
     });
   };
@@ -225,10 +226,10 @@ const TicketTest = () => {
       },
     };
     options.body = JSON.stringify({
-      ticket_number: formData.ticket_number,
+      ticket_number: Number(formData.ticket_number),
       date: formData.date,
-      location_id: user.location_id,
-      user_id: user.id,
+      location_id: Number(user.location.id),
+      user_id: Number(user.id),
       line_items: [...formData.line_items],
       tenders: [...formData.tenders],
     });
@@ -248,13 +249,13 @@ const TicketTest = () => {
             category: "",
             unit_price: 0,
             is_return: false,
+            quantity: 1,
           },
         ],
         tenders: [
           {
             payment_type: "",
-            amount_cents: 0,
-            is_layaway: false,
+            amount: 0,
           },
         ],
       });
@@ -276,6 +277,7 @@ const TicketTest = () => {
             id="ticket_date"
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            required
           />
           <div className={styles.ticketNumberInput}>
             <label htmlFor="ticket_number">Ticket Number</label>
@@ -287,6 +289,7 @@ const TicketTest = () => {
               onChange={(e) =>
                 setFormData({ ...formData, ticket_number: e.target.value })
               }
+              required
             />
           </div>
           <p>Location: {user.location.name}</p>
@@ -319,14 +322,21 @@ const TicketTest = () => {
               </button>
 
               <select
-                value={li.category}
-                onChange={(e) => handleCategoryChange(index, e.target.value)}
+                value={li.category_id}
+                onChange={(e) =>
+                  handleCategoryChange(index, Number(e.target.value))
+                }
                 className={styles.catSelect}
               >
+                {console.log(catList)}
                 <option value="">--category--</option>
-                {renderOptions(SALES_CATEGORY)}
+                {catList.map((cat) => (
+                  <option value={cat.id} key={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
-              {li.category && (
+              {li.category_id && (
                 <>
                   <div className={styles.liPriceBox}>
                     <div className={styles.liCheckBoxes}>
@@ -413,26 +423,18 @@ const TicketTest = () => {
               <select
                 value={t.payment_type}
                 onChange={(e) =>
-                  updateTender(index, "payment_type", e.target.value)
+                  updateTender(index, "payment_type", Number(e.target.value))
                 }
                 className={styles.typeSelect}
               >
                 <option value="">--payment type--</option>
-                {renderOptions(PAYMENT_TYPE)}
+                {payList.map((p) => (
+                  <option value={p.id} key={p.id}>
+                    {p.name}
+                  </option>
+                ))}
               </select>
               <div className={styles.layawayBox}>
-                <label htmlFor={`is_layaway_${index}`}>
-                  Layaway
-                  <input
-                    type="checkbox"
-                    name="is_layaway"
-                    id={`is_layaway_${index}`}
-                    checked={t.is_layaway}
-                    onChange={(e) =>
-                      updateTender(index, "is_layaway", e.target.checked)
-                    }
-                  />
-                </label>
                 <MoneyField
                   value={t.amount}
                   onChange={(e) =>

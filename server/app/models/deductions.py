@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Date, ForeignKey
-from .base import Base
+from .base import Base, IDMixin
 from datetime import date as DTdate
 
-class Deduction(Base):
+class Deduction(IDMixin, Base):
     __tablename__ = "deductions"
     
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)

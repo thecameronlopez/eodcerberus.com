@@ -1,0 +1,84 @@
+.categoryPage {
+  margin: 1rem auto;
+  width: 80%;
+  max-width: 1600px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  gap: 1rem;
+}
+
+.categoryPage > div h2 {
+  color: var(--buttonPrimary);
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.categoryPage > div h2 button {
+  background-color: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: darkgreen;
+}
+.categoryPage > div h2 button:hover {
+  color: green;
+}
+
+.categoryPage > div {
+  flex: 1;
+}
+
+.categoryPage > div > div {
+  margin-top: 10px;
+  border: 1px solid var(--linkText);
+  border-radius: 8px;
+  width: 100%;
+  min-height: 12rem;
+  max-height: 12rem;
+  padding: 10px;
+  overflow: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.8rem;
+}
+
+.categoryPage > div > div > div.listed {
+  border: 1px solid var(--bannerBackground);
+  border-radius: 6px;
+  padding: 4px;
+}
+.categoryPage > div > div > div.listed p:first-child {
+  font-weight: bold;
+}
+
+.categoryPage > div > form {
+  width: 100%;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.categoryPage > div > form div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.categoryPage > div > form label input[type="checkbox"] {
+  margin-left: 10px;
+}
+
+.categoryPage > div > form button[type="submit"] {
+  align-self: center;
+  font-size: 1.5rem;
+  padding: 4px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  box-shadow: -1px 1px 6px #333;
+}

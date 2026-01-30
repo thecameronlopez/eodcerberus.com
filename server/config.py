@@ -44,6 +44,7 @@ class Config:
     else:
         CORS_ORIGINS = [
             "http://localhost:5173",  
+            "http://eodcerberus.dev",
             "http://192.168.1.205:5173",  
             "http://192.168.1.248:5173", 
             "http://192.168.1.165:5173", 

@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, Date, ForeignKey, Numeric, event, String, Boolean
-from .base import Base
+from .base import Base, IDMixin
 from datetime import date as DTdate
 
-class Transaction(Base):
+class Transaction(IDMixin, Base):
     __tablename__ = "transactions"
     
     ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey("tickets.id"), nullable=False)
@@ -26,7 +26,7 @@ class Transaction(Base):
 
     
     # ---------------- Helpers ----------------
-    def compute_totals(self):
+    def compute_total(self):
         """Compute snapshot totals from line items"""
         self.units = len(self.line_items)
         self.subtotal = sum(li.unit_price * li.quantity for li in self.line_items)

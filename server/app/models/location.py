@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean, Numeric
-from .base import Base
+from .base import Base, IDMixin
 
 
-class Location(Base):
+class Location(IDMixin, Base):
     __tablename__ = "locations"
     
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)

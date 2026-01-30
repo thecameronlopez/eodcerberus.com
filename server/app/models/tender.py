@@ -1,9 +1,9 @@
 # app/models/tender.py
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, ForeignKey
-from .base import Base
+from .base import Base, IDMixin
 
-class Tender(Base):
+class Tender(IDMixin, Base):
     __tablename__ = "tenders"
     
     transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id"), nullable=False)

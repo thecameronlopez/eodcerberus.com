@@ -44,7 +44,7 @@ export const TabRouterProvider = ({ children }) => {
     //Settings tabs
     locations: faLocationCrosshairs,
     users: faUsers,
-    sales_categories: faList,
+    categories: faList,
 
     //Reports tabs
     run_reports: faPersonRunning,

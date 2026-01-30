@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import login_required, current_user
 from app.models import Ticket, LineItem, Transaction, Deduction, User, Location, Department, PaymentType, SalesCategory
-from app.schemas import UserSchema, LocationSchema, PaymentType, SalesCategorySchema, DepartmentSchema
+from app.schemas import UserSchema, LocationSchema, PaymentTypeSchema, SalesCategorySchema, DepartmentSchema
 from app.extensions import db
 from datetime import datetime
 from sqlalchemy.orm import selectinload
@@ -26,16 +26,16 @@ def get_locations():
 @login_required
 def get_departments():
     departments = db.session.query(Department).all()
-    return jsonify(success=True, users=[DepartmentSchema().dump(d) for d in departments]), 200
+    return jsonify(success=True, departments=[DepartmentSchema().dump(d) for d in departments]), 200
 
 @reader.route("/categories", methods=["GET"])
 @login_required
 def get_categories():
     categories = db.session.query(SalesCategory).all()
-    return jsonify(success=True, locations=[SalesCategorySchema().dump(c) for c in categories]), 200
+    return jsonify(success=True, categories=[SalesCategorySchema().dump(c) for c in categories]), 200
 
 @reader.route("/payment_types", methods=["GET"])
 @login_required
 def get_payment_types():
     payment_types = db.session.query(PaymentType).all()
-    return jsonify(success=True, locations=[LocationSchema().dump(p) for p in payment_types]), 200
+    return jsonify(success=True, payment_types=[LocationSchema().dump(p) for p in payment_types]), 200

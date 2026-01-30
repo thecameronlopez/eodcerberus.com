@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Date, ForeignKey, Numeric
-from .base import Base
+from .base import Base, IDMixin
 
-class TaxRate(Base):
+class TaxRate(IDMixin, Base):
     __tablename__ = "tax_rate"
     
     location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
