@@ -22,7 +22,6 @@ class TransactionSchema(SQLAlchemySchema):
     # Nested relationships
     line_items = fields.Nested("LineItemSchema", many=True, exclude=("transaction",))
     tenders = fields.Nested("TenderSchema", many=True, exclude=("transaction",))
-    line_item_tenders = fields.Nested("LineItemTenderSchema", many=True, exclude=("transaction",))
     
     def get_total_paid(self, obj):
         return obj.total_paid

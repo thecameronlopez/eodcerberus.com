@@ -10,8 +10,6 @@ def to_int(value):
     
 def finalize_ticket(ticket):
     for tx in ticket.transactions:
-        for li in tx.line_items:
-            li.compute_total()
         tx.compute_total()
     ticket.compute_total()
     

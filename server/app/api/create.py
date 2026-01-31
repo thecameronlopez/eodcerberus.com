@@ -274,7 +274,6 @@ def create_ticket():
     for li_data in line_item_data:
         line_item = LineItem(
             category_id=li_data["category_id"],
-            transaction=transaction,
             unit_price=int(li_data["unit_price"]),
             quantity=li_data.get("quantity", 1),
             taxable=li_data.get("taxable", True),
@@ -282,7 +281,7 @@ def create_ticket():
             tax_rate=location.current_tax_rate or 0,
             taxability_source="PRODUCT_DEFAULT"
         )
-        # line_item.compute_total()
+        
         transaction.line_items.append(line_item)
         
     # Compute transaction totals
@@ -306,8 +305,8 @@ def create_ticket():
         ))
     db.session.flush()
     for tender in transaction.tenders:
-        allocations = allocate_tender_to_line_items(transaction, tender)
-        db.session.add_all(allocations)
+        allocate_tender_to_line_items(transaction, tender)
+        # db.session.add_all(allocations)
 
     # Finalize ticket
     finalize_ticket(ticket)
@@ -315,7 +314,7 @@ def create_ticket():
     try:
         db.session.add(ticket)
         db.session.commit()
-        return jsonify(success=True, ticket=ticket.serialize(include_relationships=True)), 201
+        return jsonify(success=True, ticket=TicketSchema().dump(ticket)), 201
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"[CREATE TICKET ERROR]: {e}")
