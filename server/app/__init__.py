@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from app.extensions import db, bcrypt, cors, login_manager, mail, migrate
+from app.extensions import db, bcrypt, cors, login_manager, mail, migrate, ma
 from app.models import User
 from app.logger import setup_logger
 
@@ -15,6 +15,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
+    ma.init_app(app)
     cors.init_app(
         app,
         origins=app.config.get("CORS_ORIGINS"),
