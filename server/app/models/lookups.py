@@ -6,7 +6,7 @@ class SalesCategory(IDMixin, Base):
     __tablename__ = "sales_categories"
     
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
-    tax_default: Mapped[bool] = mapped_column(Boolean, default=True)
+    taxable: Mapped[bool] = mapped_column(Boolean, default=True)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     
     line_items = relationship("LineItem", back_populates="category")

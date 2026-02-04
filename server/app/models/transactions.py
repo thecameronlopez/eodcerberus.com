@@ -1,7 +1,14 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Date, ForeignKey, Numeric, event, String, Boolean
+from sqlalchemy import Integer, Date, ForeignKey, Numeric, event, String, Boolean, Enum
 from .base import Base, IDMixin
 from datetime import date as DTdate
+import enum
+
+class TransactionType(str, enum.Enum):
+    SALE = "sale"
+    RETURN = "return"
+    ADJUSTMENT = "adjustment"
+    
 
 class Transaction(IDMixin, Base):
     __tablename__ = "transactions"
@@ -11,11 +18,10 @@ class Transaction(IDMixin, Base):
     location_id: Mapped[int] = mapped_column(Integer, ForeignKey("locations.id"), nullable=False)
     
     posted_at: Mapped[DTdate] = mapped_column(Date, default=DTdate.today)
-    transaction_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    transaction_type: Mapped[TransactionType] = mapped_column(Enum(TransactionType, native_enum=False), default=TransactionType.SALE, nullable=False)
     subtotal: Mapped[int] = mapped_column(Integer, default=0)
     tax_total: Mapped[int] = mapped_column(Integer, default=0)
     total: Mapped[int] = mapped_column(Integer, default=0)
-    units: Mapped[int] = mapped_column(Integer, default=0)
     is_posted: Mapped[bool] = mapped_column(Boolean, default=True)
     
     ticket = relationship("Ticket", back_populates="transactions", lazy="joined")
@@ -28,7 +34,6 @@ class Transaction(IDMixin, Base):
     # ---------------- Helpers ----------------
     def compute_total(self):
         """Compute snapshot totals from line items"""
-        self.units = len(self.line_items)
         self.subtotal = sum(li.unit_price * li.quantity for li in self.line_items)
         self.tax_total = sum(li.tax_amount for li in self.line_items)
         self.total = sum(li.total for li in self.line_items)

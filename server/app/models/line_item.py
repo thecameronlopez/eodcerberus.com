@@ -8,7 +8,7 @@ class LineItem(IDMixin, Base):
     __tablename__ = "line_items"
     
     transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id"), nullable=False)
-    category_id: Mapped[int] = mapped_column(ForeignKey("sales_categories.id"), nullable=False)
+    sales_category_id: Mapped[int] = mapped_column(ForeignKey("sales_categories.id"), nullable=False)
     
     unit_price: Mapped[int] = mapped_column(Integer, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, default=1)
@@ -19,7 +19,7 @@ class LineItem(IDMixin, Base):
     tax_amount: Mapped[int] = mapped_column(Integer, default=0)
     total: Mapped[int] = mapped_column(Integer, default=0)
     
-    is_return: Mapped[bool] = mapped_column(Boolean, default=False)
+
     
     # ---------------- Relationships ----------------
     transaction = relationship("Transaction", back_populates="line_items", lazy="joined")
@@ -42,8 +42,7 @@ class LineItem(IDMixin, Base):
             if self.taxable else 0
         )
         self.total = qty_price + self.tax_amount
-        if self.is_return:
-            self.total = -self.total
+
         
         return self
             

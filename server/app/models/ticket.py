@@ -10,9 +10,13 @@ class Ticket(IDMixin, Base):
     ticket_number: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     ticket_date: Mapped[DTdate] = mapped_column(Date, default=DTdate.today)
     
+    #------------------ Foreign Keys --------------------
+    location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    sales_day_id: Mapped[int] = mapped_column(ForeignKey("sales_days.id"), nullable=False, index=True)
+    
     
     # ------------------- Relationships -------------------
-    location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
     location = relationship("Location", lazy="selectin")
     transactions = relationship(
         "Transaction",
@@ -21,11 +25,16 @@ class Ticket(IDMixin, Base):
         lazy="selectin",
     )
     
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    user = relationship("User", back_populates="tickets", lazy="selectin")
+    user = relationship(
+        "User", 
+        back_populates="tickets", 
+        lazy="selectin"
+    )
     
-    sales_day_id: Mapped[int] = mapped_column(ForeignKey("sales_days.id"), nullable=False, index=True)
-    sales_day = relationship("SalesDay", back_populates="tickets")
+    sales_day = relationship(
+        "SalesDay", 
+        back_populates="tickets"
+    )
     
     
     # ------------------- Cached Totals -------------------

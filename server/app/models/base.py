@@ -4,5 +4,5 @@ from sqlalchemy import Integer
 class Base(DeclarativeBase):
     pass
 class IDMixin:
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     

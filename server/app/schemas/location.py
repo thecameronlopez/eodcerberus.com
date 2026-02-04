@@ -1,18 +1,35 @@
 # app/schemas/user.py
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
-from marshmallow import fields
 from app.models import Location
+from marshmallow import fields, Schema, validate, validates_schema, ValidationError
+from app.extensions import ma
 
-class LocationSchema(SQLAlchemySchema):
+
+class CreateLocationSchema(Schema):
+    class Meta:
+        unknown = "raise"
+    
+    name = fields.Str(required=True)
+    code = fields.Str(required=True)
+    address = fields.Str(required=False)
+    current_tax_rate = fields.Decimal(required=False)
+
+class LocationSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Location
-        load_instance = True
+        load_instance = False
     
-    id = auto_field()
-    name = auto_field()
-    code = auto_field()
-    address = auto_field()
-    current_tax_rate = auto_field()
+    id = ma.auto_field()
+    name = ma.auto_field()
+    code = ma.auto_field()
+    address = ma.auto_field()
+    current_tax_rate = ma.auto_field()
     
-    users = fields.Nested("UserSchema", many=True)
+    users = fields.Nested("UserSchema", many=True, only=["id", "first_name", "last_name"])
+    
+    
+    
+    
+create_location_schema = CreateLocationSchema()   
+location_schema = LocationSchema()
+many_locations_schema = LocationSchema(many=True)
     

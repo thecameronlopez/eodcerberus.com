@@ -1,8 +1,14 @@
 from flask import Blueprint, request, jsonify
-from app.models import User, Location, Department
+from app.models import User, Location, Department, TaxRate
 from app.extensions import db, bcrypt
-from app.schemas import UserRegistrySchema, LocationSchema, CreateLocation, CreateDepartment
+from app.schemas import (
+    register_user_schema,
+    create_location_schema,
+    create_department_schema,
+    create_taxrate_schema
+)
 from marshmallow import ValidationError, fields, validate
+import datetime
 
 bootstrapper = Blueprint("bootstrap", __name__)
 
@@ -52,18 +58,27 @@ def run_bootstrap():
     if not data or "admin" not in data or "location" not in data:
         return jsonify(success=False, message="Invalid bootstrap payload"), 400
     try:
-        location_data = CreateLocation().load(data["location"])
-        user_data = UserRegistrySchema().load(data["admin"])
-        deaprtment_data = CreateDepartment().load(data["department"])
+        location_data = create_location_schema.load(data["location"])
+        user_data =register_user_schema.load(data["admin"])
+        deaprtment_data = create_department_schema.load(data["department"])
     except ValidationError as err:
         print(err.messages)
-        return jsonify(success=False, message=f"There was an error: {err.messages}"), 400
+        return jsonify(success=False, message=f"There was an error: {err}"), 400
+    
+    
     
     location = Location(
         name=location_data["name"].title(),
         code=location_data["code"].lower(),
+        current_tax_rate=float(location_data["current_tax_rate"])
     )
     db.session.flush()
+    
+    tax_rate = TaxRate(
+        location_id=location.id,
+        rate=location.current_tax_rate,
+        effective_from=datetime.date.today()
+    )
     
     department = Department(
         name=deaprtment_data["name"],

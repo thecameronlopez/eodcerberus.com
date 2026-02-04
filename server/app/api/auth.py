@@ -1,6 +1,10 @@
 from flask import Blueprint, jsonify, request, current_app
 from app.models import User, Ticket, Location, Department
-from app.schemas import UserRegistrySchema, UserSchema, UserLoginSchema
+from app.schemas import (
+    login_schema,
+    user_schema,
+    register_user_schema
+)
 from app.extensions import db, bcrypt
 from flask_login import login_user, logout_user, login_required, current_user
 from marshmallow import ValidationError
@@ -14,10 +18,8 @@ authorizer = Blueprint("auth", __name__)
 #-------------
 @authorizer.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
-    
     try:
-        validated = UserRegistrySchema().load(data)
+        validated = register_user_schema.load(request.get_json())
     except ValidationError as err:
         return jsonify(success=False, message=err.messages), 422
     
@@ -51,7 +53,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         current_app.logger.info(f"{new_user.first_name} {new_user.last_name} has been registered to Cerberus")
-        return jsonify(success=True, message=f"{new_user.first_name} {new_user.last_name} has been registered!"), 201
+        return jsonify(success=True, message=f"{new_user.first_name} {new_user.last_name} has been registered!", user=user_schema.dump(new_user)), 201
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"[REGISTRATION ERROR]: {e}")
@@ -63,10 +65,8 @@ def register():
 #-------------
 @authorizer.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
-    
     try:
-        validated = UserLoginSchema().load(data)
+        validated = login_schema.load(request.get_json())
     except ValidationError as err:
         return jsonify(success=False, message=err.messages), 422
     
@@ -88,8 +88,8 @@ def login():
     login_user(user)
     current_app.logger.info(f"{user.first_name} {user.last_name} has logged in.")
     
-    user_data = UserSchema().dump(user)
-    return jsonify(success=True, message=f"Welcome {user.first_name}", user=user_data), 200
+    
+    return jsonify(success=True, message=f"Welcome {user.first_name}", user=user_schema.dump(user)), 200
 
 #-------------
 # LOGOUT USER
@@ -104,8 +104,9 @@ def logout():
 #-------------
 # HYDRATE USER
 #-------------
-@authorizer.route('/hydrate_user', methods=['GET'])
+@authorizer.route('/hydrate', methods=['GET'])
 @login_required
 def hydrate_user():
-    user_data = UserSchema().dump(current_user)
-    return jsonify(success=True, user=user_data), 200
+    if not current_user:
+        return jsonify(success=False, message="User not authenticated"), 403
+    return jsonify(success=True, user=user_schema.dump(current_user)), 200

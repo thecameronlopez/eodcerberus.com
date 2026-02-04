@@ -1,19 +1,36 @@
 # app/schemas/ticket.py
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from marshmallow import fields
 from app.models import Ticket
+from marshmallow import fields, Schema, validate, validates_schema, ValidationError
+from app.extensions import ma
 
-class TicketSchema(SQLAlchemySchema):
+
+class CreateTicketSchema(Schema):
+    class Meta:
+        unknown = "raise"
+        
+    ticket_number = fields.Int(required=True)
+    date = fields.Date(required=True, format="%Y-%m-%d")
+    location_id = fields.Int(required=True)
+    user_id = fields.Int(required=False)  # Optional, default to current_user in route
+    line_items = fields.List(fields.Nested("CreateLineItemSchema"), required=True, validate=validate.Length(min=1))
+    tenders = fields.List(fields.Nested("CreateTenderSchema"))
+    transaction_type = fields.Str(required=True)
+
+
+
+
+class TicketSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Ticket
-        load_instance = True
+        load_instance = False
     
-    id = auto_field()
-    ticket_number = auto_field()
-    ticket_date = auto_field()
-    subtotal = auto_field()
-    tax_total = auto_field()
-    total = auto_field()
+    id = ma.auto_field()
+    ticket_number = ma.auto_field()
+    ticket_date = ma.auto_field()
+    subtotal = ma.auto_field()
+    tax_total = ma.auto_field()
+    total = ma.auto_field()
     
     # Computed fields
     is_open = fields.Method("get_is_open")
@@ -31,3 +48,8 @@ class TicketSchema(SQLAlchemySchema):
     
     def get_balance_owed(self, obj):
         return obj.balance_owed
+
+
+create_ticket_schema = CreateTicketSchema()
+ticket_schema = TicketSchema()
+many_tickets_schema = TicketSchema(many=True)

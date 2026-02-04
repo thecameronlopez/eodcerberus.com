@@ -1,24 +1,13 @@
-from .line_item_tender import LineItemTenderSchema
-from .line_item import LineItemSchema
-from .location import LocationSchema
-from .tender import TenderSchema
-from .ticket import TicketSchema
-from .sales_day import SalesDaySchema
-from .transaction import TransactionSchema
-from .payment_type import PaymentTypeSchema
-from .sales_category import SalesCategorySchema
-from .department import DepartmentSchema
-from .user import UserSchema
-from .user_registry import UserRegistrySchema
-from .user_login import UserLoginSchema
-from .create_items import (
-    CreateLi, 
-    CreateTender, 
-    CreateTicket, 
-    CreateLocation, 
-    CreateSalesCategory, 
-    CreatePaymentType, 
-    CreateDeduction,
-    CreateTransaction, 
-    CreateDepartment
-)
+from .line_item_tender import create_line_item_tender_schema, line_item_tender_schema, many_line_item_tenders_schema
+from .line_item import create_line_item_schema, line_item_schema, many_line_items_schema
+from .deduction import create_deduction_schema, deduction_schema, many_deductions_shema
+from .location import create_location_schema, location_schema, many_locations_schema
+from.tax_rate import create_taxrate_schema, taxrate_schema, many_taxrates_schema
+from .tender import create_tender_schema, tender_schema, many_tenders_schema
+from .ticket import create_ticket_schema, ticket_schema, many_tickets_schema 
+from .sales_day import create_sales_day_schema, close_sales_day_schema, sales_day_schema, many_sales_days_schema
+from .transaction import create_transaction_schema, transaction_schema, many_transactions_schema
+from .payment_type import create_payment_type_schema, payment_type_schema, many_payment_types_schema
+from .sales_category import create_sales_category_schema, sales_category_schema, many_sales_categories_schema
+from .department import create_department_schema, department_schema, many_departments_schema
+from .user import register_user_schema, login_schema, user_schema, many_users_schema

@@ -1,14 +1,27 @@
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
-from marshmallow import fields
 from app.models import SalesCategory
+from marshmallow import fields, Schema, validate, validates_schema, ValidationError
+from app.extensions import ma
 
-class SalesCategorySchema(SQLAlchemySchema):
+
+class CreateSalesCategorySchema(Schema):
+    class Meta:
+        unknown = "raise"
+    
+    name = fields.Str(required=True)
+    taxable = fields.Bool(required=True)
+
+class SalesCategorySchema(ma.SQLAlchemySchema):
     class Meta:
         model = SalesCategory
         load_instance = True
     
-    id = auto_field()
-    name = auto_field()
-    tax_default = auto_field()
-    active = auto_field()
+    id = ma.auto_field()
+    name = ma.auto_field()
+    taxable = ma.auto_field()
+    active = ma.auto_field()
     
+
+
+create_sales_category_schema = CreateSalesCategorySchema()
+sales_category_schema = SalesCategorySchema()
+many_sales_categories_schema = SalesCategorySchema(many=True) 
