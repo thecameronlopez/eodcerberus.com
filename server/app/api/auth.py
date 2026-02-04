@@ -1,13 +1,16 @@
 from flask import Blueprint, jsonify, request, current_app
-from app.models import User, Ticket, Location, Department
+from app.models import User, Ticket, Location, Department, SalesDay
 from app.schemas import (
     login_schema,
     user_schema,
-    register_user_schema
+    register_user_schema,
+    sales_day_schema
 )
 from app.extensions import db, bcrypt
 from flask_login import login_user, logout_user, login_required, current_user
 from marshmallow import ValidationError
+from datetime import datetime, timezone
+from sqlalchemy import func
 
 authorizer = Blueprint("auth", __name__)
 
@@ -85,11 +88,32 @@ def login():
         current_app.logger.error(f"[LOGIN ERROR]: Invalid password has been entered for {email}")
         return jsonify(success=False, message="Invalid credentials"), 401
     
+    now = datetime.now(timezone.utc)
+    
+    existing_sales_day = db.session.query(SalesDay).filter(
+        SalesDay.user_id == user.id,
+        func.date(SalesDay.opened_at) == now.date()
+    ).first()
+    if not existing_sales_day:
+        sales_day = SalesDay(
+            user_id=user.id,
+            opened_at=now,
+            location_id=user.location_id
+        )
+        
+    else:
+        sales_day = existing_sales_day
+    
     login_user(user)
     current_app.logger.info(f"{user.first_name} {user.last_name} has logged in.")
+    try:
+        db.session.add(sales_day)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(f"[SALES DAY CREATION ERROR]: {e}")
+        return jsonify(success=False, message=f"There was an error when creating new sales day for {user.first_name}")
     
-    
-    return jsonify(success=True, message=f"Welcome {user.first_name}", user=user_schema.dump(user)), 200
+    return jsonify(success=True, message=f"Welcome {user.first_name}", user=user_schema.dump(user), sales_day=sales_day_schema.dump(sales_day)), 200
 
 #-------------
 # LOGOUT USER
