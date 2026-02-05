@@ -4,9 +4,9 @@ from app.models import Transaction, TransactionType
 from marshmallow import fields
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
+from .base import BaseSchema, UpdateSchema
 
-
-class CreateTransactionSchema(Schema):
+class TransactionCreateSchema(BaseSchema):
     class Meta:
         unknown = "raise"
         
@@ -23,12 +23,16 @@ class CreateTransactionSchema(Schema):
     
     
 
-class TransactionSchema(ma.SQLAlchemySchema):
+class TransactionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Transaction
         load_instance = False
-    
+
     id = ma.auto_field()
+    ticket_id = ma.auto_field()
+    user_id = ma.auto_field()
+    location_id = ma.auto_field()
+    transaction_type = ma.auto_field()
     posted_at = ma.auto_field()
     subtotal = ma.auto_field()
     tax_total = ma.auto_field()
@@ -37,19 +41,27 @@ class TransactionSchema(ma.SQLAlchemySchema):
     # Computed
     total_paid = fields.Method("get_total_paid")
     balance_delta = fields.Method("get_balance_delta")
-    
-    # Nested relationships
-    line_items = fields.Nested("LineItemSchema", many=True, exclude=("transaction",))
-    tenders = fields.Nested("TenderSchema", many=True, exclude=("transaction",))
-    ticket = fields.Nested("TicketSchema", only=["ticket_number"], dump_only=True)
+    line_item_ids = fields.Method("get_line_item_ids")
     
     def get_total_paid(self, obj):
         return obj.total_paid
     
     def get_balance_delta(self, obj):
         return obj.balance_delta
+    
+    def get_line_item_ids(self, obj):
+        return [li.id for li in obj.line_items] if obj.line_items else []
+    
+    
+class TransactionUpdateSchema(UpdateSchema, ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Transaction
+        load_instance = True
+        unknown = "raise"
+        fields = ("posted_at", "transaction_type")
 
 
-create_transaction_schema = CreateTransactionSchema()
+transaction_create_schema = TransactionCreateSchema()
 transaction_schema = TransactionSchema()
-many_transactions_schema = TransactionSchema(many=True)
+transaction_many_schema = TransactionSchema(many=True)
+transaction_update_schema = TransactionUpdateSchema()

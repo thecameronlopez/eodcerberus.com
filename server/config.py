@@ -64,3 +64,24 @@ class Config:
     #-------------------------------
     FEATURE_X_ENABLED = os.environ.get("FEATURE_X_ENABLED", "False") == "True"
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+    
+    
+    
+    
+class TestConfig(Config):
+    FLASK_ENV = "testing"
+    DEBUG = True
+    TESTING = True
+    
+    SQLALCHEMY_DATABASE_URI = os.environ.get("TEST_DATABASE_URI", "sqlite:///:memory:")
+    SQLALCHEMY_ECHO = False
+    
+    
+    SESSION_TYPE = "filesystem"
+    SESSION_PERMANENT = False
+    
+    MAIL_SUPPRESS_SEND = True
+    
+    CORS_ORIGINS = ["*"]
+    
+    LOG_LEVEL = "WARNING"

@@ -1,9 +1,9 @@
 from app.models import SalesDay
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
+from .base import BaseSchema, UpdateSchema
 
-
-class CreateSalesDaySchema(Schema):
+class SalesDayCreateSchema(BaseSchema):
     class Meta:
         unknown = "raise"
         
@@ -14,7 +14,7 @@ class CreateSalesDaySchema(Schema):
     opened_at = fields.DateTime(required=False)
     
 
-class CloseSalesDaySchema(Schema):
+class CloseSalesDaySchema(BaseSchema):
     class Meta:
         unknown = "raise"
     
@@ -24,7 +24,7 @@ class CloseSalesDaySchema(Schema):
 
 
 
-class SalesDaySchema(ma.SQLAlchemySchema):
+class SalesDaySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SalesDay
         load_instance = False
@@ -37,16 +37,34 @@ class SalesDaySchema(ma.SQLAlchemySchema):
     status = ma.auto_field()
     starting_cash = ma.auto_field()
     expected_cash = ma.auto_field()
-    actual_cash = ma.auto_field()
     cash_difference = ma.auto_field()
+    
+    ticket_ids = fields.Method("get_ticket_ids")
+    
+    def get_ticket_ids(self, obj):
+        return [t.id for t in obj.tickets] if obj.tickets else []
 
-    # Nested relationships
+
+    
+    
+    
+class SalesDayDetailSchema(SalesDaySchema):
     user = fields.Nested("UserSchema", only=("id", "first_name", "last_name"))
-    location = fields.Nested("LocationSchema", only=["id", "name"])
+    location = fields.Nested("LocationSchema", only=("id", "name"))
     tickets = fields.Nested("TicketSchema", many=True, exclude=("sales_day",))
     
+class SalesDayUpdateSchema(UpdateSchema, ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = SalesDay
+        load_instance = True
+        unknown = "raise"
+        
 
-create_sales_day_schema = CreateSalesDaySchema()
-close_sales_day_schema = CloseSalesDaySchema()
+    
+
+sales_day_create_schema = SalesDayCreateSchema()
+sales_day_close_schema = CloseSalesDaySchema()
 sales_day_schema = SalesDaySchema()
-many_sales_days_schema = SalesDaySchema(many=True)
+sales_day_detail_schema = SalesDayDetailSchema()
+sales_day_many_schema = SalesDaySchema(many=True)
+sales_day_update_schema = SalesDayUpdateSchema()

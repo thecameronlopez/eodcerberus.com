@@ -3,9 +3,10 @@ from marshmallow import fields
 from app.models import Tender
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
+from .base import BaseSchema, UpdateSchema
 
 
-class CreateTenderSchema(Schema):
+class TenderCreateSchema(BaseSchema):
     class Meta:
         unknown = "raise"
     
@@ -13,24 +14,33 @@ class CreateTenderSchema(Schema):
     amount = fields.Int(required=True, validate=validate.Range(min=1))
     
 
-class TenderSchema(ma.SQLAlchemySchema):
+class TenderSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Tender
         load_instance = False
-    
+
+        
     id = ma.auto_field()
     amount = ma.auto_field()
-    payment_type = fields.Method("get_payment_type")
-    
-    # Nested allocations
-    allocations = fields.Nested("LineItemTenderSchema", many=True, exclude=("tender",))
-    
-    transaction = fields.Nested("TransactionSchema", dump_only=True, exclude=["line_items", "tenders", "ticket"])
+    transaction_id = ma.auto_field()
+
+    payment_type = fields.Method("get_payment_type")    
     
     def get_payment_type(self, obj):
         return obj.payment_type.name if obj.payment_type else None
+    
+    
+class TenderUpdateSchema(UpdateSchema, ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Tender
+        unknown = "raise"
+        load_instance = True
+        fields = (
+            "amount",
+        )
 
 
-create_tender_schema = CreateTenderSchema()
+tender_create_schema = TenderCreateSchema()
 tender_schema = TenderSchema()
-many_tenders_schema = TenderSchema(many=True)
+tender_many_schema = TenderSchema(many=True)
+tender_update_schema = TenderUpdateSchema()

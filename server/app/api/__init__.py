@@ -1,25 +1,36 @@
 from flask import Blueprint
-from .auth import authorizer
-from .create import creator
-from .update import updator
-from .read import reader
-from .delete import deleter
-# from .reports import reporter
+
 from .bootstrap import bootstrapper
 
-
 from .department import bp as dpt_bp
+from .sales_category import bp as category_bp
+from .payment_type import bp as payments_bp
+from .location import bp as location_bp
+from .deduction import bp as deduction_bp
+from .taxrate import bp as taxrate_bp
+from .line_item import bp as line_item_bp
+from .tender import bp as tender_bp
+from .line_item_tender import bp as lit_bp
+from .transaction import bp as transaction_bp
+from .ticket import bp as ticket_bp
+from .sales_day import bp as sales_day_bp
+from .user import bp as user_bp
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
-api.register_blueprint(authorizer, url_prefix="/auth")
-api.register_blueprint(creator, url_prefix="/create")
-api.register_blueprint(updator, url_prefix="/update")
-api.register_blueprint(reader, url_prefix="/read")
-api.register_blueprint(deleter, url_prefix="/delete")
-# api.register_blueprint(reporter, url_prefix="/reports")
+
 api.register_blueprint(bootstrapper, url_prefix="/bootstrap")
 
-
-
 api.register_blueprint(dpt_bp)
+api.register_blueprint(category_bp)
+api.register_blueprint(payments_bp)
+api.register_blueprint(location_bp)
+api.register_blueprint(deduction_bp)
+api.register_blueprint(taxrate_bp)
+api.register_blueprint(line_item_bp)
+api.register_blueprint(tender_bp)
+api.register_blueprint(lit_bp)
+api.register_blueprint(transaction_bp)
+api.register_blueprint(ticket_bp)
+api.register_blueprint(sales_day_bp)
+api.register_blueprint(user_bp)

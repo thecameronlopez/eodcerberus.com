@@ -23,7 +23,7 @@ class LineItem(IDMixin, Base):
     
     # ---------------- Relationships ----------------
     transaction = relationship("Transaction", back_populates="line_items", lazy="joined")
-    category = relationship("SalesCategory", lazy="joined")
+    sales_category = relationship("SalesCategory", lazy="joined")
     allocations = relationship("LineItemTender", back_populates="line_item", cascade="all, delete-orphan")
     
     

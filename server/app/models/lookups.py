@@ -9,7 +9,7 @@ class SalesCategory(IDMixin, Base):
     taxable: Mapped[bool] = mapped_column(Boolean, default=True)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     
-    line_items = relationship("LineItem", back_populates="category")
+    line_items = relationship("LineItem", back_populates="sales_category")
     
     
     

@@ -1,5 +1,3 @@
-
-
 def to_int(value):
     """Safely convert any incoming value to int. Fallback = 0."""
     try:

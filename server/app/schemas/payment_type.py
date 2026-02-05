@@ -1,26 +1,42 @@
 from app.models import PaymentType
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
+from .base import BaseSchema, UpdateSchema
 
 
-class CreatePaymentTypeSchema(Schema):
+class PaymentTypeCreateSchema(BaseSchema):
     class Meta:
         unknown = "raise"
+        strip_exclude = {"name"}
     
-    name = fields.Str(required=True)
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=50))
     taxable = fields.Bool(required=True)
 
-class PaymentTypeSchema(ma.SQLAlchemySchema):
+class PaymentTypeSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = PaymentType
+        load_instance = False
+        fields = (
+            "id",
+            "name",
+            "taxable",
+            "active"
+        )
+
+
+class PaymentTypeUpdateSchema(UpdateSchema, ma.SQLAlchemyAutoSchema):
     class Meta:
         model = PaymentType
         load_instance = True
-    
-    id = ma.auto_field()
-    name = ma.auto_field()
-    taxable = ma.auto_field()
-    active = ma.auto_field()
+        unknown = "raise"
+        fields = (
+            "name",
+            "taxable",
+            "active"
+        )
 
 
-create_payment_type_schema = CreatePaymentTypeSchema()  
+payment_type_create_schema = PaymentTypeCreateSchema()  
 payment_type_schema = PaymentTypeSchema()
-many_payment_types_schema = PaymentTypeSchema(many=True)
+payment_types_many_schema = PaymentTypeSchema(many=True)
+payment_type_update_schema = PaymentTypeUpdateSchema()

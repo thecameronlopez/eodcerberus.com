@@ -1,27 +1,43 @@
 from app.models import SalesCategory
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
+from .base import BaseSchema, UpdateSchema
 
 
-class CreateSalesCategorySchema(Schema):
+class SalesCategoryCreateSchema(BaseSchema):
     class Meta:
         unknown = "raise"
+        strip_exclude = {"name"}
     
-    name = fields.Str(required=True)
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=50))
     taxable = fields.Bool(required=True)
 
-class SalesCategorySchema(ma.SQLAlchemySchema):
+class SalesCategorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SalesCategory
+        load_instance = False
+        fields = (
+            "id",
+            "name",
+            "taxable",
+            "active"
+        )
+
+
+class SalesCategoryUpdateSchema(UpdateSchema, ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = SalesCategory
+        unknown = "raise"
         load_instance = True
-    
-    id = ma.auto_field()
-    name = ma.auto_field()
-    taxable = ma.auto_field()
-    active = ma.auto_field()
+        fields = (
+            "name",
+            "taxable",
+            "active"
+        )
     
 
 
-create_sales_category_schema = CreateSalesCategorySchema()
+sales_category_create_schema = SalesCategoryCreateSchema()
 sales_category_schema = SalesCategorySchema()
-many_sales_categories_schema = SalesCategorySchema(many=True) 
+sales_category_many_schema = SalesCategorySchema(many=True) 
+sales_category_update_schema = SalesCategoryUpdateSchema()

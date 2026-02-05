@@ -1,8 +1,9 @@
 from app.models import TaxRate
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
+from .base import BaseSchema, UpdateSchema
 
-class CreateTaxRateSchema(Schema):
+class TaxRateCreateSchema(BaseSchema):
     class Meta:
         unknown = "raise"
         
@@ -14,11 +15,11 @@ class CreateTaxRateSchema(Schema):
     
     
 
-class TaxRateSchema(ma.SQLAlchemySchema):
+class TaxRateSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = TaxRate
         load_instance = False
-        
+
     id = ma.auto_field()
     location_id = ma.auto_field()
     rate = ma.auto_field()
@@ -29,6 +30,17 @@ class TaxRateSchema(ma.SQLAlchemySchema):
     
     
 
-create_taxrate_schema = CreateTaxRateSchema()
+class TaxRateUpdateSchema(UpdateSchema, ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = TaxRate
+        load_instance = True
+        unknown = "raise"
+        fields = (
+            "rate",
+        )
+    
+
+taxrate_create_schema = TaxRateCreateSchema()
 taxrate_schema = TaxRateSchema()
-many_taxrates_schema = TaxRateSchema(many=True)
+taxrate_many_schema = TaxRateSchema(many=True)
+taxrate_update_schema = TaxRateUpdateSchema()

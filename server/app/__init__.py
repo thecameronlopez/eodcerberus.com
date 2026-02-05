@@ -1,8 +1,9 @@
 from flask import Flask
-from config import Config
+from config import Config, TestConfig
 from app.extensions import db, bcrypt, cors, login_manager, mail, migrate, ma
 from app.models import User
 from app.logger import setup_logger
+from app.handlers.errors import register_error_handlers
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -28,6 +29,9 @@ def create_app(config_class=Config):
     
     from app.api import api
     app.register_blueprint(api)
+    
+    
+    register_error_handlers(app)
     
     
     @login_manager.user_loader

@@ -1,5 +1,5 @@
 from app.models import Department
-from .base import BaseSchema
+from .base import BaseSchema, UpdateSchema
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError, pre_load
 from app.extensions import ma
 
@@ -18,17 +18,19 @@ class DepartmentCreateSchema(BaseSchema):
 class DepartmentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Department
+        load_instance = False
+        fields = ("id", "name", "active")
     
     
-class DepartmentUpdateSchema(ma.SQLAlchemyAutoSchema):
+class DepartmentUpdateSchema(UpdateSchema, ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Department
         load_instance = True
         unknown = "raise"
-        fields = ["name", "active"]
+        fields = ("name", "active")
     
 
-create_department_schema = DepartmentCreateSchema() 
-update_department_schema = DepartmentUpdateSchema() 
+department_create_schema = DepartmentCreateSchema() 
+department_update_schema = DepartmentUpdateSchema() 
 department_schema = DepartmentSchema()
-many_departments_schema = DepartmentSchema(many=True)
+department_many_schema = DepartmentSchema(many=True)

@@ -2,15 +2,35 @@ from flask import Blueprint, request, jsonify
 from app.models import User, Location, Department, TaxRate
 from app.extensions import db, bcrypt
 from app.schemas import (
-    register_user_schema,
-    create_location_schema,
-    create_department_schema,
-    create_taxrate_schema
+
+    user_register_schema,
+    location_create_schema,
+    department_create_schema,
+    taxrate_create_schema
 )
 from marshmallow import ValidationError, fields, validate
 import datetime
 
 bootstrapper = Blueprint("bootstrap", __name__)
+
+boot_data = {
+    "user": {
+    "first_name": "Cameron",
+    "last_name": "Lopez",
+    "email": "cameron@mattsappliancesla.net",
+    "is_admin": "true",
+    "pw": "Claire18!",
+    "pw2": "Claire18!"
+    },
+    "location": {
+        "name": "Lake Charles",
+        "code": "lake_charles",
+        "current_tax_rate": 0.1075
+    },
+    "department": {
+        "name": "Office"
+    }
+}
 
 @bootstrapper.route("/status", methods=["GET"])
 def bootstrap_status():
@@ -32,7 +52,7 @@ def run_bootstrap():
             "address": "2600 Common St.",
             "current_tax_rate": 0.1075,
         }
-        "admin": {
+        "user": {
             "first_name": "Cameron",
             "last_name": "Lopez",
             "email": "cameron@mattsappliancesla.net",
@@ -52,15 +72,14 @@ def run_bootstrap():
     if existing_user or existing_location:
         return jsonify(success=False, message="System already bootstrapped"), 403
     
-    data = request.get_json()
-    print(data)
-    #validate inputs
-    if not data or "admin" not in data or "location" not in data:
-        return jsonify(success=False, message="Invalid bootstrap payload"), 400
+    # data = request.get_json()
+    # #validate inputs
+    # if not data:
+    #     data = boot_data
     try:
-        location_data = create_location_schema.load(data["location"])
-        user_data =register_user_schema.load(data["admin"])
-        deaprtment_data = create_department_schema.load(data["department"])
+        location_data = location_create_schema.load(boot_data["location"])
+        user_data =user_register_schema.load(boot_data["user"])
+        deaprtment_data = department_create_schema.load(boot_data["department"])
     except ValidationError as err:
         print(err.messages)
         return jsonify(success=False, message=f"There was an error: {err}"), 400
@@ -70,7 +89,7 @@ def run_bootstrap():
     location = Location(
         name=location_data["name"].title(),
         code=location_data["code"].lower(),
-        current_tax_rate=float(location_data["current_tax_rate"])
+        current_tax_rate=location_data["current_tax_rate"]
     )
     db.session.flush()
     
@@ -79,6 +98,7 @@ def run_bootstrap():
         rate=location.current_tax_rate,
         effective_from=datetime.date.today()
     )
+    location.tax_rates.append(tax_rate)
     
     department = Department(
         name=deaprtment_data["name"],
@@ -97,7 +117,7 @@ def run_bootstrap():
         password_hash=bcrypt.generate_password_hash(user_data["pw"]).decode("utf-8")
     )
     
-    db.session.add_all([location, admin])
+    db.session.add_all([location, admin, department])
     db.session.commit()
     
-    return jsonify(success=True, bootstrapped=True, message="Bootstrpping complete!"), 201
+    return jsonify(success=True, bootstrapped=True, message="Bootstrapping complete!"), 201

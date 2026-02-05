@@ -1,13 +1,13 @@
-from .line_item_tender import create_line_item_tender_schema, line_item_tender_schema, many_line_item_tenders_schema
-from .line_item import create_line_item_schema, line_item_schema, many_line_items_schema
-from .deduction import create_deduction_schema, deduction_schema, many_deductions_shema
-from .location import create_location_schema, location_schema, many_locations_schema
-from.tax_rate import create_taxrate_schema, taxrate_schema, many_taxrates_schema
-from .tender import create_tender_schema, tender_schema, many_tenders_schema
-from .ticket import create_ticket_schema, ticket_schema, many_tickets_schema 
-from .sales_day import create_sales_day_schema, close_sales_day_schema, sales_day_schema, many_sales_days_schema
-from .transaction import create_transaction_schema, transaction_schema, many_transactions_schema
-from .payment_type import create_payment_type_schema, payment_type_schema, many_payment_types_schema
-from .sales_category import create_sales_category_schema, sales_category_schema, many_sales_categories_schema
-from .department import create_department_schema, department_schema, many_departments_schema, update_department_schema
-from .user import register_user_schema, login_schema, user_schema, many_users_schema
+from .deduction import deduction_schema, deduction_many_schema, deduction_create_schema, deduction_update_schema
+from .department import department_schema, department_many_schema, department_create_schema, department_update_schema
+from .line_item import line_item_schema, line_item_many_schema, line_item_create_schema, line_item_update_schema
+from .line_item_tender import line_item_tender_schema, line_item_tender_many_schema, line_item_tender_create_schema, line_item_tender_update_schema
+from .location import location_schema, location_many_schema, location_create_schema, location_update_schema
+from .payment_type import payment_type_schema, payment_type_create_schema, payment_types_many_schema, payment_type_update_schema
+from .sales_day import sales_day_schema, sales_day_detail_schema, sales_day_many_schema, sales_day_create_schema, sales_day_close_schema, sales_day_update_schema  
+from .sales_category import sales_category_schema, sales_category_many_schema, sales_category_create_schema, sales_category_update_schema
+from .tax_rate import taxrate_schema, taxrate_many_schema, taxrate_create_schema, taxrate_update_schema
+from .tender import tender_schema, tender_many_schema, tender_create_schema, tender_update_schema
+from .ticket import ticket_schema, ticket_detail_schema, ticket_many_schema, ticket_create_schema, ticket_update_schema
+from .transaction import transaction_schema, transaction_many_schema, transaction_create_schema, transaction_update_schema
+from .user import user_schema, user_register_schema, user_login_schema, user_many_schema, user_update_schema
