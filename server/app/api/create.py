@@ -246,7 +246,8 @@ def add_transaction(ticket_id):
         
         taxable, tax_source = determine_taxability(
             category=category,
-            location=location
+            location=location,
+            payment_type=payment_type
         )
         
         line_item = LineItem(
