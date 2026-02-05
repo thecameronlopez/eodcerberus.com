@@ -20,7 +20,18 @@ class DepartmentSchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     active = ma.auto_field()
     
+    
+class UpdateDepartmentSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Department
+        load_instance = True
+        unknown = "raise"
+    
+    name = ma.auto_field()
+    active = ma.auto_field()
+    
 
-create_department_schema = CreateDepartmentSchema()  
+create_department_schema = CreateDepartmentSchema() 
+update_department_schema = UpdateDepartmentSchema() 
 department_schema = DepartmentSchema()
 many_departments_schema = DepartmentSchema(many=True)

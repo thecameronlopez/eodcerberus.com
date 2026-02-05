@@ -9,5 +9,5 @@ from .sales_day import create_sales_day_schema, close_sales_day_schema, sales_da
 from .transaction import create_transaction_schema, transaction_schema, many_transactions_schema
 from .payment_type import create_payment_type_schema, payment_type_schema, many_payment_types_schema
 from .sales_category import create_sales_category_schema, sales_category_schema, many_sales_categories_schema
-from .department import create_department_schema, department_schema, many_departments_schema
+from .department import create_department_schema, department_schema, many_departments_schema, update_department_schema
 from .user import register_user_schema, login_schema, user_schema, many_users_schema

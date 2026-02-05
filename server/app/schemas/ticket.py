@@ -39,6 +39,7 @@ class TicketSchema(ma.SQLAlchemySchema):
     
     # Nested transactions (lazy to avoid circular import)
     transactions = fields.Nested("TransactionSchema", many=True, exclude=("ticket",))
+    sales_day = fields.Nested("SalesDaySchema", dump_only=True, exclude=["tickets"])
     
     def get_is_open(self, obj):
         return obj.is_open

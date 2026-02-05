@@ -21,6 +21,19 @@ authorizer = Blueprint("auth", __name__)
 #-------------
 @authorizer.route("/register", methods=["POST"])
 def register():
+    """  
+    PAYLOAD:
+    {
+        "email": "string",
+        "first_name": "string",
+        "last_name": "string",
+        "is_admin": "bool",
+        "deaprtment": "string",
+        "location_code": "string",
+        "pw1": "string",
+        "pw2": "string"
+    }
+    """
     try:
         validated = register_user_schema.load(request.get_json())
     except ValidationError as err:
@@ -94,26 +107,11 @@ def login():
         SalesDay.user_id == user.id,
         func.date(SalesDay.opened_at) == now.date()
     ).first()
-    if not existing_sales_day:
-        sales_day = SalesDay(
-            user_id=user.id,
-            opened_at=now,
-            location_id=user.location_id
-        )
-        
-    else:
-        sales_day = existing_sales_day
     
     login_user(user)
     current_app.logger.info(f"{user.first_name} {user.last_name} has logged in.")
-    try:
-        db.session.add(sales_day)
-        db.session.commit()
-    except Exception as e:
-        current_app.logger.error(f"[SALES DAY CREATION ERROR]: {e}")
-        return jsonify(success=False, message=f"There was an error when creating new sales day for {user.first_name}")
     
-    return jsonify(success=True, message=f"Welcome {user.first_name}", user=user_schema.dump(user), sales_day=sales_day_schema.dump(sales_day)), 200
+    return jsonify(success=True, message=f"Welcome {user.first_name}", user=user_schema.dump(user), sales_day=True if existing_sales_day else False), 200
 
 #-------------
 # LOGOUT USER
@@ -129,8 +127,7 @@ def logout():
 # HYDRATE USER
 #-------------
 @authorizer.route('/hydrate', methods=['GET'])
-@login_required
 def hydrate_user():
-    if not current_user:
+    if not current_user.is_authenticated:
         return jsonify(success=False, message="User not authenticated"), 403
     return jsonify(success=True, user=user_schema.dump(current_user)), 200
