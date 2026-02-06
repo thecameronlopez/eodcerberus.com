@@ -1,5 +1,5 @@
 from app.models import SalesDay
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError
+from marshmallow import fields
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
 
@@ -19,7 +19,7 @@ class CloseSalesDaySchema(BaseSchema):
         unknown = "raise"
     
     actual_cash = fields.Int(required=True)
-    closet_at = fields.DateTime(required=False)
+    closed_at = fields.DateTime(required=False)
 
 
 

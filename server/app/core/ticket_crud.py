@@ -6,7 +6,6 @@ from app.extensions import db
 from app.services.allocations import allocate_tender_to_line_items
 from datetime import datetime
 from app.models import User, Location
-from app.utils.responses import success, error
 from app.utils.tools import finalize_ticket
 from marshmallow import ValidationError as MarshallowValidationError
 from app.handlers.errors.domain import ConflictError, NotFoundError
@@ -56,8 +55,17 @@ class TicketCRUDEngine(CRUDEngine):
         
         
         #-------------- create sales day if not one --------------
-        existing_sales_day = db.session.query(SalesDay).filter_by(user_id=user.id).first()
-        if existing_sales_day:
+        existing_sales_day = (
+            db.session.query(SalesDay)
+            .filter_by(
+                user_id=user.id,
+                location_id=location.id,
+                status="open",
+            )
+            .order_by(SalesDay.opened_at.desc())
+            .first()
+        )
+        if existing_sales_day and existing_sales_day.opened_at.date() == date:
             sales_day = existing_sales_day
         else:
             sales_day = SalesDay(
@@ -89,6 +97,8 @@ class TicketCRUDEngine(CRUDEngine):
         line_items = []
         for li in data["line_items"]:
             sales_category = db.session.get(SalesCategory, li["sales_category_id"])
+            if not sales_category:
+                raise NotFoundError(f"SalesCategory {li['sales_category_id']} not found.")
             line_item = LineItem(
                 sales_category_id=sales_category.id,
                 unit_price=li["unit_price"],
@@ -103,6 +113,8 @@ class TicketCRUDEngine(CRUDEngine):
         tenders = []
         for t in data["tenders"]:
             payment_type = db.session.get(PaymentType, t["payment_type_id"])
+            if not payment_type:
+                raise NotFoundError(f"PaymentType {t['payment_type_id']} not found.")
             tender = Tender(
                 payment_type_id=payment_type.id,
                 amount=t["amount"]

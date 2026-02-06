@@ -1,7 +1,6 @@
 # app/schemas/line_item_tender.py
-from marshmallow_sqlalchemy import auto_field
 from app.models import LineItemTender
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError
+from marshmallow import fields
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
 

@@ -1,7 +1,6 @@
 # app/schemas/tender.py
-from marshmallow import fields
+from marshmallow import fields, validate
 from app.models import Tender
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
 

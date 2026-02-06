@@ -1,5 +1,5 @@
 # app/schemas/user.py
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError
+from marshmallow import fields, validate, validates_schema, ValidationError
 from app.models import User
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema

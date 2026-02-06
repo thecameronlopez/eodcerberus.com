@@ -8,7 +8,7 @@ from app.schemas import (
     department_create_schema,
     taxrate_create_schema
 )
-from marshmallow import ValidationError, fields, validate
+from marshmallow import ValidationError
 import datetime
 
 bootstrapper = Blueprint("bootstrap", __name__)
@@ -32,7 +32,7 @@ boot_data = {
     }
 }
 
-@bootstrapper.route("/status", methods=["GET"])
+@bootstrapper.route("", methods=["GET"])
 def bootstrap_status():
     bootstrapped = (
         db.session.query(User).first() is not None

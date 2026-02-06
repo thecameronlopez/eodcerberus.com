@@ -1,8 +1,6 @@
 # app/schemas/transaction.py
-from marshmallow import fields
+from marshmallow import fields, validate
 from app.models import Transaction, TransactionType
-from marshmallow import fields
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
 

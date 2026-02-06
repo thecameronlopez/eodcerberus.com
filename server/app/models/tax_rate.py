@@ -5,6 +5,7 @@ from decimal import Decimal
 
 class TaxRate(IDMixin, Base):
     __tablename__ = "tax_rate"
+    __plural__ = "tax_rates"
     
     location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
     rate: Mapped[Decimal] = mapped_column(Numeric(5, 4), nullable=False)

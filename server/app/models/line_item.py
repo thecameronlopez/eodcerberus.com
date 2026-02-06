@@ -6,6 +6,7 @@ from decimal import Decimal, ROUND_HALF_UP
 
 class LineItem(IDMixin, Base):
     __tablename__ = "line_items"
+    __plural__ = "line_items"
     
     transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id"), nullable=False)
     sales_category_id: Mapped[int] = mapped_column(ForeignKey("sales_categories.id"), nullable=False)
@@ -49,7 +50,7 @@ class LineItem(IDMixin, Base):
             
     @property
     def paid_total(self):
-        return sum(t.applied_total for t in self.tenders)
+        return sum(t.applied_total for t in self.allocations)
     
     @property
     def remaining_total(self):

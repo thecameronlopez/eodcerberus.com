@@ -4,6 +4,7 @@ from .base import Base, IDMixin
 
 class SalesCategory(IDMixin, Base):
     __tablename__ = "sales_categories"
+    __plural__ = "sales_categories"
     
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     taxable: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -16,6 +17,7 @@ class SalesCategory(IDMixin, Base):
     
 class PaymentType(IDMixin, Base):
     __tablename__ = "payment_types"
+    __plural__ = "payment_types"
     
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     taxable: Mapped[bool] = mapped_column(Boolean, default=True)

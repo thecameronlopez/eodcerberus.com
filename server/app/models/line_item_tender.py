@@ -5,6 +5,7 @@ from .base import Base, IDMixin
 
 class LineItemTender(IDMixin, Base):
     __tablename__ = "line_item_tenders"
+    __plural__ = "line_item_tenders"
     
     __table_args__ = (
         UniqueConstraint("line_item_id", "tender_id", name="uq_line_item_tender"),

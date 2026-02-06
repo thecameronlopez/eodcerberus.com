@@ -13,6 +13,8 @@ def app():
         
 @pytest.fixture(scope="session")
 def db(app):
+    # Ensure all models are imported so SQLAlchemy knows about them
+    import app.models  # noqa: F401
     _db.create_all()
     yield _db
     _db.drop_all()

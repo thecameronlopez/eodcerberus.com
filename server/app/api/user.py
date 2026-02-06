@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.core.crud_engine import CRUDEngine
+from app.core.user_crud import UserCRUDEngine
 from app.core.resource import register_resource
 
 from app.models import User
@@ -13,7 +13,7 @@ from app.schemas import (
 bp = Blueprint("users", __name__)
 
 
-user_crud = CRUDEngine(
+user_crud = UserCRUDEngine(
     model=User,
     read_schema=user_schema,
     create_schema=user_register_schema,

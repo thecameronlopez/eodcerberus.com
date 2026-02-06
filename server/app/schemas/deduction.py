@@ -1,5 +1,5 @@
 from app.models import Deduction
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError
+from marshmallow import fields, validate
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
 

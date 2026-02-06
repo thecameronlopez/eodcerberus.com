@@ -1,7 +1,6 @@
 # app/schemas/ticket.py
-from marshmallow import fields
+from marshmallow import fields, validate
 from app.models import Ticket
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
 
@@ -13,9 +12,9 @@ class TicketCreateSchema(BaseSchema):
     ticket_number = fields.Int(required=True)
     date = fields.Date(required=True, format="%Y-%m-%d")
     location_id = fields.Int(required=True)
-    user_id = fields.Int(required=False)  # Optional, default to current_user in route
+    user_id = fields.Int(required=True)
     line_items = fields.List(fields.Nested("LineItemCreateSchema"), required=True, validate=validate.Length(min=1))
-    tenders = fields.List(fields.Nested("TenderCreateSchema"))
+    tenders = fields.List(fields.Nested("TenderCreateSchema"), required=True)
     transaction_type = fields.Str(required=True)
 
 

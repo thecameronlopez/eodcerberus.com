@@ -14,6 +14,7 @@ class SalesDayStatus(str, enum.Enum):
 
 class SalesDay(IDMixin, Base):
     __tablename__ = "sales_days"
+    __plural__ = "sales_days"
 
     # ------------------ Core fields ------------------
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
@@ -61,7 +62,7 @@ class SalesDay(IDMixin, Base):
             for ticket in self.tickets
             for tx in ticket.transactions
             for tender in tx.tenders
-            if tender.payment_type == "CASH"
+            if tender.payment_type.name.upper() == "CASH"
         )
         self.expected_cash = self.starting_cash + total_cash
         return self.expected_cash

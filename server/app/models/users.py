@@ -36,7 +36,7 @@ class User(IDMixin, Base, UserMixin):
         total transactions(includes return) - deductions
         """
         total_sales = sum(
-            t.total for t in self.transactions if t.posted_date == date
+            t.total for t in self.transactions if t.posted_at == date
         )
         total_deductions = sum(
             d.amount for d in self.deductions if d.date == date

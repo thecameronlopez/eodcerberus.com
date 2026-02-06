@@ -1,6 +1,6 @@
 from app.models import Department
 from .base import BaseSchema, UpdateSchema
-from marshmallow import fields, Schema, validate, validates_schema, ValidationError, pre_load
+from marshmallow import fields, validate
 from app.extensions import ma
 
 

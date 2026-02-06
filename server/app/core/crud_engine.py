@@ -32,17 +32,30 @@ class CRUDEngine:
         
     def list(self):
         items = db.session.query(self.model).all()
-        
+        plural = self._plural_key()
         return success(data={
-            self.model.__name__.lower() + "s":
-                self.read_schema.dump(items, many=True)
+            plural: self.read_schema.dump(items, many=True)
         })
+
+    def _plural_key(self):
+        if hasattr(self.model, "__plural__"):
+            return getattr(self.model, "__plural__")
+
+        name = self.model.__name__.lower()
+        if name.endswith("y") and len(name) > 1 and name[-2] not in "aeiou":
+            return name[:-1] + "ies"
+        if name.endswith(("s", "x", "z", "ch", "sh")):
+            return name + "es"
+        return name + "s"
         
     
     def create(self):
         data = request.get_json()
-        
+
         instance = self.create_schema.load(data)
+
+        if isinstance(instance, dict):
+            instance = self.model(**instance)
         
         db.session.add(instance)
         db.session.commit()
