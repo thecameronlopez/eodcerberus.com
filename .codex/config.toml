@@ -1,0 +1,7 @@
+model = "gpt-5.2"
+sandbox_mode = "workspace-write"
+deny_commands = ["rm -rf /", "shutdown", "reboot"]
+ignore = ["node_modules", "dist", ".venv", ".git"]
+web_search = "cached"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"
