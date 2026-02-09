@@ -1,7 +1,8 @@
 from flask import request
 from app.extensions import db
-from app.utils.responses import success, error
-from app.handlers.errors.domain import NotFoundError
+from app.utils.responses import success
+from app.handlers.errors.domain import NotFoundError, ConflictError
+from sqlalchemy.exc import IntegrityError
 
 
 class CRUDEngine:
@@ -57,8 +58,15 @@ class CRUDEngine:
         if isinstance(instance, dict):
             instance = self.model(**instance)
         
-        db.session.add(instance)
-        db.session.commit()
+        try:
+            db.session.add(instance)
+            db.session.commit()
+        except IntegrityError as err:
+            db.session.rollback()
+            raise ConflictError(f"{self.model.__name__} conflicts with existing data.") from err
+        except Exception:
+            db.session.rollback()
+            raise
         
         return success(
             f"{self.model.__name__} created",
@@ -81,7 +89,14 @@ class CRUDEngine:
             partial=True
         )
         
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError as err:
+            db.session.rollback()
+            raise ConflictError(f"{self.model.__name__} conflicts with existing data.") from err
+        except Exception:
+            db.session.rollback()
+            raise
         
         return success(
             f"{self.model.__name__} updated",
@@ -95,7 +110,14 @@ class CRUDEngine:
         if not instance:
             raise NotFoundError(f"{self.model.__name__} not found")
         
-        db.session.delete(instance)
-        db.session.commit()
+        try:
+            db.session.delete(instance)
+            db.session.commit()
+        except IntegrityError as err:
+            db.session.rollback()
+            raise ConflictError(f"{self.model.__name__} cannot be deleted due to related data.") from err
+        except Exception:
+            db.session.rollback()
+            raise
         
         return success(f"{self.model.__name__} deleted")

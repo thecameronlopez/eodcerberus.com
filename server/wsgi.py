@@ -1,7 +1,18 @@
 import os
 from app import create_app
+from config import DevelopmentConfig, ProductionConfig, TestConfig
 
-app = create_app()
+
+def _select_config():
+    env = os.environ.get("FLASK_ENV", "development").strip().lower()
+    if env == "production":
+        return ProductionConfig
+    if env == "testing":
+        return TestConfig
+    return DevelopmentConfig
+
+
+app = create_app(_select_config())
 
 if __name__ == "__main__":
     host = os.environ.get("HOST", "0.0.0.0")

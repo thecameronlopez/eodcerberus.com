@@ -24,7 +24,7 @@ class LineItem(IDMixin, Base):
     
     # ---------------- Relationships ----------------
     transaction = relationship("Transaction", back_populates="line_items", lazy="joined")
-    sales_category = relationship("SalesCategory", lazy="joined")
+    sales_category = relationship("SalesCategory", back_populates="line_items", lazy="joined")
     allocations = relationship("LineItemTender", back_populates="line_item", cascade="all, delete-orphan")
     
     
@@ -35,7 +35,7 @@ class LineItem(IDMixin, Base):
     # ---------------- Helpers ----------------
     def compute_total(self):
         if self.unit_price is None:
-            raise ValueError("Line item is missing unit_price")
+            raise ValueError("Line item is missing unit_price.")
         qty_price = self.unit_price * self.quantity
         tax_amt = Decimal(qty_price) * Decimal(self.tax_rate or 0)
         self.tax_amount = (

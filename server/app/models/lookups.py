@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Boolean
+from sqlalchemy import String, Boolean
 from .base import Base, IDMixin
 
 class SalesCategory(IDMixin, Base):

@@ -1,10 +1,13 @@
 from flask import request
+from flask_login import current_user
 from app.core.crud_engine import CRUDEngine
 from app.extensions import db, bcrypt
 from app.handlers.errors.validation import ValidationError as AppValidationError
+from app.handlers.errors.domain import ConflictError, NotFoundError, PermissionDenied
 from app.models import Department, Location, User
 from app.schemas import user_register_schema
 from app.utils.responses import success
+from sqlalchemy.exc import IntegrityError
 
 
 class UserCRUDEngine(CRUDEngine):
@@ -41,18 +44,61 @@ class UserCRUDEngine(CRUDEngine):
             last_name=data["last_name"].title(),
             department=department,
             location=location,
-            is_admin=bool(data.get("is_admin", False)),
+            is_admin=bool(data.get("is_admin", False)) if current_user.is_authenticated and current_user.is_admin else False,
             password_hash=bcrypt.generate_password_hash(data["pw"]).decode("utf-8"),
         )
 
         db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError as err:
+            db.session.rollback()
+            raise ConflictError(f"Email '{data['email'].lower()}' is already in use.") from err
 
         return success(
             "User created",
             {self.model.__name__.lower(): self.read_schema.dump(user)},
             201,
         )
+
+    def update(self, id):
+        instance = db.session.get(self.model, id)
+        if not instance:
+            raise NotFoundError(f"{self.model.__name__} not found")
+
+        is_self = current_user.is_authenticated and current_user.id == id
+        is_admin = current_user.is_authenticated and getattr(current_user, "is_admin", False)
+        if not (is_self or is_admin):
+            raise PermissionDenied("You can only update your own user record.")
+
+        data = self._get_json_payload() or {}
+        if not is_admin:
+            blocked = {"is_admin", "terminated"}
+            if blocked.intersection(data.keys()):
+                raise PermissionDenied("Only admins can modify admin/termination fields.")
+
+        instance = self.update_schema.load(
+            data,
+            instance=instance,
+            partial=True
+        )
+
+        try:
+            db.session.commit()
+        except IntegrityError as err:
+            db.session.rollback()
+            raise ConflictError(f"{self.model.__name__} conflicts with existing data.") from err
+        except Exception:
+            db.session.rollback()
+            raise
+
+        return success(
+            f"{self.model.__name__} updated",
+            {self.model.__name__.lower(): self.read_schema.dump(instance)}
+        )
+
+    def delete(self, id):
+        raise PermissionDenied("User deletion is disabled.")
 
     @staticmethod
     def _get_json_payload():

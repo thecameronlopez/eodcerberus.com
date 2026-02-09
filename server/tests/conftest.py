@@ -2,6 +2,7 @@ import pytest
 from app import create_app
 from config import TestConfig
 from app.extensions import db as _db
+from app.models.base import Base
 
 @pytest.fixture(scope="session")
 def app():
@@ -15,9 +16,9 @@ def app():
 def db(app):
     # Ensure all models are imported so SQLAlchemy knows about them
     import app.models  # noqa: F401
-    _db.create_all()
+    Base.metadata.create_all(bind=_db.engine)
     yield _db
-    _db.drop_all()
+    Base.metadata.drop_all(bind=_db.engine)
     
     
 @pytest.fixture

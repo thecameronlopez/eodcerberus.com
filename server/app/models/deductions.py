@@ -2,6 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Date, ForeignKey
 from .base import Base, IDMixin
 from datetime import date as DTdate
+from app.utils.timezone import business_today
 
 class Deduction(IDMixin, Base):
     __tablename__ = "deductions"
@@ -11,6 +12,6 @@ class Deduction(IDMixin, Base):
     
     amount: Mapped[int] = mapped_column(Integer, nullable=False)
     reason: Mapped[str] = mapped_column(String(300), nullable=False)
-    date: Mapped[DTdate] = mapped_column(Date, default=DTdate.today)
+    date: Mapped[DTdate] = mapped_column(Date, default=business_today, nullable=False)
     
     

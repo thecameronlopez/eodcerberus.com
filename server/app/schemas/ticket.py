@@ -3,6 +3,7 @@ from marshmallow import fields, validate
 from app.models import Ticket
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
+from app.utils.timezone import business_today
 
 
 class TicketCreateSchema(BaseSchema):
@@ -10,7 +11,7 @@ class TicketCreateSchema(BaseSchema):
         unknown = "raise"
         
     ticket_number = fields.Int(required=True)
-    date = fields.Date(required=True, format="%Y-%m-%d")
+    ticket_date = fields.Date(required=False, load_default=business_today, format="%Y-%m-%d")
     location_id = fields.Int(required=True)
     user_id = fields.Int(required=True)
     line_items = fields.List(fields.Nested("LineItemCreateSchema"), required=True, validate=validate.Length(min=1))

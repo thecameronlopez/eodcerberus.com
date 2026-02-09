@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from app.models import User, Location, Department, TaxRate
 from app.extensions import db, bcrypt
 from app.schemas import (
@@ -6,10 +6,11 @@ from app.schemas import (
     user_register_schema,
     location_create_schema,
     department_create_schema,
-    taxrate_create_schema
 )
 from marshmallow import ValidationError
-import datetime
+from app.utils.timezone import business_today
+from app.handlers.errors.domain import PermissionDenied
+from app.handlers.errors.validation import ValidationError as AppValidationError
 
 bootstrapper = Blueprint("bootstrap", __name__)
 
@@ -65,24 +66,26 @@ def run_bootstrap():
         }
     }
     """
+    if current_app.config.get("FLASK_ENV") == "production":
+        raise PermissionDenied("Bootstrap is disabled in production")
     # HARD STOP if already bootstrapped
     existing_user = db.session.query(User).first()
     existing_location = db.session.query(Location).first()
     
     if existing_user or existing_location:
-        return jsonify(success=False, message="System already bootstrapped"), 403
+        raise PermissionDenied("System already bootstrapped")
     
-    # data = request.get_json()
-    # #validate inputs
-    # if not data:
-    #     data = boot_data
+    data = request.get_json(silent=True) or boot_data
     try:
-        location_data = location_create_schema.load(boot_data["location"])
-        user_data =user_register_schema.load(boot_data["user"])
-        deaprtment_data = department_create_schema.load(boot_data["department"])
+        location_data = location_create_schema.load(data["location"])
+        user_data = user_register_schema.load(data["user"])
+        deaprtment_data = department_create_schema.load(data["department"])
     except ValidationError as err:
-        print(err.messages)
-        return jsonify(success=False, message=f"There was an error: {err}"), 400
+        raise AppValidationError(err.messages)
+    except KeyError as err:
+        raise AppValidationError(
+            {str(err): ["Missing required bootstrap section. Expected: location, user, department."]}
+        )
     
     
     
@@ -96,7 +99,7 @@ def run_bootstrap():
     tax_rate = TaxRate(
         location_id=location.id,
         rate=location.current_tax_rate,
-        effective_from=datetime.date.today()
+        effective_from=business_today()
     )
     location.tax_rates.append(tax_rate)
     

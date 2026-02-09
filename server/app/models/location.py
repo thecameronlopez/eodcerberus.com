@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Boolean, Numeric
+from sqlalchemy import String, Numeric
 from .base import Base, IDMixin
 
 

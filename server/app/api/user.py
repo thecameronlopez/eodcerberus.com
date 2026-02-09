@@ -21,4 +21,4 @@ user_crud = UserCRUDEngine(
 )
 
 
-register_resource(bp, "users", user_crud)
+register_resource(bp, "users", user_crud, require_auth=True, create_admin_only=True)

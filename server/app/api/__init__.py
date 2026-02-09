@@ -1,5 +1,6 @@
 from flask import Blueprint
 
+from .auth import bp as auth_bp
 from .bootstrap import bootstrapper
 
 from .department import bp as dpt_bp
@@ -19,6 +20,7 @@ from .user import bp as user_bp
 api = Blueprint("api", __name__, url_prefix="/api")
 
 
+api.register_blueprint(auth_bp)
 api.register_blueprint(bootstrapper, url_prefix="/bootstrap")
 
 api.register_blueprint(dpt_bp)

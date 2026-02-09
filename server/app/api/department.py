@@ -21,4 +21,4 @@ department_crud = CRUDEngine(
 )
 
 
-register_resource(bp, "departments", department_crud)
+register_resource(bp, "departments", department_crud, write_admin_only=True)

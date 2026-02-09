@@ -1,14 +1,15 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Boolean, Date, ForeignKey, BigInteger, event
+from sqlalchemy import Integer, Date, ForeignKey, BigInteger
 from .base import Base, IDMixin
 from datetime import date as DTdate
+from app.utils.timezone import business_today
 
 class Ticket(IDMixin, Base):
     __tablename__ = "tickets"
     
     # ------------------- Core fields -------------------
     ticket_number: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
-    ticket_date: Mapped[DTdate] = mapped_column(Date, default=DTdate.today)
+    ticket_date: Mapped[DTdate] = mapped_column(Date, default=business_today, nullable=False)
     
     #------------------ Foreign Keys --------------------
     location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
@@ -52,6 +53,24 @@ class Ticket(IDMixin, Base):
             for tx in self.transactions
             for t in tx.tenders 
         )
+
+    @property
+    def line_items(self):
+        """Flatten all line items across child transactions for schema serialization."""
+        return [
+            line_item
+            for tx in self.transactions
+            for line_item in tx.line_items
+        ]
+
+    @property
+    def tenders(self):
+        """Flatten all tenders across child transactions for schema serialization."""
+        return [
+            tender
+            for tx in self.transactions
+            for tender in tx.tenders
+        ]
     
     @property
     def balance_owed(self) -> int:

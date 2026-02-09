@@ -1,5 +1,4 @@
 from flask import Blueprint
-from app.core.crud_engine import CRUDEngine
 from app.core.ticket_crud import TicketCRUDEngine
 from app.core.resource import register_resource
 

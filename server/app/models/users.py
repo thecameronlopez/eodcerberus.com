@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Boolean, DateTime, ForeignKey
+from sqlalchemy import String, Boolean, ForeignKey
 from .base import Base, IDMixin
 from datetime import date as DTdate
 from flask_login import UserMixin

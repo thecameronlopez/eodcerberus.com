@@ -21,4 +21,4 @@ location_crud = CRUDEngine(
 )
 
 
-register_resource(bp, "locations", location_crud)
+register_resource(bp, "locations", location_crud, write_admin_only=True)

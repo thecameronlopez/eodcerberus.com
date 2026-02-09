@@ -21,4 +21,4 @@ payment_type_crud = CRUDEngine(
 )
 
 
-register_resource(bp, "payment_types", payment_type_crud)
+register_resource(bp, "payment_types", payment_type_crud, write_admin_only=True)

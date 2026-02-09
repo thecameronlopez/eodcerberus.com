@@ -1,9 +1,15 @@
 import os 
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import timedelta
 import redis
 
 load_dotenv()
+
+def _require_env(name: str) -> str:
+    value = os.environ.get(name)
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
 
 class Config:
     #-------------------------------
@@ -13,6 +19,7 @@ class Config:
     FLASK_ENV = os.environ.get("FLASK_ENV", "development")
     DEBUG = os.environ.get("DEBUG", "True") == "True"
     APP_NAME = os.environ.get("APP_NAME", "Cerberus")
+    BUSINESS_TIMEZONE = os.environ.get("BUSINESS_TIMEZONE", "America/Chicago")
     
     
     #-------------------------------
@@ -65,6 +72,10 @@ class Config:
     FEATURE_X_ENABLED = os.environ.get("FEATURE_X_ENABLED", "False") == "True"
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
     
+    @classmethod
+    def validate(cls):
+        return
+    
     
     
     
@@ -85,3 +96,30 @@ class TestConfig(Config):
     CORS_ORIGINS = ["*"]
     
     LOG_LEVEL = "WARNING"
+
+
+class DevelopmentConfig(Config):
+    FLASK_ENV = "development"
+    DEBUG = True
+
+
+class ProductionConfig(Config):
+    FLASK_ENV = "production"
+    DEBUG = False
+
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
+    SESSION_REDIS = redis.from_url(os.environ.get("REDIS_URL", "redis://localhost:6379"))
+    BUSINESS_TIMEZONE = os.environ.get("BUSINESS_TIMEZONE")
+
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+
+    @classmethod
+    def validate(cls):
+        # Enforce required runtime settings for non-dev deployments.
+        _require_env("SECRET_KEY")
+        _require_env("DATABASE_URI")
+        _require_env("REDIS_URL")
+        _require_env("BUSINESS_TIMEZONE")

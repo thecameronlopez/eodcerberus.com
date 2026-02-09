@@ -21,4 +21,4 @@ sales_category_crud = CRUDEngine(
 )
 
 
-register_resource(bp, "sales_categories", sales_category_crud)
+register_resource(bp, "sales_categories", sales_category_crud, write_admin_only=True)

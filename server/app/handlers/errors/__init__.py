@@ -2,6 +2,7 @@ from flask import jsonify
 from marshmallow import ValidationError
 from .base import AppError
 from .response import error_response
+from .validation import ValidationError as AppValidationError
 
 
 def register_error_handlers(app):
@@ -14,7 +15,7 @@ def register_error_handlers(app):
     @app.errorhandler(ValidationError)
     def handle_validation_error(err):
         return error_response(
-            AppError(
+            AppValidationError(
                 message="Validation error",
                 code="SCHEMA_422",
                 details=err.messages

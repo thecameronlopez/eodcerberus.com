@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, DateTime, Enum, Index, Integer, func
+from sqlalchemy import ForeignKey, DateTime, Enum, Index, Integer, event, select
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 import enum
 
@@ -82,3 +83,40 @@ class SalesDay(IDMixin, Base):
     @property
     def computed_cash_difference(self):
         return self.compute_cash_difference()
+
+
+def _is_open_status(status) -> bool:
+    if status is None:
+        return True
+    if isinstance(status, SalesDayStatus):
+        return status == SalesDayStatus.OPEN
+    return str(status).lower() == SalesDayStatus.OPEN.value
+
+
+def _assert_single_open_day(connection, target: SalesDay):
+    if not _is_open_status(target.status):
+        return
+
+    stmt = select(SalesDay.id).where(
+        SalesDay.user_id == target.user_id,
+        SalesDay.status == SalesDayStatus.OPEN,
+    )
+    if target.id is not None:
+        stmt = stmt.where(SalesDay.id != target.id)
+
+    if connection.execute(stmt.limit(1)).first():
+        raise IntegrityError(
+            "User already has an open sales day.",
+            params=None,
+            orig=None,
+        )
+
+
+@event.listens_for(SalesDay, "before_insert")
+def validate_one_open_day_before_insert(mapper, connection, target):
+    _assert_single_open_day(connection, target)
+
+
+@event.listens_for(SalesDay, "before_update")
+def validate_one_open_day_before_update(mapper, connection, target):
+    _assert_single_open_day(connection, target)

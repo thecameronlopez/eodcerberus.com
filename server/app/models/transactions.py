@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Date, ForeignKey, Numeric, event, String, Boolean, Enum
+from sqlalchemy import Integer, Date, ForeignKey, Boolean, Enum
 from .base import Base, IDMixin
 from datetime import date as DTdate
+from app.utils.timezone import business_today
 import enum
 
 class TransactionType(str, enum.Enum):
@@ -17,7 +18,7 @@ class Transaction(IDMixin, Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
     location_id: Mapped[int] = mapped_column(Integer, ForeignKey("locations.id"), nullable=False)
     
-    posted_at: Mapped[DTdate] = mapped_column(Date, default=DTdate.today)
+    posted_at: Mapped[DTdate] = mapped_column(Date, default=business_today, nullable=False)
     transaction_type: Mapped[TransactionType] = mapped_column(Enum(TransactionType, native_enum=False), default=TransactionType.SALE, nullable=False)
     subtotal: Mapped[int] = mapped_column(Integer, default=0)
     tax_total: Mapped[int] = mapped_column(Integer, default=0)

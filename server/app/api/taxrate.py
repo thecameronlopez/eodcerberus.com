@@ -21,4 +21,4 @@ taxrate_crud = CRUDEngine(
 )
 
 
-register_resource(bp, "taxrates", taxrate_crud)
+register_resource(bp, "taxrates", taxrate_crud, write_admin_only=True)

@@ -12,7 +12,7 @@ class Tender(IDMixin, Base):
     
     # ---------------- Relationships ----------------
     transaction = relationship("Transaction", back_populates="tenders", lazy="joined")
-    payment_type = relationship("PaymentType", lazy="joined")
+    payment_type = relationship("PaymentType", back_populates="tenders", lazy="joined")
     allocations = relationship("LineItemTender", back_populates="tender", cascade="all, delete-orphan")
     
    
