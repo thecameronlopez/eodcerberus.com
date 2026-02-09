@@ -17,7 +17,7 @@ const Categories = () => {
   const [formData, setFormData] = useState({
     sales_categories: {
       name: "",
-      tax_default: true,
+      taxable: true,
     },
     payment_types: {
       name: "",
@@ -27,6 +27,22 @@ const Categories = () => {
       name: "",
     },
   });
+
+  const refreshLists = async () => {
+    try {
+      const [depRes, catRes, payRes] = await Promise.all([
+        DepartmentList(),
+        CategoriesList(),
+        PaymentTypeList(),
+      ]);
+      if (depRes.success) setDepartments(depRes.departments || []);
+      if (catRes.success) setCategories(catRes.categories || []);
+      if (payRes.success) setPaymentTypes(payRes.payment_types || []);
+    } catch (error) {
+      console.error("[REFRESH ERROR]: ", error);
+      toast.error(error.message);
+    }
+  };
 
   /*----------------Populate lists---------------------*/
   useEffect(() => {
@@ -47,6 +63,7 @@ const Categories = () => {
     };
 
     fetchAll();
+    refreshLists();
   }, []);
 
   // Handle adding
@@ -80,10 +97,20 @@ const Categories = () => {
     e.preventDefault();
     if (!adding) return;
     if (!confirm(`Submit new ${adding}`)) return;
+
+    const payload = {
+      ...formData[adding],
+      name: String(formData[adding].name || "").trim(),
+    };
+    if (!payload.name) {
+      toast.error("Name is required");
+      return;
+    }
+
     const URL = {
-      sales_categories: "/api/create/sales_category",
-      payment_types: "/api/create/payment_type",
-      departments: "/api/create/department",
+      sales_categories: "/api/sales_categories",
+      payment_types: "/api/payment_types",
+      departments: "/api/departments",
     };
 
     try {
@@ -93,7 +120,7 @@ const Categories = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData[adding]),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -101,13 +128,8 @@ const Categories = () => {
         throw new Error(data.message);
       }
       toast.success(data.message);
-      if (data.new_category) {
-        setCategories((prev) => [...prev, data.new_category]);
-      } else if (data.new_payment_type) {
-        setPaymentTypes((prev) => [...prev, data.new_payment_type]);
-      } else if (data.new_department) {
-        setDepartments((prev) => [...prev, data.new_department]);
-      }
+
+      await refreshLists();
 
       setFormData((prev) => ({
         ...prev,
@@ -147,7 +169,7 @@ const Categories = () => {
             categories.map((cat) => (
               <div key={cat.id} className={styles.listed}>
                 <p>{cat.name}</p>
-                <p>{cat.tax_default ? "Taxed" : "Not Taxed"}</p>
+                <p>{cat.taxable ? "Taxed" : "Not Taxed"}</p>
               </div>
             ))
           )}
@@ -167,13 +189,13 @@ const Categories = () => {
                   onChange={handleChange}
                 />
               </div>
-              <label htmlFor="tax_default">
+              <label htmlFor="taxable">
                 Taxable?
                 <input
                   type="checkbox"
-                  name="tax_default"
-                  id="tax_default"
-                  checked={formData.sales_categories.tax_default}
+                  name="taxable"
+                  id="taxable"
+                  checked={formData.sales_categories.taxable}
                   onChange={handleChange}
                 />
               </label>

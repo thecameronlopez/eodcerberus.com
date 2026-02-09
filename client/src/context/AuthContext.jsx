@@ -10,7 +10,7 @@ export const AuthContext = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("/api/auth/hydrate_user", {
+        const response = await fetch("/api/auth/me", {
           credentials: "include",
         });
 
@@ -31,7 +31,7 @@ export const AuthContext = ({ children }) => {
   useEffect(() => {
     const checkBootstrap = async () => {
       try {
-        const res = await fetch("/api/bootstrap/status");
+        const res = await fetch("/api/bootstrap");
         const data = await res.json();
         setBootstrapped(data.bootstrapped);
       } catch {

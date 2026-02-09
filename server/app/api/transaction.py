@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.core.crud_engine import CRUDEngine
+from app.core.transaction_crud import TransactionCRUDEngine
 from app.core.resource import register_resource
 
 from app.models import Transaction
@@ -13,7 +13,7 @@ from app.schemas import (
 bp = Blueprint("transactions", __name__)
 
 
-transaction_crud = CRUDEngine(
+transaction_crud = TransactionCRUDEngine(
     model=Transaction,
     read_schema=transaction_schema,
     create_schema=transaction_create_schema,

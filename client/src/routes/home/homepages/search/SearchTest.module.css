@@ -1,7 +1,7 @@
 .ticketSearchPage {
-  width: 80%;
+  width: 92%;
   margin: 1rem auto;
-  max-width: 1400px;
+  max-width: 1680px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -33,12 +33,23 @@
 .ticketNumberInput {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 .ticketNumberInput > input {
   background-color: var(--buttonPrimary);
   color: var(--textPrimary);
   font-size: 20px !important;
   width: 70%;
+}
+
+.searchBtn {
+  width: fit-content;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  font-weight: 700;
 }
 
 /*------------Ticket controls------------*/
@@ -94,6 +105,83 @@
   box-shadow: -1px 1px 4px #000;
 }
 
+.transactionHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.transactionHeader > div p:first-child {
+  font-weight: 800;
+}
+
+.deleteTransaction {
+  border: none;
+  background: transparent;
+  color: darkred;
+  font-size: 1.2rem;
+}
+
+.transactionTotals {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  justify-content: flex-end;
+}
+
+.transactionDetailBlock {
+  width: 100%;
+  border: 1px solid var(--bannerBackground);
+  border-radius: 8px;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.transactionDetailBlock h5 {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--textPrimary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.25rem;
+}
+
+.detailRow p {
+  margin: 0;
+}
+
+.lineItemsBlock {
+  border-left: 3px solid #1f8f5f;
+  background: rgba(31, 143, 95, 0.08);
+}
+
+.lineItemsBlock h5 {
+  color: #8ce7c0;
+}
+
+.tendersBlock {
+  border-left: 3px solid #2f7dbb;
+  background: rgba(47, 125, 187, 0.09);
+}
+
+.tendersBlock h5 {
+  color: #9fd3ff;
+}
+
 /*------------Line Items------------*/
 .lineItem {
   border-bottom: 2px solid var(--linkText);
@@ -142,17 +230,190 @@
 }
 
 /*------------FORM------------*/
-.addTrannyForm {
+.transactionForm {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
+  width: 100%;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
 }
 
-.addTrannyForm fieldset {
+.transactionForm > div {
+  width: 100%;
+}
+
+.transactionForm select,
+.transactionForm input[type="date"],
+.transactionForm input[type="number"] {
+  min-height: 28px;
+  border-radius: 8px;
+  padding-inline: 0.3rem;
+  font-size: 0.78rem !important;
+  background-color: transparent;
+  border: 1px solid var(--linkText) !important;
+  box-shadow: unset !important;
+}
+
+.transactionForm label {
+  font-size: 0.72rem;
+  color: var(--textPrimary);
+  margin-bottom: 0.15rem;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.metaGrid > div {
   display: flex;
   flex-direction: column;
+}
+
+.sectionsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+}
+
+.formSection {
+  border: 1px solid var(--linkText);
+  border-radius: 8px;
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+}
+
+.sectionHeader h5 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--textPrimary);
+}
+
+.sectionHeader button {
+  border: none;
+  background: transparent;
+  color: var(--bannerBackground);
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 0.76rem;
+  padding: 0;
+}
+
+.formLineItem,
+.formTender {
+  position: relative;
+  border: 1px solid var(--bannerBackground);
+  border-radius: 6px;
+  padding: 0.3rem;
+  display: grid;
+  gap: 0.3rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  align-items: center;
+}
+
+.formLineItem {
+  grid-template-columns: minmax(0, 1fr) 92px 58px;
+}
+
+.formTender {
+  grid-template-columns: minmax(0, 1fr) 92px;
+}
+
+.amountInput {
+  min-height: 28px;
+}
+
+.qtyInput {
+  min-height: 28px;
+}
+
+.removeRow {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  border: none;
+  background: rgba(70, 0, 0, 0.9);
+  color: #ffdada;
+  font-size: 0.78rem;
+  border-radius: 999px;
+  width: 1.1rem;
+  height: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeRow:hover:not(:disabled) {
+  background: rgba(130, 0, 0, 0.95);
+  color: #fff;
+}
+
+.removeRow:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.submitTransaction {
+  align-self: center;
+  border: none;
+  border-radius: 8px;
+  padding: 0.25rem 0.6rem;
+  font-weight: 600;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  font-size: 0.8rem;
+}
+
+.formSummary {
+  border: 1px solid var(--buttonPrimary);
+  border-radius: 8px;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.formSummary h5 {
+  margin: 0 0 0.15rem 0;
+  font-size: 0.82rem;
+  color: var(--textPrimary);
+}
+
+.formSummary p {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.formSummary p span {
+  font-weight: 700;
+}
+
+.summaryBalance span {
+  color: #ffd58c;
+}
+
+.summaryChange span {
+  color: #8ce7c0;
+}
+
+.openTicketHint {
+  margin-top: 0.2rem !important;
+  font-size: 0.72rem !important;
+  color: #ffd58c;
 }
 
 button.addLineItem,
@@ -162,29 +423,16 @@ button.addTender {
   color: darkgreen;
 }
 
-.formTender {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-}
 .formTender select {
   font-size: unset;
 }
 
-.formLineItem {
-  position: relative;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-}
+@media (max-width: 960px) {
+  .metaGrid {
+    grid-template-columns: 1fr 1fr;
+  }
 
-.formTender button.removeTender,
-button.removeLineItem {
-  position: absolute;
-  right: -10px;
-  top: -10px;
-  background-color: transparent;
-  border: none;
-  font-size: 1.2rem;
-  color: red;
+  .sectionsGrid {
+    grid-template-columns: 1fr;
+  }
 }

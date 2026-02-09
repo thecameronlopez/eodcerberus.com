@@ -17,6 +17,7 @@ const Bootstrap = () => {
     password: "",
     name: "",
     code: "",
+    current_tax_rate: "",
   });
 
   const handleChange = (e) => {
@@ -30,8 +31,14 @@ const Bootstrap = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!confirm("Initialize application?")) return;
+    const ratePercent = Number(formData.current_tax_rate);
+    if (Number.isNaN(ratePercent) || ratePercent < 0 || ratePercent > 20) {
+      toast.error("Enter a valid tax rate between 0 and 20");
+      return;
+    }
+
     const payload = {
-      admin: {
+      user: {
         email: formData.email,
         first_name: formData.first_name,
         last_name: formData.last_name,
@@ -41,6 +48,7 @@ const Bootstrap = () => {
       location: {
         name: formData.name,
         code: formData.code,
+        current_tax_rate: ratePercent / 100,
       },
       department: {
         name: formData.department,
@@ -50,6 +58,7 @@ const Bootstrap = () => {
     try {
       const response = await fetch("/api/bootstrap", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -147,6 +156,19 @@ const Bootstrap = () => {
               name="code"
               id="code"
               value={formData.code}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="current_tax_rate">Tax Rate (%)</label>
+            <input
+              type="number"
+              name="current_tax_rate"
+              id="current_tax_rate"
+              min="0"
+              max="20"
+              step="0.01"
+              value={formData.current_tax_rate}
               onChange={handleChange}
             />
           </div>

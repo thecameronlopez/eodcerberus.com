@@ -2,31 +2,39 @@
   margin: 1rem auto;
   width: 80%;
   max-width: 1600px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: flex-start;
-  justify-content: space-evenly;
-  gap: 1rem;
+  gap: 1.25rem;
+}
+
+.categoryPage > div {
+  border: 1px solid var(--bannerBackground);
+  border-radius: 10px;
+  padding: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  min-height: 26rem;
 }
 
 .categoryPage > div h2 {
   color: var(--buttonPrimary);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.6rem;
+  margin: 0;
+  font-size: 1.1rem;
 }
 
 .categoryPage > div h2 button {
   background-color: transparent;
   border: none;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: darkgreen;
+  cursor: pointer;
 }
 .categoryPage > div h2 button:hover {
   color: green;
-}
-
-.categoryPage > div {
-  flex: 1;
 }
 
 .categoryPage > div > div {
@@ -43,12 +51,14 @@
   flex-direction: column;
   align-items: stretch;
   gap: 0.8rem;
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .categoryPage > div > div > div.listed {
   border: 1px solid var(--bannerBackground);
   border-radius: 6px;
-  padding: 4px;
+  padding: 0.45rem 0.55rem;
+  background-color: rgba(255, 255, 255, 0.03);
 }
 .categoryPage > div > div > div.listed p:first-child {
   font-weight: bold;
@@ -59,26 +69,69 @@
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+.categoryPage > div > form fieldset {
+  border: 1px solid var(--bannerBackground);
+  border-radius: 8px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.categoryPage > div > form legend {
+  color: var(--linkText);
+  padding-inline: 0.3rem;
 }
 
 .categoryPage > div > form div {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.categoryPage > div > form label {
+  font-size: 0.9rem;
+}
+
+.categoryPage > div > form input[type="text"] {
+  width: 100%;
+  min-height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--bannerBackground);
+  background-color: #f8fafc;
+  color: #111;
+  padding-inline: 0.55rem;
 }
 
 .categoryPage > div > form label input[type="checkbox"] {
-  margin-left: 10px;
+  margin-left: 8px;
+  transform: translateY(1px);
 }
 
 .categoryPage > div > form button[type="submit"] {
   align-self: center;
-  font-size: 1.5rem;
-  padding: 4px 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0.55rem 1rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: var(--linkText);
   color: var(--textPrimary);
   box-shadow: -1px 1px 6px #333;
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .categoryPage {
+    width: 92%;
+    grid-template-columns: 1fr;
+  }
+
+  .categoryPage > div {
+    min-height: unset;
+  }
 }

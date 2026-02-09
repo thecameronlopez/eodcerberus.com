@@ -3,6 +3,7 @@ from marshmallow import fields, validate
 from app.models import Transaction, TransactionType
 from app.extensions import ma
 from .base import BaseSchema, UpdateSchema
+from app.utils.timezone import business_today
 
 class TransactionCreateSchema(BaseSchema):
     class Meta:
@@ -12,12 +13,23 @@ class TransactionCreateSchema(BaseSchema):
     ticket_id = fields.Int(required=True)
     user_id = fields.Int(required=True)
     location_id = fields.Int(required=True)
+    posted_at = fields.Date(required=False, load_default=business_today, format="%Y-%m-%d")
     
     transaction_type = fields.Str(
         required=False,
+        load_default=TransactionType.SALE.value,
         validate=validate.OneOf([t.value for t in TransactionType])
     )
-    
+    line_items = fields.List(
+        fields.Nested("LineItemCreateSchema"),
+        required=True,
+        validate=validate.Length(min=1),
+    )
+    tenders = fields.List(
+        fields.Nested("TenderCreateSchema"),
+        required=True,
+        validate=validate.Length(min=1),
+    )
     
     
 
