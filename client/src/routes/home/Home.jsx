@@ -6,8 +6,6 @@ import { useTicket } from "../../context/TicketContext";
 import { useTabRouter } from "../../context/TabRouterContext";
 
 //PAGES
-import SearchTest from "./homepages/search/SearchTest";
-
 import Ticket from "./homepages/ticket/Ticket";
 import Deduction from "./homepages/deduction/Deduction";
 import Search from "./homepages/search/Search";
@@ -17,7 +15,7 @@ import Ranking from "./homepages/ranking/Ranking";
 const PAGES = {
   ticket: Ticket,
   deduction: Deduction,
-  search: SearchTest,
+  search: Search,
   report: Report,
   ranking: Ranking,
 };

@@ -5,13 +5,10 @@ import toast from "react-hot-toast";
 import Register from "../../../auth/register/Register";
 import EditUser from "../../../auth/edit/EditUser";
 import { useAuth } from "../../../../context/AuthContext";
-import { DEPARTMENTS } from "../../../../utils/enums";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEraser,
   faRotateLeft,
-  faTrashCan,
   faUserPen,
   faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -21,45 +18,44 @@ const Users = () => {
   const [users, setUsers] = useState(null);
   const [editingID, setEditingID] = useState(null);
 
+  const fetchUsers = async () => {
+    const ulist = await UserList();
+    if (!ulist.success) {
+      toast.error(ulist.message);
+      setUsers(null);
+      return;
+    }
+    setUsers(ulist.users);
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      const ulist = await UserList();
-      if (!ulist.success) {
-        toast.error(ulist.message);
-        setUsers(null);
-      }
-      setUsers(ulist.users);
-    };
     fetchUsers();
   }, []);
 
-  const handleUser = async (userID, action) => {
-    if (!confirm(`Are you sure you want to ${action} this user?`)) return;
-    const URL = {
-      terminate: `/api/update/user/${userID}/terminate`,
-      delete: `/api/delete/user/${userID}`,
-    };
-
-    const METHOD = {
-      terminate: "PUT",
-      delete: "DELETE",
-    };
+  const handleTerminateToggle = async (targetUser) => {
+    const nextTerminated = !targetUser.terminated;
+    const actionWord = nextTerminated ? "terminate" : "restore";
+    if (!confirm(`Are you sure you want to ${actionWord} this user?`)) return;
 
     try {
-      const response = await fetch(URL[action], {
-        method: METHOD[action],
+      const response = await fetch(`/api/users/${targetUser.id}`, {
+        method: "PATCH",
         credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ terminated: nextTerminated }),
       });
       const data = await response.json();
-      if (data.success) {
-        toast.success(data.message);
-        const updatedUsers = users.filter((u) => u.id !== userID);
-        setUsers(updatedUsers);
-      } else {
-        toast.error(data.message);
+      if (!data.success) {
+        throw new Error(data.message);
       }
+      toast.success(data.message || "User updated");
+      setUsers((prev) =>
+        (prev || []).map((u) => (u.id === targetUser.id ? { ...u, ...data.user } : u)),
+      );
     } catch (error) {
-      toast.error("Error processing request.");
+      toast.error(error.message || "Error processing request.");
     }
   };
 
@@ -70,8 +66,8 @@ const Users = () => {
       <div className={styles.userListInSettings}>
         <h2>Users</h2>
         <ul>
-          {users.map((u, index) => (
-            <li key={index}>
+          {users.map((u) => (
+            <li key={u.id}>
               <div>
                 <p>
                   <b>
@@ -79,7 +75,7 @@ const Users = () => {
                   </b>
                 </p>
                 <p>
-                  {u.location.name} {DEPARTMENTS[u.department]}
+                  {u.location?.name} {u.department?.name}
                 </p>
                 {user.is_admin && (
                   <div className={styles.userControls}>
@@ -95,18 +91,11 @@ const Users = () => {
                         icon={editingID === u.id ? faRotateLeft : faUserPen}
                       />
                     </button>
-                    <button onClick={() => handleUser(u.id, "terminate")}>
-                      Terminate
+                    <button onClick={() => handleTerminateToggle(u)}>
+                      {u.terminated ? "Restore" : "Terminate"}
                       <FontAwesomeIcon
                         className={styles.terminateUser}
                         icon={faUserSlash}
-                      />
-                    </button>
-                    <button onClick={() => handleUser(u.id, "delete")}>
-                      Delete
-                      <FontAwesomeIcon
-                        className={styles.deleteUser}
-                        icon={faTrashCan}
                       />
                     </button>
                   </div>

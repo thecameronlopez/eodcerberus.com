@@ -1,10 +1,11 @@
 import styles from "./Register.module.css";
 import toast from "react-hot-toast";
 import React, { useState, useEffect } from "react";
-import { LOCATIONS, DEPARTMENTS } from "../../../utils/enums";
-import { renderOptions } from "../../../utils/tools";
+import { DepartmentList, LocationList } from "../../../utils/api";
 
 const Register = () => {
+  const [departments, setDepartments] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -12,9 +13,30 @@ const Register = () => {
     pw: "",
     pw2: "",
     department: "",
-    location: "",
+    location_code: "",
     is_admin: false,
   });
+
+  useEffect(() => {
+    const loadLookups = async () => {
+      const [departmentsRes, locationsRes] = await Promise.all([
+        DepartmentList(),
+        LocationList(),
+      ]);
+      if (!departmentsRes.success) {
+        toast.error(departmentsRes.message);
+      } else {
+        setDepartments(departmentsRes.departments || []);
+      }
+      if (!locationsRes.success) {
+        toast.error(locationsRes.message);
+      } else {
+        setLocations(locationsRes.locations || []);
+      }
+    };
+
+    loadLookups();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,7 +54,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/users", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -52,7 +74,7 @@ const Register = () => {
         pw: "",
         pw2: "",
         department: "",
-        location: "",
+        location_code: "",
         is_admin: false,
       });
     } catch (error) {
@@ -115,19 +137,27 @@ const Register = () => {
             onChange={handleChange}
           >
             <option value="">--select department--</option>
-            {renderOptions(DEPARTMENTS)}
+            {departments.map((department) => (
+              <option key={department.id} value={department.name}>
+                {department.name}
+              </option>
+            ))}
           </select>
         </div>
         <div>
-          <label htmlFor="location">Location</label>
+          <label htmlFor="location_code">Location</label>
           <select
-            name="location"
-            id="location"
-            value={formData.location}
+            name="location_code"
+            id="location_code"
+            value={formData.location_code}
             onChange={handleChange}
           >
             <option value="">--select a location--</option>
-            {renderOptions(LOCATIONS)}
+            {locations.map((location) => (
+              <option key={location.id} value={location.code}>
+                {location.name}
+              </option>
+            ))}
           </select>
         </div>
         <div>

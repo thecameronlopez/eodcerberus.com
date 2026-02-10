@@ -29,7 +29,8 @@ const listFromKeys = (data, keys) => {
 const firstObjectFromData = (data) => {
   for (const [key, value] of Object.entries(data || {})) {
     if (key === "success" || key === "message") continue;
-    if (value && typeof value === "object" && !Array.isArray(value)) return value;
+    if (value && typeof value === "object" && !Array.isArray(value))
+      return value;
   }
   return null;
 };
@@ -49,7 +50,8 @@ export const list = async (resource) => {
     }
 
     const items =
-      (Array.isArray(data[resource]) && data[resource]) || listFromKeys(data, Object.keys(data));
+      (Array.isArray(data[resource]) && data[resource]) ||
+      listFromKeys(data, Object.keys(data));
 
     return { success: true, items, raw: data };
   } catch (error) {
@@ -66,14 +68,17 @@ export const getById = async (resource, id) => {
 
     const singularKey = singularize(resource);
     const item =
-      (data[singularKey] && typeof data[singularKey] === "object" ? data[singularKey] : null) ||
-      firstObjectFromData(data);
+      (data[singularKey] && typeof data[singularKey] === "object"
+        ? data[singularKey]
+        : null) || firstObjectFromData(data);
 
     return { success: true, item, raw: data };
   } catch (error) {
     return { success: false, message: error.message || "Network error" };
   }
 };
+
+//LEGACY FUNCTIONS
 
 export const UserList = async () => {
   const res = await list("users");

@@ -206,3 +206,80 @@ Scope reviewed:
 - Wired `server/app/api/transaction.py` to use `TransactionCRUDEngine`.
 - Updated `server/app/schemas/transaction.py` to support nested `line_items` + `tenders` for transaction creation.
 - Verified backend syntax (`py_compile`) and frontend lint checks (`eslint`) for touched files.
+
+<!-- ====================================================================== -->
+<!-- ========================= READ-ONLY AUDIT 2026-02-10 ================== -->
+<!-- ====== BACKEND SOURCE OF TRUTH VS FRONTEND CONTRACT FOLLOW-UP ========= -->
+<!-- ====================================================================== -->
+
+## Read-Only Audit (2026-02-10)
+
+This section reflects a read-only pass only. No files were changed during this audit.
+
+### Backend Source Of Truth
+
+- Generic resource routes are defined in `server/app/core/resource.py`:
+  - `GET /api/<resource>`
+  - `GET /api/<resource>/<id>`
+  - `POST /api/<resource>`
+  - `PATCH /api/<resource>/<id>`
+  - `DELETE /api/<resource>/<id>`
+- Registered resources:
+  - `users` via `server/app/api/user.py:24`
+  - `locations` via `server/app/api/location.py:24`
+  - `deductions` via `server/app/api/deduction.py:24`
+  - `tickets` via `server/app/api/ticket.py:27`
+  - `transactions` via `server/app/api/transaction.py:24`
+- Auth/bootstrap:
+  - `POST /api/auth/login` (`server/app/api/auth.py:16`)
+  - `POST /api/auth/logout` (`server/app/api/auth.py:34`)
+  - `GET /api/auth/me` (`server/app/api/auth.py:41`)
+  - `GET/POST /api/bootstrap` (`server/app/api/__init__.py:24`, `server/app/api/bootstrap.py`)
+
+### Frontend Areas Already Aligned
+
+- `client/src/context/AuthContext.jsx:13` uses `/api/auth/me`.
+- `client/src/context/AuthContext.jsx:34` uses `/api/bootstrap`.
+- `client/src/layout/RootLayout.jsx:13` uses `POST /api/auth/logout`.
+- `client/src/routes/home/homepages/ticket/Ticket.jsx:237` uses `POST /api/tickets`.
+- `client/src/routes/home/homepages/search/SearchTest.jsx:58` uses `GET /api/tickets/{id}?expand=true`.
+- `client/src/routes/home/homepages/search/SearchTest.jsx:194` and `:233` use `/api/transactions`.
+
+### Active Frontend Mismatches
+
+1. Register flow still points to removed auth endpoint.
+- Evidence: `client/src/routes/auth/register/Register.jsx:35` uses `/api/auth/register`.
+- Backend contract: `POST /api/users` (`server/app/api/user.py:24`).
+
+2. Users settings still uses legacy user routes.
+- Evidence:
+  - `client/src/routes/settings/settingspages/users/Users.jsx:39`
+  - `client/src/routes/settings/settingspages/users/Users.jsx:40`
+  - `client/src/routes/auth/edit/EditUser.jsx:57`
+
+3. Locations settings still uses legacy routes.
+- Evidence:
+  - `client/src/routes/settings/settingspages/locations/Locations.jsx:33`
+  - `client/src/routes/settings/settingspages/locations/Locations.jsx:72`
+  - `client/src/routes/settings/settingspages/locations/Locations.jsx:105`
+  - `client/src/routes/settings/settingspages/locations/Locations.jsx:136`
+
+4. Deductions page still uses legacy routes.
+- Evidence:
+  - `client/src/routes/home/homepages/deduction/Deduction.jsx:35`
+  - `client/src/routes/home/homepages/deduction/Deduction.jsx:51`
+  - `client/src/routes/home/homepages/deduction/Deduction.jsx:79`
+
+5. Reports/ranking endpoints used by frontend are not present in backend.
+- Evidence (frontend):
+  - `client/src/routes/home/homepages/ranking/Ranking.jsx:38` (`/api/read/monthly_totals`)
+  - `client/src/routes/home/homepages/report/Report.jsx:60` (`/api/reports/summary`)
+  - `client/src/routes/reports/reportpages/run_reports/RunReports.jsx:88` (`/api/reports/summary`)
+  - `client/src/routes/reports/reportpages/ticket_list/TicketList.jsx:44` (`/api/read/tickets?...`)
+- Evidence (backend): no report/monthly_totals routes found under `server/app/api/*`; API registration list in `server/app/api/__init__.py` does not include a reports blueprint.
+
+### Contract Constraints Confirmed
+
+- User deletion is disabled by backend: `server/app/core/user_crud.py` (`delete` raises permission denied).
+- User update schema does not include `location_id`: `server/app/schemas/user.py` (`UserUpdateSchema` fields).
+- Location updates in canonical resource routing are `PATCH`, not `PUT`: `server/app/core/resource.py`.

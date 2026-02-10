@@ -1,54 +1,39 @@
 import styles from "./Deduction.module.css";
 import { useAuth } from "../../../../context/AuthContext";
 import React, { useEffect, useState } from "react";
-import {
-  SALES_CATEGORY,
-  DEPARTMENTS,
-  LOCATIONS,
-  PAYMENT_TYPE,
-} from "../../../../utils/enums";
-import {
-  getTodayLocalDate,
-  renderOptions,
-  formatCurrency,
-  formatDate,
-} from "../../../../utils/tools";
-import { UserList } from "../../../../utils/api";
+import { formatCurrency, formatDate } from "../../../../utils/tools";
+import { list } from "../../../../utils/api";
 import toast from "react-hot-toast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import MoneyField from "../../../../components/MoneyField";
 
 const Deduction = () => {
-  const today = new Date();
-  const { user, location, setLoading } = useAuth();
+  const { user, setLoading } = useAuth();
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
-  const [date, setDate] = useState({
-    start: getTodayLocalDate(),
-    end: getTodayLocalDate(),
-  });
   const [myDeductions, setMyDeductions] = useState([]);
 
+  const fetchMyDeductions = async () => {
+    const deductionsRes = await list("deductions");
+    if (!deductionsRes.success) {
+      toast.error(deductionsRes.message);
+      setMyDeductions([]);
+      return;
+    }
+    const filtered = (deductionsRes.items || []).filter(
+      (deduction) => Number(deduction.user?.id) === Number(user.id),
+    );
+    setMyDeductions(filtered);
+  };
+
   useEffect(() => {
-    const get = async () => {
-      const response = await fetch(`/api/read/deductions/user/${user.id}/all`);
-      const data = await response.json();
-      if (!data.success) {
-        toast.error(data.message);
-        setMyDeductions(null);
-      }
-      console.log("DEDUCTIONS DATA: ", data.deductions);
-      setMyDeductions(data.deductions);
-    };
-    get();
-  }, []);
+    fetchMyDeductions();
+  }, [user.id]);
 
   const deleteDeduction = async (did) => {
     if (!confirm("Delete this deduction?")) return;
 
     try {
-      const response = await fetch(`/api/delete/deduction/${did}`, {
+      const response = await fetch(`/api/deductions/${did}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -66,17 +51,22 @@ const Deduction = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!confirm(`Submit deduction for ${date.start}`)) return;
-    console.log(amount);
+    if (!confirm("Submit deduction?")) return;
+    const amountCents = Number(amount);
+    if (Number.isNaN(amountCents) || amountCents < 1) {
+      toast.error("Enter a valid deduction amount");
+      return;
+    }
+
     const payload = {
-      amount: Number(amount),
+      user_id: Number(user.id),
+      amount: amountCents,
       reason: reason,
-      date: date.start,
     };
 
     try {
       setLoading(true);
-      const response = await fetch("/api/create/deduction", {
+      const response = await fetch("/api/deductions", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -92,7 +82,6 @@ const Deduction = () => {
       toast.success(data.message);
       setAmount("");
       setReason("");
-      setDate(getTodayLocalDate());
       setMyDeductions((prev) => [data.deduction, ...prev]);
     } catch (error) {
       console.error("[DEDUCTION ERROR]: ", error);
@@ -106,14 +95,6 @@ const Deduction = () => {
     <div className={styles.deductionsPage}>
       <div>
         <h3>Deductions</h3>
-        <input
-          type="date"
-          name="date"
-          id="date"
-          value={date.start}
-          onChange={(e) => setDate({ ...date, start: e.target.value })}
-          className={styles.deductionsDateSet}
-        />
         <form className={styles.deductionForm} onSubmit={handleSubmit}>
           <div>
             <label htmlFor="amount">Amount</label>
@@ -141,9 +122,9 @@ const Deduction = () => {
       <div className={styles.deductionsList}>
         <h4>My Deductions</h4>
         <ul>
-          {myDeductions?.map(({ id, amount, reason, date }, index) => (
+          {myDeductions?.map(({ id, amount, reason, date }) => (
             <li
-              key={index}
+              key={id}
               onClick={() => deleteDeduction(id)}
               title="click to delete"
             >

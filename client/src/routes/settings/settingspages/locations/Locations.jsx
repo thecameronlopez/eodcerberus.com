@@ -2,6 +2,7 @@ import toast from "react-hot-toast";
 import styles from "./Locations.module.css";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../../context/AuthContext";
+import { LocationList } from "../../../../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBan,
@@ -10,14 +11,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Locations = () => {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [locations, setLocations] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     code: "",
     address: "",
-    current_tax_rate: "",
+    current_tax_rate: "0.00",
   });
 
   const handleChange = (e) => {
@@ -29,17 +30,17 @@ const Locations = () => {
   };
 
   useEffect(() => {
-    const getLoc = async () => {
-      const response = await fetch("/api/read/locations");
-      const data = await response.json();
-      if (!data.success) {
-        toast.error(data.message);
+    const getLocations = async () => {
+      const result = await LocationList();
+      if (!result.success) {
+        toast.error(result.message);
         setLocations(null);
+        return;
       }
-      setLocations(data.locations);
+      setLocations(result.locations || []);
     };
-    getLoc();
-  }, [user]);
+    getLocations();
+  }, []);
 
   useEffect(() => {
     if (!editingId) {
@@ -47,7 +48,7 @@ const Locations = () => {
         name: "",
         code: "",
         address: "",
-        current_tax_rate: "",
+        current_tax_rate: "0.00",
       });
     }
   }, [editingId]);
@@ -69,7 +70,7 @@ const Locations = () => {
     };
 
     try {
-      const response = await fetch("/api/create/location", {
+      const response = await fetch("/api/locations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -80,12 +81,12 @@ const Locations = () => {
       if (!data.success) {
         throw new Error(data.message);
       }
-      setLocations((prev) => [...prev, data.new_location]);
+      setLocations((prev) => [...(prev || []), data.location]);
       setFormData({
         name: "",
         code: "",
         address: "",
-        current_tax_rate: "",
+        current_tax_rate: "0.00",
       });
       toast.success("Location added");
     } catch (error) {
@@ -97,13 +98,18 @@ const Locations = () => {
   const handleUpdateLocation = async (e) => {
     e.preventDefault();
     if (!confirm("Update location?")) return;
+    const rate = Number(formData.current_tax_rate);
+    if (Number.isNaN(rate) || rate < 0 || rate > 20) {
+      toast.error("Enter a valid tax rate (0-20%)");
+      return;
+    }
     const payload = {
       ...formData,
-      current_tax_rate: Number(formData.current_tax_rate) / 100,
+      current_tax_rate: rate / 100,
     };
     try {
-      const response = await fetch(`/api/update/location/${editingId}`, {
-        method: "PUT",
+      const response = await fetch(`/api/locations/${editingId}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
         credentials: "include",
@@ -113,13 +119,13 @@ const Locations = () => {
         throw new Error(data.message);
       }
       setLocations((prev) =>
-        prev.map((loc) => (loc.id === editingId ? data.new_location : loc))
+        (prev || []).map((loc) => (loc.id === editingId ? data.location : loc))
       );
       setFormData({
         name: "",
         code: "",
         address: "",
-        current_tax_rate: "",
+        current_tax_rate: "0.00",
       });
       setEditingId(null);
       toast.success(data.message);
@@ -129,24 +135,21 @@ const Locations = () => {
     }
   };
 
-  const updateDefault = async (location_id) => {
-    if (!confirm("Update default location?")) return;
+  const deleteLocation = async (locationId) => {
+    if (!confirm("Delete location?")) return;
     try {
-      const response = await fetch(
-        `/api/update/user/location/${user.id}?location_id=${location_id}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`/api/locations/${locationId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       const data = await response.json();
       if (!data.success) {
         throw new Error(data.message);
       }
-      setUser((prev) => ({ ...prev, location_id: location_id }));
+      setLocations((prev) => (prev || []).filter((location) => location.id !== locationId));
       toast.success(data.message);
     } catch (error) {
-      console.error("[DEFAULT LOCATION ERROR]: ", error);
+      console.error("[DELETE LOCATION ERROR]: ", error);
       toast.error(error.message);
     }
   };
@@ -166,17 +169,11 @@ const Locations = () => {
       <h1>Locations </h1>
       <div className={styles.locationDataBlock}>
         <div className={styles.locations}>
-          {locations?.map(
-            ({ id, name, code, address, current_tax_rate }, index) => (
-              <div key={index} className={styles.location}>
+          {locations?.map(({ id, name, code, address, current_tax_rate }, index) => (
+              <div key={id} className={styles.location}>
                 <div className={styles.locationControls}>
-                  {user.location_id !== id ? (
-                    <button
-                      className={styles.setDefault}
-                      onClick={() => updateDefault(id)}
-                    >
-                      Set as default
-                    </button>
+                  {(user.location?.id ?? user.location_id) !== id ? (
+                    <p className={styles.defaultTag}>Not Default</p>
                   ) : (
                     <p className={styles.defaultTag}>Default Location</p>
                   )}
@@ -192,7 +189,10 @@ const Locations = () => {
                           icon={editingId === id ? faBan : faPenToSquare}
                         />
                       </button>
-                      <button className={styles.deleteLocationButton}>
+                      <button
+                        className={styles.deleteLocationButton}
+                        onClick={() => deleteLocation(id)}
+                      >
                         <FontAwesomeIcon icon={faTrash} />
                       </button>
                     </>

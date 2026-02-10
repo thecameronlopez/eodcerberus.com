@@ -16,12 +16,14 @@ from .transaction import bp as transaction_bp
 from .ticket import bp as ticket_bp
 from .sales_day import bp as sales_day_bp
 from .user import bp as user_bp
+from .reports import bp as report_bp
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
 
 api.register_blueprint(auth_bp)
 api.register_blueprint(bootstrapper, url_prefix="/bootstrap")
+api.register_blueprint(report_bp, url_prefix="/reports")
 
 api.register_blueprint(dpt_bp)
 api.register_blueprint(category_bp)

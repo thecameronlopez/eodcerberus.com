@@ -1,58 +1,66 @@
-.searchPage {
-  width: 100%;
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
+.ticketSearchPage {
+  width: 92%;
+  margin: 1rem auto;
+  max-width: 1680px;
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 1rem;
 }
+/* .ticketSearchPage > * {
+  border: 1px solid red;
+} */
 
-.searchPage .ticketSearch {
+.searchPanel {
   display: flex;
   flex-direction: column;
-  width: 90%;
-}
-
-.searchPage .ticketSearch label {
-  font-size: 14px;
-  color: var(--linkText);
-}
-.ticketSearch input {
-  font-size: 16px !important;
-  border-radius: 6px;
-  width: fit-content;
-}
-
-.ticketData {
-  display: flex;
   align-items: stretch;
-  gap: 10px;
-}
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  min-height: 20rem;
 
-.ticketHeader {
-  flex: 1;
+  border: 1px solid var(--buttonPrimary);
+  border-radius: 12px;
   background-color: var(--textSecondary);
   color: var(--buttonPrimary);
+}
+
+.searchPanel .ticketTotals {
+  margin-top: auto;
+}
+
+.ticketNumberInput {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
-  padding: 0.6rem;
-  border-radius: 8px;
-  align-self: flex-start;
+  gap: 0.5rem;
+}
+.ticketNumberInput > input {
+  background-color: var(--buttonPrimary);
+  color: var(--textPrimary);
+  font-size: 20px !important;
+  width: 70%;
 }
 
-.ticketHeader h2 {
+.searchBtn {
+  width: fit-content;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  font-weight: 700;
+}
+
+/*------------Ticket controls------------*/
+.ticketControls {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 60%;
+  margin-block: 10px;
 }
-
-.ticketHeader h2 div.ticketControls {
-  display: flex;
-  gap: 14px;
-}
-
 .ticketControls button {
   border: none;
   background-color: transparent;
@@ -68,200 +76,363 @@
   color: darkred;
 }
 
-form.transactionForm {
+/*------------Ticket results------------*/
+.ticketResults {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-form.transactionForm div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-end;
+  gap: 1rem;
+
+  /* padding: 0 1rem; */
 }
 
-form.transactionForm div label {
-  font-size: 14px;
-  color: var(--textPrimary);
-}
-form.transactionForm div input,
-select {
-  width: 15rem;
-  background-color: transparent;
-  border: 1px solid var(--linkText) !important;
-  border-radius: 8px;
-  box-shadow: unset !important;
-  font-size: 14px !important;
-}
-
-form.transactionForm button.addLineItem {
-  background-color: transparent;
-  border: none;
-  color: var(--bannerBackground);
-  text-decoration: underline;
-  margin-left: 1rem;
-}
-
-form.transactionForm .formLineItem {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  border: 1px solid var(--bannerBackground);
-  border-radius: 8px;
-  position: relative;
-}
-
-form.transactionForm .formLineItem button.removeLineItem {
-  color: darkred;
-  background-color: transparent;
-  width: fit-content;
-  border: none;
-  position: absolute;
-  top: 0;
-  right: 5px;
-}
-
-form.transactionForm .formLineItem select,
-input {
-  font-size: 12px !important;
-}
-
-label.returnCheck {
-  display: flex;
-  justify-content: flex-start;
-  width: 20%;
-  gap: 10px;
-}
-
-form.transactionForm button.submitTransaction {
-  background-color: var(--linkText);
-  color: var(--textPrimary);
+.ticketResults h4 {
   align-self: center;
-  margin-block: 1rem;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
+}
+
+/*------------Transaction Items------------*/
+.transaction {
+  border: 1px solid var(--buttonPrimary);
+  border-radius: 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 10px;
+
   box-shadow: -1px 1px 4px #000;
 }
 
-.ticketHeader > div.ticketTotals {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.ticketHeader > div.ticketTotals p {
-  display: flex;
-  justify-content: space-between;
-  font-size: 20px;
-}
-
-.transactionData {
-  flex: 2;
-  padding: 0.6rem;
-  background-color: var(--textSecondary);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  border-radius: 8px;
-}
-
-.transactionData .transactionTotal {
-  align-self: center;
-  font-weight: 700;
-  color: var(--backgroundDark);
-  font-size: 20px;
-}
-
-.lineItemData {
+.transactionHeader {
   width: 100%;
-  border: 2px solid var(--buttonPrimary);
-  border-radius: 8px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  position: relative;
-}
-
-.lineItemData button.deleteTransaction {
-  color: var(--textPrimary);
-  background-color: darkred;
-  border: none;
-  padding: 4px;
-  position: absolute;
-  right: -10px;
-  top: -10px;
-  border-radius: 50%;
-}
-
-.lineItemData h4 {
-  font-size: 18px;
-  padding-left: 10px;
-  color: var(--textPrimary);
-}
-.lineItemData h4 span {
-  color: var(--backgroundDark);
-}
-
-.lineItemData ul {
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.lineItemData ul li {
   display: flex;
   justify-content: space-between;
-  border: 1px solid var(--bannerBackground);
-  background-color: var(--linkText);
-  border-radius: 6px;
-  padding: 10px 6px;
-  position: relative;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
-.lineItemData ul li button.deleteLineItem {
-  background-color: darkred;
-  color: var(--textPrimary);
-  position: absolute;
-  left: -5px;
-  top: -10px;
-  padding: 2px;
-  border-radius: 50%;
+.transactionHeader > div p:first-child {
+  font-weight: 800;
+}
+
+.deleteTransaction {
   border: none;
+  background: transparent;
+  color: darkred;
+  font-size: 1.2rem;
 }
 
-.lineItemData ul li div {
+.transactionTotals {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  justify-content: flex-end;
+}
+
+.transactionDetailBlock {
+  width: 100%;
+  border: 1px solid var(--bannerBackground);
+  border-radius: 8px;
+  padding: 0.4rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-weight: 600;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.lineItemData ul li > div.lineItemTotal {
+.transactionDetailBlock h5 {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--textPrimary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.25rem;
+}
+
+.detailRow p {
+  margin: 0;
+}
+
+.lineItemsBlock {
+  border-left: 3px solid #1f8f5f;
+  background: rgba(31, 143, 95, 0.08);
+}
+
+.lineItemsBlock h5 {
+  color: #8ce7c0;
+}
+
+.tendersBlock {
+  border-left: 3px solid #2f7dbb;
+  background: rgba(47, 125, 187, 0.09);
+}
+
+.tendersBlock h5 {
+  color: #9fd3ff;
+}
+
+/*------------Line Items------------*/
+.lineItem {
+  border-bottom: 2px solid var(--linkText);
+  border-right: 1px solid var(--linkText);
+  border-radius: 4px 0 8px 4px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
+
+  box-shadow: 1px 1px 3px #333;
+}
+
+.lineItem > p:first-child {
+  font-weight: 800;
+}
+
+.lineItemTotal {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 }
+.lineItemTotal p {
+  font-weight: 800;
+}
+.lineItemTotal p span {
+  font-weight: 400;
+}
 
-/* ==========================
-   Mobile / Responsive styles
-   ========================== */
+/*------------Tenders------------*/
+.transactionTender {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
 
-@media (max-width: 768px) {
-  .searchPage {
-    align-items: center;
-  }
-  .searchPage .ticketSearch {
-    align-items: center;
-  }
-  .ticketData {
-    flex-direction: column;
+  border-radius: 6px;
+  background-color: var(--textSecondary);
+  color: var(--buttonPrimary);
+  padding: 6px 10px;
+
+  font-weight: bold;
+
+  box-shadow: inset -1px 1px 3px #333;
+}
+
+/*------------FORM------------*/
+.transactionForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+}
+
+.transactionForm > div {
+  width: 100%;
+}
+
+.transactionForm select,
+.transactionForm input[type="date"],
+.transactionForm input[type="number"] {
+  min-height: 28px;
+  border-radius: 8px;
+  padding-inline: 0.3rem;
+  font-size: 0.78rem !important;
+  background-color: transparent;
+  border: 1px solid var(--linkText) !important;
+  box-shadow: unset !important;
+}
+
+.transactionForm label {
+  font-size: 0.72rem;
+  color: var(--textPrimary);
+  margin-bottom: 0.15rem;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.metaGrid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+}
+
+.formSection {
+  border: 1px solid var(--linkText);
+  border-radius: 8px;
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionHeader h5 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--textPrimary);
+}
+
+.sectionHeader button {
+  border: none;
+  background: transparent;
+  color: var(--bannerBackground);
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 0.76rem;
+  padding: 0;
+}
+
+.formLineItem,
+.formTender {
+  position: relative;
+  border: 1px solid var(--bannerBackground);
+  border-radius: 6px;
+  padding: 0.3rem;
+  display: grid;
+  gap: 0.3rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  align-items: center;
+}
+
+.formLineItem {
+  grid-template-columns: minmax(0, 1fr) 92px 58px;
+}
+
+.formTender {
+  grid-template-columns: minmax(0, 1fr) 92px;
+}
+
+.amountInput {
+  min-height: 28px;
+}
+
+.qtyInput {
+  min-height: 28px;
+}
+
+.removeRow {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  border: none;
+  background: rgba(70, 0, 0, 0.9);
+  color: #ffdada;
+  font-size: 0.78rem;
+  border-radius: 999px;
+  width: 1.1rem;
+  height: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeRow:hover:not(:disabled) {
+  background: rgba(130, 0, 0, 0.95);
+  color: #fff;
+}
+
+.removeRow:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.submitTransaction {
+  align-self: center;
+  border: none;
+  border-radius: 8px;
+  padding: 0.25rem 0.6rem;
+  font-weight: 600;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  font-size: 0.8rem;
+}
+
+.formSummary {
+  border: 1px solid var(--buttonPrimary);
+  border-radius: 8px;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.formSummary h5 {
+  margin: 0 0 0.15rem 0;
+  font-size: 0.82rem;
+  color: var(--textPrimary);
+}
+
+.formSummary p {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.formSummary p span {
+  font-weight: 700;
+}
+
+.summaryBalance span {
+  color: #ffd58c;
+}
+
+.summaryChange span {
+  color: #8ce7c0;
+}
+
+.openTicketHint {
+  margin-top: 0.2rem !important;
+  font-size: 0.72rem !important;
+  color: #ffd58c;
+}
+
+button.addLineItem,
+button.addTender {
+  background-color: transparent;
+  border: none;
+  color: darkgreen;
+}
+
+.formTender select {
+  font-size: unset;
+}
+
+@media (max-width: 960px) {
+  .metaGrid {
+    grid-template-columns: 1fr 1fr;
   }
 
-  .ticketData .ticketHeader {
-    width: 100%;
+  .sectionsGrid {
+    grid-template-columns: 1fr;
   }
 }
