@@ -31,6 +31,7 @@ export const PAYMENT_TYPE = {
   stripe_payment: "Stripe Payment",
   acima: "Acima",
   tower_loan: "Tower Loan",
+  snap: "Snap Finance",
 };
 
 export const MONTHS = [

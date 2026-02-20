@@ -95,6 +95,7 @@ class PaymentTypeEnum(str, Enum):
     STRIPE_PAYMENT = "stripe_payment"
     ACIMA = "acima"
     TOWER_LOAN = "tower_loan" #+tax
+    SNAP = "snap"
     
     def __str__(self):
         return self.value

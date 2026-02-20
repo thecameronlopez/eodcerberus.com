@@ -12,6 +12,7 @@ PAYMENT_TYPE_TAXABILITY = {
     PaymentTypeEnum.STRIPE_PAYMENT: False,
     PaymentTypeEnum.ACIMA: False,
     PaymentTypeEnum.TOWER_LOAN: True,
+    PaymentTypeEnum.SNAP: True,
 }
 
 SALES_CATEGORY_TAXABILITY = {
