@@ -24,6 +24,7 @@ const Order = {
     "acima",
     "tower_loan",
     "stripe_payment",
+    "snap",
     "ebay_payment",
   ],
 };

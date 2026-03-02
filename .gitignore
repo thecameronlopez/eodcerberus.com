@@ -18,3 +18,5 @@ dist/
 .DS_Store
 
 server/training
+
+server/db_actions.py
