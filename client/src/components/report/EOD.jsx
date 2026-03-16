@@ -30,9 +30,6 @@ const Order = {
 };
 
 const EOD = ({ report, meta, ref }) => {
-  console.log("[REPORT]: ", report);
-  console.log("[META]: ", meta);
-
   const setTitle = (rtype) => {
     switch (rtype) {
       case "user_eod":
@@ -83,22 +80,31 @@ const EOD = ({ report, meta, ref }) => {
   return (
     <div className={styles.eodPage} ref={ref}>
       <div className={styles.eodHeader}>
-        <img src={LOGO} className={styles.eodLogo} />
-        <div className={styles.eodTitle}>
-          <div>
+        <div className={styles.headerTop}>
+          <div className={styles.headerBrand}>
+            <img src={LOGO} className={styles.eodLogo} alt="Cerberus logo" />
+            <p className={styles.brandLabel}>Cerberus Report</p>
+          </div>
+          <div className={styles.titleBlock}>
             {setTitle(meta.report_type)}
-            <p className={styles.eodDate}>{`${formatDate(
-              meta.start,
-            )} - ${formatDate(meta.end)}`}</p>
+            <p className={styles.eodDate}>
+              {`${formatDate(meta.start)} - ${formatDate(meta.end)}`}
+            </p>
           </div>
-          <div className={styles.grandTotals}>
-            <h4>Grand Subtotal: {formatCurrency(report.grand.subtotal)}</h4>
-            <h4>Grand Total: {formatCurrency(report.grand.total)}</h4>
-          </div>
+        </div>
+        <div className={styles.grandTotals}>
+          <p>
+            Grand Subtotal
+            <span>{formatCurrency(report.grand.subtotal)}</span>
+          </p>
+          <p>
+            Grand Total
+            <span>{formatCurrency(report.grand.total)}</span>
+          </p>
         </div>
       </div>
       <div className={styles.eodData}>
-        <details open>
+        <details open className={styles.reportSection}>
           <summary>Sales Category</summary>
           <ul>
             {Order.categories
@@ -106,22 +112,25 @@ const EOD = ({ report, meta, ref }) => {
               .map(([key, value], index) => (
                 <li key={index}>
                   <h4>{SALES_CATEGORY[key]}</h4>
-                  <div>
+                  <div className={styles.metricGroup}>
                     <p>
-                      Subtotal: <span>{formatCurrency(value.subtotal)}</span>
+                      Subtotal
+                      <span>{formatCurrency(value.subtotal)}</span>
                     </p>
                     <p className={styles.taxAdded}>
-                      Tax: <span>{formatCurrency(value.tax)}</span>
+                      Tax
+                      <span>{formatCurrency(value.tax)}</span>
                     </p>
                     <p>
-                      Total: <span>{formatCurrency(value.total)}</span>
+                      Total
+                      <span>{formatCurrency(value.total)}</span>
                     </p>
                   </div>
                 </li>
               ))}
           </ul>
         </details>
-        <details open>
+        <details open className={styles.reportSection}>
           <summary>Payment Methods</summary>
           <ul>
             {Order.payments
@@ -134,21 +143,24 @@ const EOD = ({ report, meta, ref }) => {
                 return (
                   <li key={index}>
                     <h4>{PAYMENT_TYPE[key]}</h4>
-                    <div>
+                    <div className={styles.metricGroup}>
                       <p>
-                        Subtotal: <span>{formatCurrency(value.subtotal)}</span>
+                        Subtotal
+                        <span>{formatCurrency(value.subtotal)}</span>
                       </p>
                       <p className={styles.taxAdded}>
-                        Tax: <span>{formatCurrency(value.tax)}</span>
+                        Tax
+                        <span>{formatCurrency(value.tax)}</span>
                       </p>
                       {isCash && deductionApplied > 0 && (
                         <p className={styles.deductionApplied}>
-                          Deductions:{" "}
+                          Deductions
                           <span>-{formatCurrency(deductionApplied)}</span>
                         </p>
                       )}
                       <p>
-                        Total: <span>{formatCurrency(value.total)}</span>
+                        Total
+                        <span>{formatCurrency(value.total)}</span>
                       </p>
                     </div>
                   </li>

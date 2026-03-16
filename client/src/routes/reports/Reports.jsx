@@ -17,7 +17,7 @@ const Reports = () => {
 
   const SelectedComponent = PAGES[activeTab];
   return (
-    <div>
+    <div className={styles.reportsShell}>
       <UserBar pages={Object.keys(PAGES)} section={"reports"} />
       <SelectedComponent />
     </div>

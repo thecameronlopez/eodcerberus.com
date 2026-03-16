@@ -1,10 +1,6 @@
 import styles from "./Ranking.module.css";
 import React, { useEffect, useState } from "react";
-import {
-  formatCurrency,
-  getTodayLocalDate,
-  renderOptions,
-} from "../../../../utils/tools";
+import { formatCurrency, renderOptions } from "../../../../utils/tools";
 import { DEPARTMENTS, MONTHS } from "../../../../utils/enums";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../../context/AuthContext";
@@ -14,10 +10,6 @@ import {
   faCrown,
   faForwardStep,
 } from "@fortawesome/free-solid-svg-icons";
-
-{
-  /* <FontAwesomeIcon icon={faCrown} /> */
-}
 
 const Ranking = () => {
   const today = new Date();
@@ -87,26 +79,41 @@ const Ranking = () => {
         </button>
       </div>
       <div className={styles.userRank}>
-        <select
-          name="department"
-          value={chosenDepartment}
-          onChange={(e) => setChosenDepartment(e.target.value)}
-        >
-          <option value="all">All Departments</option>
-          {renderOptions(DEPARTMENTS)}
-        </select>
+        <label className={styles.departmentFilter}>
+          Department
+          <select
+            name="department"
+            value={chosenDepartment}
+            onChange={(e) => setChosenDepartment(e.target.value)}
+          >
+            <option value="all">All Departments</option>
+            {renderOptions(DEPARTMENTS)}
+          </select>
+        </label>
         <ul className={styles.rankingsBoard}>
           {totals
-            .filter((u) => u.department === chosenDepartment || "all")
+            .filter(
+              (u) =>
+                chosenDepartment === "all" || u.department === chosenDepartment
+            )
             .map((u, index) => (
               <li key={index}>
                 {index === 0 && u.total !== 0 && (
                   <FontAwesomeIcon icon={faCrown} className={styles.theKing} />
                 )}
-                <h4>
-                  {u.first_name} {u.last_name}
-                </h4>
-                <p>Total: {formatCurrency(u.total)}</p>
+                <div className={styles.rankIdentity}>
+                  <span className={styles.rankNumber}>#{index + 1}</span>
+                  <div>
+                    <h4>
+                      {u.first_name} {u.last_name}
+                    </h4>
+                    <p>{DEPARTMENTS[u.department]}</p>
+                  </div>
+                </div>
+                <p className={styles.rankTotal}>
+                  Total
+                  <span>{formatCurrency(u.total)}</span>
+                </p>
               </li>
             ))}
         </ul>

@@ -1,97 +1,164 @@
 .searchPage {
   width: 100%;
-  padding: 1rem;
-  max-width: 1200px;
+  padding: 0;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .searchPage .ticketSearch {
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: min(520px, 100%);
+  gap: 0.4rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(77, 141, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 36px rgba(15, 23, 38, 0.06);
 }
 
 .searchPage .ticketSearch label {
-  font-size: 14px;
-  color: var(--linkText);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 .ticketSearch input {
-  font-size: 16px !important;
-  border-radius: 6px;
-  width: fit-content;
+  font-size: 1rem !important;
+  border-radius: 14px;
+  width: 100%;
+  padding: 0.85rem 1rem !important;
 }
 
 .ticketData {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
   align-items: stretch;
-  gap: 10px;
+  gap: 1rem;
 }
 
 .ticketHeader {
-  flex: 1;
-  background-color: var(--textSecondary);
-  color: var(--buttonPrimary);
+  color: var(--textStrong);
   display: flex;
   flex-direction: column;
-  gap: 3rem;
-  padding: 0.6rem;
-  border-radius: 8px;
-  align-self: flex-start;
+  gap: 1.5rem;
+  padding: 1.4rem;
+  border-radius: 26px;
+  align-self: start;
+  height: fit-content;
+  background: rgba(244, 247, 251, 0.95);
+  border: 1px solid rgba(77, 141, 255, 0.14);
+  box-shadow: 0 24px 42px rgba(15, 23, 38, 0.06);
 }
 
 .ticketHeader h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.7rem;
+  letter-spacing: -0.04em;
 }
 
 .ticketHeader h2 div.ticketControls {
   display: flex;
-  gap: 14px;
+  gap: 0.65rem;
 }
 
 .ticketControls button {
-  border: none;
-  background-color: transparent;
-  font-size: 22px;
+  border: 1px solid rgba(16, 45, 85, 0.08);
+  background-color: #fff;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 14px;
+  font-size: 1rem;
+  box-shadow: 0 12px 22px rgba(15, 23, 38, 0.06);
+  cursor: pointer;
 }
 .ticketControls button.addTransaction {
-  color: green;
+  color: #177245;
 }
 .ticketControls button.editTicket {
-  color: cyan;
+  color: #0f7da8;
 }
 .ticketControls button.deleteTicket {
-  color: darkred;
+  color: #b42318;
+}
+
+.ticketMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.metaGrid p {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(16, 45, 85, 0.08);
+  font-weight: 600;
+}
+
+.metaGrid p span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 form.transactionForm {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: stretch;
+  gap: 0.95rem;
+  padding: 1.2rem;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(77, 141, 255, 0.12);
+}
+
+.transactionFormTop {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 320px));
+  gap: 0.9rem;
 }
 form.transactionForm div {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.45rem;
 }
 
 form.transactionForm div label {
-  font-size: 14px;
-  color: var(--textPrimary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 form.transactionForm div input,
-select {
-  width: 15rem;
-  background-color: transparent;
-  border: 1px solid var(--linkText) !important;
-  border-radius: 8px;
+form.transactionForm div select {
+  width: 100%;
+  max-width: 100%;
+  background-color: #fff;
+  border-radius: 12px;
   box-shadow: unset !important;
-  font-size: 14px !important;
+  font-size: 0.95rem !important;
+  min-height: 46px;
+  padding: 0.75rem 0.9rem !important;
 }
 
 form.transactionForm button.addLineItem {
@@ -99,110 +166,207 @@ form.transactionForm button.addLineItem {
   border: none;
   color: var(--bannerBackground);
   text-decoration: underline;
-  margin-left: 1rem;
+  margin-left: 0.6rem;
+  cursor: pointer;
+}
+
+.lineItemEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 0.4rem;
+}
+
+.lineItemsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 form.transactionForm .formLineItem {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  border: 1px solid var(--bannerBackground);
-  border-radius: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.1fr) minmax(0, 0.8fr) 88px;
+  align-items: stretch;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 74px;
+  padding: 0.7rem 3.4rem 0.7rem 0.85rem;
+  border: 1px solid rgba(18, 49, 93, 0.12);
+  border-radius: 18px;
   position: relative;
+  background: #f8fbff;
+  overflow: hidden;
 }
 
 form.transactionForm .formLineItem button.removeLineItem {
-  color: darkred;
-  background-color: transparent;
-  width: fit-content;
+  color: #fff;
+  background-color: #b42318;
+  width: 44px;
   border: none;
   position: absolute;
   top: 0;
-  right: 5px;
+  right: 0;
+  bottom: 0;
+  border-radius: 0 18px 18px 0;
+  cursor: pointer;
+  z-index: 1;
 }
 
-form.transactionForm .formLineItem select,
-input {
-  font-size: 12px !important;
+.formLineItem input,
+.formLineItem select {
+  font-size: 0.92rem !important;
+  min-width: 0;
+  width: 100%;
+  align-self: end;
+  min-height: 40px;
+  padding: 0.6rem 0.75rem !important;
 }
 
 label.returnCheck {
   display: flex;
-  justify-content: flex-start;
-  width: 20%;
-  gap: 10px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  align-self: end;
+  padding: 0;
+  grid-column: 4;
+  grid-row: 1;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.returnCheck input {
+  width: 18px !important;
+  height: 18px;
+  min-height: 18px;
+  padding: 0 !important;
+  margin: 0;
+  accent-color: var(--buttonSecondary);
+  flex: 0 0 auto;
 }
 
 form.transactionForm button.submitTransaction {
-  background-color: var(--linkText);
+  background: linear-gradient(135deg, var(--buttonSecondary), #1d8dff);
   color: var(--textPrimary);
-  align-self: center;
-  margin-block: 1rem;
+  align-self: flex-start;
+  margin-top: 0.25rem;
   border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  box-shadow: -1px 1px 4px #000;
+  border-radius: 14px;
+  padding: 0.9rem 1.25rem;
+  box-shadow: 0 14px 26px rgba(43, 109, 246, 0.2);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
 }
 
 .ticketHeader > div.ticketTotals {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.65rem;
+  padding: 1rem 1.1rem;
+  border-radius: 20px;
+  background: rgba(13, 24, 42, 0.94);
 }
 .ticketHeader > div.ticketTotals p {
   display: flex;
   justify-content: space-between;
-  font-size: 20px;
+  font-size: 1rem;
+  color: var(--textPrimary);
+}
+
+.ticketTotals span {
+  color: var(--linkTextSoft);
 }
 
 .transactionData {
-  flex: 2;
-  padding: 0.6rem;
-  background-color: var(--textSecondary);
+  padding: 1.35rem;
+  background: rgba(244, 247, 251, 0.95);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  border-radius: 8px;
+  align-items: stretch;
+  gap: 1rem;
+  border-radius: 26px;
+  border: 1px solid rgba(77, 141, 255, 0.14);
+  box-shadow: 0 24px 42px rgba(15, 23, 38, 0.06);
+}
+
+.transactionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.transactionHeader h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.45rem;
+}
+
+.transactionHeader p {
+  color: var(--textSecondary);
+  font-weight: 600;
 }
 
 .transactionData .transactionTotal {
   align-self: center;
   font-weight: 700;
-  color: var(--backgroundDark);
+  color: var(--textStrong);
   font-size: 20px;
 }
 
 .lineItemData {
   width: 100%;
-  border: 2px solid var(--buttonPrimary);
-  border-radius: 8px;
-  padding: 8px;
+  border: 1px solid rgba(16, 45, 85, 0.14);
+  border-radius: 22px;
+  padding: 1.1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   position: relative;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(15, 23, 38, 0.04);
 }
 
 .lineItemData button.deleteTransaction {
   color: var(--textPrimary);
-  background-color: darkred;
+  background-color: #b42318;
   border: none;
-  padding: 4px;
+  min-width: 132px;
+  height: 38px;
   position: absolute;
-  right: -10px;
-  top: -10px;
-  border-radius: 50%;
+  right: 1rem;
+  top: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lineItemData button.deleteTransaction::after {
+  content: "Delete Tx";
 }
 
 .lineItemData h4 {
-  font-size: 18px;
-  padding-left: 10px;
-  color: var(--textPrimary);
+  font-size: 1.05rem;
+  padding-right: 8.8rem;
+  color: var(--textStrong);
 }
 .lineItemData h4 span {
-  color: var(--backgroundDark);
+  color: var(--buttonSecondary);
 }
 
 .lineItemData ul {
@@ -213,37 +377,52 @@ form.transactionForm button.submitTransaction {
 }
 
 .lineItemData ul li {
-  display: flex;
-  justify-content: space-between;
-  border: 1px solid var(--bannerBackground);
-  background-color: var(--linkText);
-  border-radius: 6px;
-  padding: 10px 6px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid rgba(18, 49, 93, 0.1);
+  background-color: #f4f7fb;
+  border-radius: 16px;
+  padding: 1rem 1rem 1rem 3.7rem;
   position: relative;
+  overflow: hidden;
 }
 
 .lineItemData ul li button.deleteLineItem {
-  background-color: darkred;
+  background-color: #b42318;
   color: var(--textPrimary);
   position: absolute;
-  left: -5px;
-  top: -10px;
-  padding: 2px;
-  border-radius: 50%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 42px;
+  height: auto;
+  padding: 0;
+  border-radius: 16px 0 0 16px;
   border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lineItemData ul li div {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.45rem;
   font-weight: 600;
+  min-width: 0;
 }
 
 .lineItemData ul li > div.lineItemTotal {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  padding-left: 1rem;
+  padding-right: 0;
+  min-width: 150px;
+  align-self: center;
 }
 
 /* ==========================
@@ -252,16 +431,67 @@ form.transactionForm button.submitTransaction {
 
 @media (max-width: 768px) {
   .searchPage {
-    align-items: center;
+    align-items: stretch;
   }
   .searchPage .ticketSearch {
-    align-items: center;
+    align-items: stretch;
+    width: 100%;
   }
   .ticketData {
+    display: flex;
     flex-direction: column;
   }
 
   .ticketData .ticketHeader {
     width: 100%;
+  }
+
+  .ticketHeader h2 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .metaGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .transactionFormTop {
+    grid-template-columns: 1fr;
+  }
+
+  form.transactionForm .formLineItem {
+    grid-template-columns: 1fr;
+    padding-right: 3.6rem;
+    min-height: unset;
+  }
+
+  label.returnCheck {
+    align-items: flex-start;
+    grid-column: auto;
+    grid-row: auto;
+    justify-content: flex-start;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .transactionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lineItemData ul li {
+    grid-template-columns: 1fr auto;
+    padding-left: 3.4rem;
+  }
+
+  .lineItemData ul li > div.lineItemTotal {
+    padding-left: 0;
+    padding-right: 0;
+    align-items: flex-start;
+  }
+
+  .lineItemData ul li button.deleteLineItem {
+    grid-column: auto;
+    grid-row: auto;
   }
 }

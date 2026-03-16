@@ -270,7 +270,7 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
       {ticket && (
         <div className={styles.ticketData}>
           <div className={styles.ticketHeader}>
-            <div>
+            <div className={styles.ticketMeta}>
               <h2>
                 Ticket #{ticket.ticket_number}{" "}
                 <div className={styles.ticketControls}>
@@ -299,114 +299,21 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
                 </div>
               </h2>
 
-              <p>
-                {ticket.user.first_name} {ticket.user.last_name}
-              </p>
-              <p>{formatDate(ticket.ticket_date)}</p>
-              <p>Store: {ticket.location.name}</p>
+              <div className={styles.metaGrid}>
+                <p>
+                  <span>User</span>
+                  {ticket.user.first_name} {ticket.user.last_name}
+                </p>
+                <p>
+                  <span>Date</span>
+                  {formatDate(ticket.ticket_date)}
+                </p>
+                <p>
+                  <span>Store</span>
+                  {ticket.location.name}
+                </p>
+              </div>
             </div>
-            {adding && (
-              <form className={styles.transactionForm} onSubmit={handleSubmit}>
-                {user.is_admin && (
-                  <div>
-                    <label htmlFor="user_id">User</label>
-                    <select
-                      name="user_id"
-                      value={formData.user_id}
-                      onChange={(e) =>
-                        setFormData({ ...formData, user_id: e.target.value })
-                      }
-                    >
-                      <option value="">--select a user--</option>
-                      {users.map((u, index) => (
-                        <option value={u.id} key={index}>
-                          {u.first_name} {u.last_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                <div>
-                  <label htmlFor="posted_date">Date</label>
-                  <input
-                    type="date"
-                    name="posted_date"
-                    value={formData.posted_date}
-                    onChange={(e) =>
-                      setFormData({ ...formData, posted_date: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="line_items">
-                    Line Items{" "}
-                    <button
-                      className={styles.addLineItem}
-                      type="button"
-                      onClick={addLineItem}
-                    >
-                      add
-                    </button>
-                  </label>
-                  {formData.line_items.map((li, index) => (
-                    <div className={styles.formLineItem} key={index}>
-                      <button
-                        type="button"
-                        className={styles.removeLineItem}
-                        onClick={() => removeLineItem(index)}
-                      >
-                        remove
-                      </button>
-                      <select
-                        name="category"
-                        value={li.category}
-                        onChange={(e) =>
-                          updateLineItem(index, "category", e.target.value)
-                        }
-                      >
-                        <option value="">--select a category--</option>
-                        {renderOptions(SALES_CATEGORY)}
-                      </select>
-                      <select
-                        name="payment_type"
-                        value={li.payment_type}
-                        onChange={(e) =>
-                          updateLineItem(index, "payment_type", e.target.value)
-                        }
-                      >
-                        <option value="">--select a payment type--</option>
-                        {renderOptions(PAYMENT_TYPE)}
-                      </select>
-                      <MoneyField
-                        name={"unit_price"}
-                        value={li.unit_price || 0}
-                        onChange={(e) =>
-                          updateLineItem(index, "unit_price", e.target.value)
-                        }
-                        placeholder={"$0.00"}
-                        className={styles.unitPriceInput}
-                      />
-                      <label htmlFor="is_return" className={styles.returnCheck}>
-                        <input
-                          type="checkbox"
-                          name="is_return"
-                          id="is_return"
-                          checked={li.is_return}
-                          onChange={(e) =>
-                            updateLineItem(index, "is_return", e.target.checked)
-                          }
-                        />
-                        Return?
-                      </label>
-                    </div>
-                  ))}
-                </div>
-                <button className={styles.submitTransaction} type="submit">
-                  Submit
-                </button>
-              </form>
-            )}
             <div className={styles.ticketTotals}>
               <p>
                 Subtotal: <span>{formatCurrency(ticket.subtotal)}</span>
@@ -420,14 +327,124 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
             </div>
           </div>
           <div className={styles.transactionData}>
-            <h3>Transactions</h3>
-            <p>Total Transactions: {ticket.transactions.length}</p>
+            <div className={styles.transactionHeader}>
+              <h3>Transactions</h3>
+              <p>Total Transactions: {ticket.transactions.length}</p>
+            </div>
+            {adding && (
+              <form className={styles.transactionForm} onSubmit={handleSubmit}>
+                <div className={styles.transactionFormTop}>
+                  {user.is_admin && (
+                    <div>
+                      <label htmlFor="user_id">User</label>
+                      <select
+                        name="user_id"
+                        value={formData.user_id}
+                        onChange={(e) =>
+                          setFormData({ ...formData, user_id: e.target.value })
+                        }
+                      >
+                        <option value="">--select a user--</option>
+                        {users.map((u, index) => (
+                          <option value={u.id} key={index}>
+                            {u.first_name} {u.last_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  <div>
+                    <label htmlFor="posted_date">Date</label>
+                    <input
+                      type="date"
+                      name="posted_date"
+                      value={formData.posted_date}
+                      onChange={(e) =>
+                        setFormData({ ...formData, posted_date: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.lineItemsSection}>
+                  <label htmlFor="line_items">
+                    Line Items{" "}
+                    <button
+                      className={styles.addLineItem}
+                      type="button"
+                      onClick={addLineItem}
+                    >
+                      add
+                    </button>
+                  </label>
+                  <div className={styles.lineItemEditor}>
+                    {formData.line_items.map((li, index) => (
+                      <div className={styles.formLineItem} key={index}>
+                        <button
+                          type="button"
+                          className={styles.removeLineItem}
+                          onClick={() => removeLineItem(index)}
+                        >
+                          X
+                        </button>
+                        <select
+                          name="category"
+                          value={li.category}
+                          onChange={(e) =>
+                            updateLineItem(index, "category", e.target.value)
+                          }
+                        >
+                          <option value="">--select a category--</option>
+                          {renderOptions(SALES_CATEGORY)}
+                        </select>
+                        <select
+                          name="payment_type"
+                          value={li.payment_type}
+                          onChange={(e) =>
+                            updateLineItem(index, "payment_type", e.target.value)
+                          }
+                        >
+                          <option value="">--select a payment type--</option>
+                          {renderOptions(PAYMENT_TYPE)}
+                        </select>
+                        <MoneyField
+                          name={"unit_price"}
+                          value={li.unit_price || 0}
+                          onChange={(e) =>
+                            updateLineItem(index, "unit_price", e.target.value)
+                          }
+                          placeholder={"$0.00"}
+                          className={styles.unitPriceInput}
+                        />
+                        <label htmlFor="is_return" className={styles.returnCheck}>
+                          <input
+                            type="checkbox"
+                            name="is_return"
+                            id="is_return"
+                            checked={li.is_return}
+                            onChange={(e) =>
+                              updateLineItem(index, "is_return", e.target.checked)
+                            }
+                          />
+                          Return
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <button className={styles.submitTransaction} type="submit">
+                  Submit
+                </button>
+              </form>
+            )}
             {ticket.transactions.map((tx, index) => (
               <div key={index} className={styles.lineItemData}>
                 {editing && (
                   <button
                     className={styles.deleteTransaction}
                     onClick={() => handleDeleteTransaction(tx.id)}
+                    title="Delete transaction"
+                    aria-label="Delete transaction"
                   >
                     <FontAwesomeIcon icon={faDeleteLeft} />
                   </button>
@@ -443,6 +460,8 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
                         <button
                           className={styles.deleteLineItem}
                           onClick={() => handleDeleteLineItem(item.id)}
+                          title="Delete line item"
+                          aria-label="Delete line item"
                         >
                           <FontAwesomeIcon icon={faXmark} />
                         </button>

@@ -9,7 +9,6 @@ import { DEPARTMENTS } from "../../../../utils/enums";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEraser,
   faRotateLeft,
   faTrashCan,
   faUserPen,
@@ -68,7 +67,7 @@ const Users = () => {
   return (
     <div className={styles.userSettingsPage}>
       <div className={styles.userListInSettings}>
-        <h2>Users</h2>
+        <h2>User Directory</h2>
         <ul>
           {users.map((u, index) => (
             <li key={index}>

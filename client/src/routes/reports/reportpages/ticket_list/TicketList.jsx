@@ -1,27 +1,20 @@
 import styles from "./TicketList.module.css";
 import React, { useEffect, useState } from "react";
 import {
-  formatDateObj,
   formatDate,
   getTodayLocalDate,
-  renderOptions,
   formatCurrency,
 } from "../../../../utils/tools";
 import { useAuth } from "../../../../context/AuthContext";
-import { MONTHS, SALES_CATEGORY, PAYMENT_TYPE } from "../../../../utils/enums";
+import { SALES_CATEGORY, PAYMENT_TYPE } from "../../../../utils/enums";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBackwardStep,
-  faEye,
-  faForwardStep,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBackwardStep, faForwardStep } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useTicket } from "../../../../context/TicketContext";
 import { useTabRouter } from "../../../../context/TabRouterContext";
 
 const TicketList = ({ setComponent }) => {
-  const today = new Date();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { setSelectedTicketNumber } = useTicket();
@@ -165,25 +158,30 @@ const TicketList = ({ setComponent }) => {
                     className={styles.viewThisTicket}
                     onClick={() => openInSearch(ticket.ticket_number)}
                   >
-                    {/* <FontAwesomeIcon icon={faEye} /> */}
                     Manage Ticket
                   </button>
-                  <p>Ticket #{ticket.ticket_number}</p>
-                  <p>
-                    User:{" "}
-                    <span>
-                      {ticket.user.first_name} {ticket.user.last_name[0]}.
-                    </span>
-                  </p>
-                  <p>
-                    Date: <span>{formatDate(ticket.ticket_date)}</span>
-                  </p>
-                  <p>
-                    Subtotal: <span>{formatCurrency(ticket.subtotal)}</span>
-                  </p>
-                  <p>
-                    Total: <span>{formatCurrency(ticket.total)}</span>
-                  </p>
+                  <div className={styles.ticketIdentity}>
+                    <p className={styles.ticketNumber}>
+                      Ticket #{ticket.ticket_number}
+                    </p>
+                    <p>
+                      User:{" "}
+                      <span>
+                        {ticket.user.first_name} {ticket.user.last_name[0]}.
+                      </span>
+                    </p>
+                    <p>
+                      Date: <span>{formatDate(ticket.ticket_date)}</span>
+                    </p>
+                  </div>
+                  <div className={styles.ticketTotals}>
+                    <p>
+                      Subtotal: <span>{formatCurrency(ticket.subtotal)}</span>
+                    </p>
+                    <p>
+                      Total: <span>{formatCurrency(ticket.total)}</span>
+                    </p>
+                  </div>
                 </div>
                 <div className={styles.ticketTransactions}>
                   {ticket.transactions.map((tx, txIndex) => (
@@ -198,21 +196,24 @@ const TicketList = ({ setComponent }) => {
                           className={styles.transactionLineItem}
                         >
                           <p>
-                            Category: <span>{SALES_CATEGORY[li.category]}</span>
+                            Category
+                            <span>{SALES_CATEGORY[li.category]}</span>
                           </p>
                           <p>
-                            Payment Type:{" "}
+                            Payment Type
                             <span>{PAYMENT_TYPE[li.payment_type]}</span>
                           </p>
                           <p>
-                            Subtotal:{" "}
+                            Subtotal
                             <span>{formatCurrency(li.unit_price)}</span>
                           </p>
                           <p>
-                            Tax: <span>{formatCurrency(li.tax_amount)}</span>
+                            Tax
+                            <span>{formatCurrency(li.tax_amount)}</span>
                           </p>
                           <p>
-                            Total: <span>{formatCurrency(li.total)}</span>
+                            Total
+                            <span>{formatCurrency(li.total)}</span>
                           </p>
                         </div>
                       ))}

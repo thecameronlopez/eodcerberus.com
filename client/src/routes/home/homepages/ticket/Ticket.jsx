@@ -133,7 +133,7 @@ const Ticket = () => {
       <form className={styles.ticketForm} onSubmit={handleSubmit}>
         <div className={styles.formTopBar}>
           {user.is_admin && (
-            <div>
+            <div className={styles.topField}>
               <label htmlFor="user_id">Submit As</label>
               <select
                 name="user_id"
@@ -152,7 +152,7 @@ const Ticket = () => {
               </select>
             </div>
           )}
-          <div>
+          <div className={styles.topField}>
             <label htmlFor="date">Date</label>
             <input
               type="date"
@@ -164,7 +164,7 @@ const Ticket = () => {
               }
             />
           </div>
-          <div>
+          <div className={styles.topField}>
             <label htmlFor="ticket_number">Ticket Number</label>
             <input
               type="text"
@@ -176,12 +176,12 @@ const Ticket = () => {
               }}
             />
           </div>
-          <div className={styles.unitCount}>
-            <label htmlFor="units">Units: </label>
+          <div className={`${styles.topField} ${styles.summaryField}`}>
+            <label htmlFor="units">Units</label>
             <p>{formData.line_items.length}</p>
           </div>
-          <div className={styles.locale}>
-            <label htmlFor="location">Location:</label>
+          <div className={`${styles.topField} ${styles.summaryField}`}>
+            <label htmlFor="location">Location</label>
             <p>{user.location.name}</p>
           </div>
         </div>

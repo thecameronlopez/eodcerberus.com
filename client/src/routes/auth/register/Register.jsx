@@ -63,7 +63,7 @@ const Register = () => {
   return (
     <div className={styles.registerContainer}>
       <form className={styles.registrationForm} onSubmit={handleSubmit}>
-        <h2 style={{ color: "var(--linkText)" }}>Register New User</h2>
+        <h2 className={styles.registrationTitle}>Register New User</h2>
         <div className={styles.adminCheck}>
           <label htmlFor="is_admin">
             Admin

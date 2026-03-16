@@ -1,34 +1,17 @@
 import styles from "./Report.module.css";
 import { useAuth } from "../../../../context/AuthContext";
 import React, { useEffect, useState } from "react";
-import {
-  SALES_CATEGORY,
-  DEPARTMENTS,
-  LOCATIONS,
-  PAYMENT_TYPE,
-} from "../../../../utils/enums";
-import {
-  getTodayLocalDate,
-  renderOptions,
-  formatLocationName,
-  formatCurrency,
-  formatDate,
-} from "../../../../utils/tools";
+import { getTodayLocalDate } from "../../../../utils/tools";
 import { UserList } from "../../../../utils/api";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPrint,
-  faSquareMinus,
-  faSquarePlus,
-} from "@fortawesome/free-solid-svg-icons";
-import MoneyField from "../../../../components/MoneyField";
+import { faPrint } from "@fortawesome/free-solid-svg-icons";
 import EOD from "../../../../components/report/EOD";
 import { useReactToPrint } from "react-to-print";
 import { useRef } from "react";
 
 const Report = () => {
-  const { user, location, setLoading } = useAuth();
+  const { user } = useAuth();
   const [users, setUsers] = useState(null);
   const [selectedUser, setSelectedUser] = useState(user.id || null);
   const [reportDate, setReportDate] = useState(getTodayLocalDate());
@@ -76,31 +59,37 @@ const Report = () => {
   return (
     <div className={styles.reportPage}>
       <div className={styles.reportHeader}>
-        <div>
+        <div className={styles.reportFilters}>
           {user.is_admin && (
-            <select
-              name="user_id"
-              value={selectedUser}
-              onChange={(e) => setSelectedUser(e.target.value)}
-            >
-              <option value="">--select user--</option>
-              {users.map((u, index) => (
-                <option value={u.id} key={index}>
-                  {u.first_name} {u.last_name}
-                </option>
-              ))}
-            </select>
+            <label>
+              User
+              <select
+                name="user_id"
+                value={selectedUser}
+                onChange={(e) => setSelectedUser(e.target.value)}
+              >
+                <option value="">--select user--</option>
+                {users.map((u, index) => (
+                  <option value={u.id} key={index}>
+                    {u.first_name} {u.last_name}
+                  </option>
+                ))}
+              </select>
+            </label>
           )}
-          <input
-            type="date"
-            name="date"
-            id="date"
-            value={reportDate}
-            onChange={(e) => setReportDate(e.target.value)}
-          />
+          <label>
+            Date
+            <input
+              type="date"
+              name="date"
+              id="date"
+              value={reportDate}
+              onChange={(e) => setReportDate(e.target.value)}
+            />
+          </label>
         </div>
         <div className={styles.headerControls}>
-          <button onClick={printFn}>
+          <button onClick={printFn} disabled={!report} title="Print report">
             <FontAwesomeIcon icon={faPrint} />
           </button>
           <button className={styles.runReport} onClick={runReport}>
@@ -108,7 +97,9 @@ const Report = () => {
           </button>
         </div>
       </div>
-      {report && <EOD report={report} meta={meta} ref={contentRef} />}
+      <div className={styles.reportOutput}>
+        {report && <EOD report={report} meta={meta} ref={contentRef} />}
+      </div>
     </div>
   );
 };

@@ -1,66 +1,94 @@
 .reportsPage {
   width: 100%;
-  max-width: 1600px;
-  margin: 1rem auto;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
 }
 
 .reportFilters {
-  padding: 1rem;
-  width: fit-content;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  min-height: 30rem;
-}
-
-.reportFilters > div {
-  border: 1px solid var(--linkText);
-  border-radius: 8px;
-  padding: 1rem;
+  padding: 1.1rem;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  border-radius: 26px;
+  background: rgba(244, 247, 251, 0.92);
+  border: 1px solid rgba(77, 141, 255, 0.14);
+  box-shadow: 0 24px 42px rgba(15, 23, 38, 0.06);
+  position: sticky;
+  top: 1rem;
+}
+
+.reportFilters > div {
+  border: 1px solid rgba(77, 141, 255, 0.12);
+  border-radius: 20px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  background: rgba(255, 255, 255, 0.78);
 }
 .reportFilters > div:first-child {
-  min-height: 8rem;
+  min-height: auto;
 }
 
 .reportType {
   display: flex;
   flex-direction: column;
+  gap: 0.45rem;
 }
 
 .reportDate {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
 }
 
 .reportDate label {
   display: flex;
   flex-direction: column;
+  gap: 0.45rem;
 }
 
-.reportDate label input[type="date"] {
-  border-radius: 8px;
+.reportFilters label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.reportFilters select,
+.reportFilters input[type="date"] {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.75rem 0.9rem !important;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.userSelect,
+.locationSelect {
+  width: 100%;
 }
 
 .paramList {
   list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  gap: 0.75rem;
+  max-height: 320px;
+  overflow: auto;
+  padding-right: 0.2rem;
 }
 
 .paramList li {
-  border: 1px solid var(--linkText);
-  border-radius: 6px;
+  border: 1px solid rgba(77, 141, 255, 0.12);
+  border-radius: 14px;
   padding: 0;
   transition: background-color 0.2s;
+  background: #fff;
 }
 .paramList li input[type="checkbox"] {
   display: none;
@@ -69,50 +97,71 @@
 .paramList li label {
   display: block;
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.9rem 1rem;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 14px;
   transition:
     background-color 0.2s,
     color 0.2s;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--textStrong);
 }
 
 .paramList li input[type="checkbox"]:checked + label {
-  background-color: var(--bannerBackground);
-  color: var(--linkText);
+  background: linear-gradient(135deg, #102d55, #2468f2);
+  color: var(--textPrimary);
 }
 
 button.runnit {
-  align-self: center;
-  font-size: 1.6rem;
-  padding: 10px 24px;
-  border-radius: 8px;
+  align-self: stretch;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.95rem 1.2rem;
+  border-radius: 16px;
   border: none;
-  background-color: var(--bannerBackground);
+  background: linear-gradient(135deg, var(--buttonSecondary), #1d8dff);
   color: var(--textPrimary);
-
-  box-shadow: -1px 1px 4px #000;
-
+  box-shadow: 0 16px 28px rgba(43, 109, 246, 0.24);
   margin-top: auto;
+  cursor: pointer;
 }
 
 button.prinnit {
-  background-color: transparent;
-  border: none;
-  font-size: 1.2rem;
+  background: #fff;
+  border: 1px solid rgba(16, 45, 85, 0.08);
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 14px;
+  font-size: 1rem;
   align-self: flex-end;
   color: var(--bannerBackground);
+  box-shadow: 0 12px 22px rgba(15, 23, 38, 0.06);
+  cursor: pointer;
 }
 button.prinnit:disabled {
   filter: opacity(0.3);
 }
 
 .reported {
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 3rem;
+  min-height: 420px;
+}
+
+.reported:empty {
+  border-radius: 26px;
+  border: 1px dashed rgba(77, 141, 255, 0.22);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(244, 247, 251, 0.72)
+  );
 }
 
 /* ==========================
@@ -121,29 +170,15 @@ button.prinnit:disabled {
 
 @media (max-width: 768px) {
   .reportsPage {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
   }
 
   .reportFilters {
-    padding: 1rem;
-    width: fit-content;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    min-height: 15rem;
+    position: static;
   }
 
-  button.runnit {
-    align-self: center;
-    font-size: 1.6rem;
-    padding: 10px 24px;
-    border-radius: 8px;
-    border: none;
-    background-color: var(--bannerBackground);
-    color: var(--textPrimary);
-
-    box-shadow: -1px 1px 4px #000;
+  .reportDate {
+    grid-template-columns: 1fr;
   }
 
   .reported {

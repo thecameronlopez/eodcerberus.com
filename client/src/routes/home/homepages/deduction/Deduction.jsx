@@ -1,27 +1,16 @@
 import styles from "./Deduction.module.css";
-import { useAuth } from "../../../../context/AuthContext";
 import React, { useEffect, useState } from "react";
 import {
-  SALES_CATEGORY,
-  DEPARTMENTS,
-  LOCATIONS,
-  PAYMENT_TYPE,
-} from "../../../../utils/enums";
-import {
   getTodayLocalDate,
-  renderOptions,
   formatCurrency,
   formatDate,
 } from "../../../../utils/tools";
-import { UserList } from "../../../../utils/api";
 import toast from "react-hot-toast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import MoneyField from "../../../../components/MoneyField";
+import { useAuth } from "../../../../context/AuthContext";
 
 const Deduction = () => {
-  const today = new Date();
-  const { user, location, setLoading } = useAuth();
+  const { user, setLoading } = useAuth();
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
   const [date, setDate] = useState({
@@ -92,7 +81,7 @@ const Deduction = () => {
       toast.success(data.message);
       setAmount("");
       setReason("");
-      setDate(getTodayLocalDate());
+      setDate((prev) => ({ ...prev, start: getTodayLocalDate() }));
       setMyDeductions((prev) => [data.deduction, ...prev]);
     } catch (error) {
       console.error("[DEDUCTION ERROR]: ", error);
@@ -104,16 +93,21 @@ const Deduction = () => {
 
   return (
     <div className={styles.deductionsPage}>
-      <div>
-        <h3>Deductions</h3>
-        <input
-          type="date"
-          name="date"
-          id="date"
-          value={date.start}
-          onChange={(e) => setDate({ ...date, start: e.target.value })}
-          className={styles.deductionsDateSet}
-        />
+      <div className={styles.deductionEntry}>
+        <div className={styles.deductionHeader}>
+          <h3>Deductions</h3>
+          <label className={styles.dateField}>
+            Date
+            <input
+              type="date"
+              name="date"
+              id="date"
+              value={date.start}
+              onChange={(e) => setDate({ ...date, start: e.target.value })}
+              className={styles.deductionsDateSet}
+            />
+          </label>
+        </div>
         <form className={styles.deductionForm} onSubmit={handleSubmit}>
           <div>
             <label htmlFor="amount">Amount</label>
@@ -139,7 +133,10 @@ const Deduction = () => {
         </form>
       </div>
       <div className={styles.deductionsList}>
-        <h4>My Deductions</h4>
+        <div className={styles.listHeader}>
+          <h4>My Deductions</h4>
+          <p>{myDeductions?.length || 0} entries</p>
+        </div>
         <ul>
           {myDeductions?.map(({ id, amount, reason, date }, index) => (
             <li
@@ -147,8 +144,10 @@ const Deduction = () => {
               onClick={() => deleteDeduction(id)}
               title="click to delete"
             >
-              <p>{formatCurrency(amount)}</p>
-              <p>{formatDate(date)}</p>
+              <div className={styles.deductionMeta}>
+                <p>{formatCurrency(amount)}</p>
+                <p>{formatDate(date)}</p>
+              </div>
               <p className={styles.reasonForDeduction}>{reason}</p>
             </li>
           ))}

@@ -1,58 +1,80 @@
 .ticketContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
-  max-width: 1200px;
-  margin: 1rem auto;
+  margin: 0 auto;
 }
 
 .ticketContainer .ticketForm {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 1rem;
-  padding: 10px;
-  width: 90%;
+  padding: 0;
+  width: 100%;
   margin: 0 auto;
 }
 
 .ticketForm .formTopBar {
-  align-self: flex-start;
-  display: flex;
-  flex-direction: column;
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1rem;
-  border-bottom: 1px solid var(--linkText);
-  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(77, 141, 255, 0.2);
+  padding-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
+  align-items: end;
 }
 
 .ticketForm .formTopBar div {
   display: flex;
   flex-direction: column;
-}
-.ticketForm .formTopBar .unitCount {
-  flex-direction: row;
-  gap: 10px;
-  font-weight: 700;
-}
-.ticketForm .formTopBar .locale {
-  flex-direction: row;
-  gap: 10px;
-  font-weight: 700;
+  min-width: 0;
 }
 
-.ticketForm .formTopBar div input {
-  font-size: 24px !important;
-  border: none;
-  border-radius: 8px;
-  box-shadow: -1px 1px 4px #000;
-  padding: 4px 8px;
+.topField {
+  gap: 0.45rem;
+}
+
+.topField label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.ticketForm .formTopBar .topField input,
+.ticketForm .formTopBar .topField select {
+  min-height: 48px;
+  font-size: 1rem !important;
+  padding: 0.8rem 0.95rem !important;
+  width: 100%;
 }
 
 select.adminUserSelect {
-  height: 36px !important;
-  border-radius: 8px !important;
-  padding-inline: 4px !important;
+  height: auto !important;
+  border-radius: 12px !important;
+  padding-inline: 0.95rem !important;
+}
+
+.summaryField {
+  justify-content: flex-end;
+  min-height: 48px;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid rgba(77, 141, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(244, 247, 251, 0.96);
+}
+
+.summaryField p {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--textStrong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ticketForm .lineItems {
@@ -79,72 +101,100 @@ select.adminUserSelect {
 
 .ticketForm .lineItems .lineItem {
   width: 100%;
-  display: flex;
-  gap: 10px;
-  border: 2px solid var(--linkText);
-  border-radius: 4px;
-  padding: 18px 8px;
+  display: grid;
+  grid-template-columns: minmax(260px, 1.5fr) minmax(220px, 1.1fr) minmax(180px, 0.9fr) 76px;
+  gap: 0.9rem;
+  border: 1px solid rgba(77, 141, 255, 0.18);
+  padding: 1.1rem 4.4rem 1rem 1rem;
   justify-content: flex-start;
-  align-items: center;
-  border-radius: 8px;
+  align-items: end;
+  border-radius: 18px;
   position: relative;
-  box-shadow: -1px 1px 4px #333;
+  background: rgba(246, 249, 253, 0.95);
+  box-shadow: 0 14px 28px rgba(15, 23, 38, 0.06);
 }
 
 .lineItems .lineItem div:not(.returnBox) {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .returnBox {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  min-height: 100%;
+  padding-top: 0.15rem;
+  align-self: stretch;
 }
 .lineItems .lineItem div label {
-  font-size: 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 .lineItems .lineItem select,
-input {
-  font-size: 18px !important;
-  padding: 4px !important;
-  background-color: transparent;
-  border: 1px solid var(--background);
-  border-radius: 0;
-  box-shadow: unset;
-  flex: 1;
-  border-radius: 8px;
+.lineItems .lineItem input {
+  font-size: 0.95rem !important;
+  padding: 0.7rem 0.8rem !important;
+  background-color: #fff;
+  width: 100%;
+  border-radius: 12px;
 }
 
 .lineItem input.unitPriceInput {
-  width: 45%;
-  font-size: 18px !important;
-  border-radius: 8px;
+  width: 100%;
+  font-size: 0.95rem !important;
+  border-radius: 12px;
+}
+
+.returnBox input {
+  width: 18px !important;
+  height: 18px;
+  min-height: 18px;
+  padding: 0 !important;
+  margin: 0;
+  border-radius: 4px;
+  accent-color: var(--buttonSecondary);
 }
 
 button.removeLiButton {
   position: absolute;
-  top: -12%;
-  left: -1.3%;
-  background-color: darkred;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: auto;
+  transform: none;
+  background-color: #b42318;
   color: #fff;
   border: none;
-  border-radius: 50%;
-  padding: 3px;
-  height: 24px;
-  width: 24px;
+  border-radius: 0 18px 18px 0;
+  padding: 0;
+  height: auto;
+  width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
 }
 
 .ticketForm button[type="submit"] {
-  background-color: var(--buttonSecondary);
+  align-self: flex-start;
+  background: linear-gradient(135deg, var(--buttonSecondary), #1d8dff);
   color: var(--textPrimary);
-  font-size: 1.8rem;
-  padding: 10px 24px;
-  border-radius: 8px;
-  margin-top: 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.95rem 1.35rem;
+  border: none;
+  border-radius: 16px;
+  margin-top: 1rem;
 }
 .ticketForm button[type="submit"]:disabled {
   background-color: #888;
@@ -162,21 +212,30 @@ button.removeLiButton {
   }
 
   .ticketForm .formTopBar {
+    grid-template-columns: 1fr;
     width: 100%;
-  }
-  .ticketForm .formTopBar div input {
-    padding: 4px 8px;
-    width: fit-content;
   }
 
   .ticketForm .lineItems .lineItem {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding-right: 3.5rem;
+  }
+
+  .returnBox {
+    align-items: flex-start;
+    min-height: auto;
+    padding-top: 0;
   }
 
   button.removeLiButton {
-    top: -5%;
-    left: -2.5%;
+    top: 0.65rem;
+    right: 0.65rem;
+    bottom: 0.65rem;
+    width: 38px;
+    border-radius: 12px;
+    transform: none;
   }
 
   .returnBox {

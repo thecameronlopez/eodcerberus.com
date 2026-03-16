@@ -18,7 +18,7 @@ const Settings = () => {
   const SelectedComponent = PAGES[activeTab];
 
   return (
-    <div>
+    <div className={styles.settingsShell}>
       <UserBar pages={Object.keys(PAGES)} section={"settings"} />
       <SelectedComponent />
     </div>
