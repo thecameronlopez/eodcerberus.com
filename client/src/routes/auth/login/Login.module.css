@@ -1,89 +1,335 @@
-.loginContainer {
-  width: min(100%, 640px);
-  margin: 2.5rem auto;
+.loginShell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 460px);
+  grid-template-areas: "intro form";
+  gap: 1.5rem;
+  align-items: stretch;
+  min-height: min(78dvh, 760px);
+}
+
+.loginIntro {
+  grid-area: intro;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
   gap: 1.5rem;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.78);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 32px;
+  border: 1px solid var(--borderSoft);
+  background:
+    radial-gradient(circle at top right, rgba(77, 141, 255, 0.22), transparent 30%),
+    linear-gradient(160deg, rgba(7, 15, 27, 0.92), rgba(14, 28, 52, 0.84));
+  box-shadow: var(--shadowSoft);
+  overflow: hidden;
+}
+
+.loginIntro::after {
+  content: "";
+  position: absolute;
+  inset: auto -8% -12% auto;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14, 165, 166, 0.24), transparent 68%);
+  pointer-events: none;
+}
+
+.brandBadge {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brandLogo {
+  width: clamp(88px, 14vw, 120px);
+  filter: drop-shadow(0 12px 24px rgba(77, 141, 255, 0.18));
+}
+
+.eyebrow,
+.formEyebrow,
+.featureCard span,
+.loginForm label {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 800;
+}
+
+.eyebrow {
+  color: var(--linkTextSoft);
+  font-size: 0.74rem;
+  margin-bottom: 0.35rem;
+}
+
+.loginHeader {
+  color: var(--textPrimary);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  letter-spacing: -0.06em;
+  line-height: 0.96;
+}
+
+.loginCopy {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  color: rgba(244, 247, 251, 0.84);
+  font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+  line-height: 1.7;
+}
+
+.featureGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.featureCard {
+  padding: 1.15rem 1.2rem;
+  border-radius: 22px;
+  border: 1px solid rgba(138, 181, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.featureCard span {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: #9bc0ff;
+  font-size: 0.7rem;
+}
+
+.featureCard p {
+  color: rgba(244, 247, 251, 0.88);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.loginContainer {
+  grid-area: form;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.84);
   box-shadow: 0 24px 60px rgba(11, 21, 39, 0.12);
   backdrop-filter: blur(14px);
 }
 
-.loginContainer h1.loginHeader {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
+.formHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formEyebrow {
+  color: var(--buttonSecondary);
+  font-size: 0.72rem;
+}
+
+.formHeader h2 {
   color: var(--textStrong);
-  font-weight: 700;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
   letter-spacing: -0.05em;
 }
 
-.loginContainer .loginForm {
+.formHeader p {
+  color: #51637d;
+  line-height: 1.6;
+}
+
+.loginForm {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
+  gap: 1rem;
 }
 
 .loginForm div {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
+  gap: 0.45rem;
 }
 
-.loginForm div label {
-  font-size: 0.72rem;
-  font-weight: 800;
+.loginForm label {
   color: var(--textSecondary);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  margin-bottom: 0.45rem;
+  font-size: 0.72rem;
 }
 
-.loginForm div input {
-  font-size: 1.15rem !important;
-  padding: 0.95rem 1rem !important;
-  border-radius: 16px;
+.loginForm input {
+  width: 100%;
+  padding: 1rem 1rem;
+  border-radius: 18px;
   background: rgba(247, 250, 253, 0.96);
-  width: 100% !important;
+  font-size: 1rem;
 }
 
 .loginForm button[type="submit"] {
   width: 100%;
-  background: linear-gradient(135deg, var(--buttonSecondary), #1d8dff);
-  color: var(--textPrimary);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  margin-top: 0.4rem;
   padding: 1rem 1.25rem;
   border: none;
-  border-radius: 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--buttonSecondary), #1d8dff);
+  color: var(--textPrimary);
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   box-shadow: 0 16px 28px rgba(43, 109, 246, 0.28);
-  margin-top: 0.5rem;
   cursor: pointer;
 }
 
-/* ==========================
-   Mobile / Responsive styles
-   ========================== */
+@media (max-width: 980px) {
+  .loginShell {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "form"
+      "intro";
+    min-height: auto;
+  }
+
+  .loginIntro {
+    min-height: 0;
+  }
+
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+}
 
 @media (max-width: 768px) {
-  .loginContainer h1.loginHeader {
-    font-size: 2rem;
+  .loginShell {
+    gap: 1rem;
   }
 
+  .loginIntro,
   .loginContainer {
-    margin: 1rem auto;
-    padding: 1.25rem;
+    padding: 1.2rem;
+    border-radius: 24px;
   }
 
-  .loginForm > div {
-    width: 100%;
+  .brandBadge {
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .brandLogo {
+    width: 84px;
+  }
+
+  .loginHeader {
+    font-size: clamp(2rem, 11vw, 3rem);
+  }
+
+  .loginCopy {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .featureCard {
+    padding: 1rem;
+    border-radius: 18px;
+  }
+
+  .formHeader {
+    gap: 0.35rem;
+  }
+
+  .formHeader h2 {
+    font-size: clamp(1.65rem, 8vw, 2.2rem);
+  }
+
+  .loginForm {
+    gap: 0.9rem;
+  }
+
+  .loginForm input {
+    padding: 0.9rem 0.95rem;
+    border-radius: 16px;
+    font-size: 16px;
+  }
+
+  .loginForm button[type="submit"] {
+    padding: 0.95rem 1rem;
+    border-radius: 16px;
+   }
+}
+
+@media (max-width: 560px) {
+  .loginShell {
+    gap: 0.85rem;
+  }
+
+  .loginIntro,
+  .loginContainer {
+    padding: 1rem;
+    border-radius: 20px;
+  }
+
+  .loginIntro {
+    gap: 1.1rem;
+  }
+
+  .brandBadge {
+    flex-direction: column;
+  }
+
+  .brandLogo {
+    width: 72px;
+  }
+
+  .eyebrow,
+  .formEyebrow,
+  .featureCard span,
+  .loginForm label {
+    letter-spacing: 0.12em;
+  }
+
+  .loginHeader {
+    font-size: clamp(1.8rem, 10vw, 2.5rem);
+    line-height: 1;
+  }
+
+  .loginCopy {
+    font-size: 0.95rem;
+  }
+
+  .featureGrid {
+    gap: 0.75rem;
+  }
+
+  .featureCard p,
+  .formHeader p {
+    font-size: 0.92rem;
+  }
+
+  .formHeader h2 {
+    font-size: 1.55rem;
+  }
+
+  .loginForm button[type="submit"] {
+    margin-top: 0.2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .loginShell {
+    gap: 0.75rem;
+  }
+
+  .loginIntro,
+  .loginContainer {
+    padding: 0.9rem;
+  }
+
+  .featureCard {
+    padding: 0.9rem;
   }
 }

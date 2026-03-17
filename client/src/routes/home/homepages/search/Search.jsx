@@ -1,6 +1,5 @@
 import styles from "./Search.module.css";
 import { useAuth } from "../../../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import {
   SALES_CATEGORY,
@@ -11,7 +10,6 @@ import {
 import {
   getTodayLocalDate,
   renderOptions,
-  formatLocationName,
   formatCurrency,
   formatDate,
 } from "../../../../utils/tools";
@@ -20,7 +18,6 @@ import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDeleteLeft,
-  faMinus,
   faPenToSquare,
   faRotateLeft,
   faSquareMinus,
@@ -29,17 +26,15 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import MoneyField from "../../../../components/MoneyField";
-import { useTicket } from "../../../../context/TicketContext";
 
 const Search = ({ ticketNumber: initialTicketNumber }) => {
-  const navigate = useNavigate();
-  const { user, location, setLoading } = useAuth();
-  const { selectedTicketNumber, setSelectedTicketNumber } = useTicket();
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [ticketNumber, setTicketNumber] = useState(initialTicketNumber || "");
   const [ticket, setTicket] = useState(null);
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [submittingTransaction, setSubmittingTransaction] = useState(false);
   const [formData, setFormData] = useState({
     posted_date: getTodayLocalDate(),
     location_id: user.location_id,
@@ -54,12 +49,6 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
       },
     ],
   });
-  const [editData, setEditData] = useState({
-    ticket_number: "",
-    ticket_date: "",
-    user_id: "",
-  });
-
   useEffect(() => {
     if (initialTicketNumber) {
       setTicketNumber(initialTicketNumber);
@@ -143,7 +132,7 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
     }
 
     try {
-      setLoading(true);
+      setSubmittingTransaction(true);
       const response = await fetch(`/api/create/transaction/${ticket.id}`, {
         method: "POST",
         credentials: "include",
@@ -178,7 +167,7 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
       toast.error(error.message);
       console.error("[NEW LINE ITEM ERROR]: ", error);
     } finally {
-      setLoading(false);
+      setSubmittingTransaction(false);
     }
   };
 
@@ -432,8 +421,12 @@ const Search = ({ ticketNumber: initialTicketNumber }) => {
                     ))}
                   </div>
                 </div>
-                <button className={styles.submitTransaction} type="submit">
-                  Submit
+                <button
+                  className={styles.submitTransaction}
+                  type="submit"
+                  disabled={submittingTransaction}
+                >
+                  {submittingTransaction ? "Submitting..." : "Submit"}
                 </button>
               </form>
             )}

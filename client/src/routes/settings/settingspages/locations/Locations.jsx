@@ -5,6 +5,7 @@ import { useAuth } from "../../../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBan,
+  faChevronDown,
   faPenToSquare,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,7 @@ const Locations = () => {
   const { user, setUser } = useAuth();
   const [locations, setLocations] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [formOpen, setFormOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     code: "",
@@ -52,6 +54,12 @@ const Locations = () => {
     }
   }, [editingId]);
 
+  useEffect(() => {
+    if (editingId) {
+      setFormOpen(true);
+    }
+  }, [editingId]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!confirm("Submit new location?")) return;
@@ -87,6 +95,7 @@ const Locations = () => {
         address: "",
         current_tax_rate: "",
       });
+      setFormOpen(false);
       toast.success("Location added");
     } catch (error) {
       console.error("[NEW LOCATION ERROR]: ", error);
@@ -122,6 +131,7 @@ const Locations = () => {
         current_tax_rate: "",
       });
       setEditingId(null);
+      setFormOpen(false);
       toast.success(data.message);
     } catch (error) {
       console.error("[UPDATE LOCATION ERROR]: ", error);
@@ -165,6 +175,85 @@ const Locations = () => {
     <div className={styles.locationsPage}>
       <h1>Locations </h1>
       <div className={styles.locationDataBlock}>
+        {user.is_admin && (
+          <div
+            className={`${styles.addLocationForm} ${
+              formOpen ? styles.formOpen : ""
+            }`}
+          >
+            <button
+              type="button"
+              className={styles.formToggle}
+              onClick={() => {
+                if (editingId && formOpen) {
+                  setEditingId(null);
+                }
+                setFormOpen((prev) => !prev);
+              }}
+              aria-expanded={formOpen}
+            >
+              <span>{editingId ? "Update Location" : "Add Location"}</span>
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className={styles.formChevron}
+              />
+            </button>
+            {formOpen && (
+              <form onSubmit={editingId ? handleUpdateLocation : handleSubmit}>
+                <div>
+                  <label htmlFor="name">Location Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="code">Location Code</label>
+                  <input
+                    type="text"
+                    name="code"
+                    id="code"
+                    value={formData.code}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="address">Address</label>
+                  <input
+                    type="text"
+                    name="address"
+                    id="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="current_tax_rate">Current Tax Rate (%)</label>
+                  <input
+                    type="number"
+                    step={"0.01"}
+                    placeholder="0.00"
+                    name="current_tax_rate"
+                    id="current_tax_rate"
+                    value={formData.current_tax_rate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <button type="submit">
+                  {editingId ? "Update" : "Add New"} Location
+                </button>
+              </form>
+            )}
+          </div>
+        )}
+
         <div className={styles.locations}>
           {locations?.map(
             ({ id, name, code, address, current_tax_rate }, index) => (
@@ -186,6 +275,7 @@ const Locations = () => {
                         onClick={() => {
                           sendLocationDataToForm(index);
                           setEditingId(editingId === id ? null : id);
+                          setFormOpen(editingId !== id);
                         }}
                       >
                         <FontAwesomeIcon
@@ -214,62 +304,6 @@ const Locations = () => {
             )
           )}
         </div>
-        {user.is_admin && (
-          <div className={styles.addLocationForm}>
-            <h3>{editingId ? "Update" : "Add"} Location</h3>
-            <form onSubmit={editingId ? handleUpdateLocation : handleSubmit}>
-              <div>
-                <label htmlFor="name">Location Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="code">Location Code</label>
-                <input
-                  type="text"
-                  name="code"
-                  id="code"
-                  value={formData.code}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="address">Address</label>
-                <input
-                  type="text"
-                  name="address"
-                  id="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="current_tax_rate">Current Tax Rate (%)</label>
-                <input
-                  type="number"
-                  step={"0.01"}
-                  placeholder="0.00"
-                  name="current_tax_rate"
-                  id="current_tax_rate"
-                  value={formData.current_tax_rate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <button type="submit">
-                {editingId ? "Update" : "Add New"} Location
-              </button>
-            </form>
-          </div>
-        )}
       </div>
     </div>
   );

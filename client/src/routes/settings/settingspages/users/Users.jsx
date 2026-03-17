@@ -9,6 +9,7 @@ import { DEPARTMENTS } from "../../../../utils/enums";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faChevronDown,
   faRotateLeft,
   faTrashCan,
   faUserPen,
@@ -19,6 +20,7 @@ const Users = () => {
   const { user } = useAuth();
   const [users, setUsers] = useState(null);
   const [editingID, setEditingID] = useState(null);
+  const [registerOpen, setRegisterOpen] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -57,7 +59,7 @@ const Users = () => {
       } else {
         toast.error(data.message);
       }
-    } catch (error) {
+    } catch {
       toast.error("Error processing request.");
     }
   };
@@ -66,6 +68,28 @@ const Users = () => {
 
   return (
     <div className={styles.userSettingsPage}>
+      {user.is_admin && (
+        <div
+          className={`${styles.registerFormInSettings} ${
+            registerOpen ? styles.registerOpen : ""
+          }`}
+        >
+          <button
+            type="button"
+            className={styles.registerToggle}
+            onClick={() => setRegisterOpen((prev) => !prev)}
+            aria-expanded={registerOpen}
+          >
+            <span>Register New User</span>
+            <FontAwesomeIcon
+              icon={faChevronDown}
+              className={styles.registerChevron}
+            />
+          </button>
+          {registerOpen && <Register />}
+        </div>
+      )}
+
       <div className={styles.userListInSettings}>
         <h2>User Directory</h2>
         <ul>
@@ -122,9 +146,6 @@ const Users = () => {
             </li>
           ))}
         </ul>
-      </div>
-      <div className={styles.registerFormInSettings}>
-        {user.is_admin && <Register />}
       </div>
     </div>
   );
